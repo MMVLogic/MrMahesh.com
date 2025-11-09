@@ -1,0 +1,28 @@
+# Site settings
+title: MrMahesh.com
+email: your-email@example.com
+description: "A professional showcase of IT Homelab projects and technical documentation."
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://yourdomain.com" # the base hostname & protocol for your site
+
+# Build settings
+markdown: kramdown
+theme: minima # You can remove this if you aren't using the default theme
+
+# Define your Custom Content Types (Collections)
+collections:
+  # The 'projects' collection will contain your homelab reports.
+  projects:
+    output: true
+    permalink: /projects/:path/
+  # The 'posts' collection is Jekyll's default for your blog/updates
+  posts:
+    output: true
+    permalink: /updates/:year/:month/:day/:title/
+
+# Files excluded from the build process
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/

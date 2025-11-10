@@ -3,7 +3,7 @@ title: MrMahesh.com
 email: your-email@example.com
 description: "A professional showcase of IT Homelab projects and technical documentation."
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://yourdomain.com" # the base hostname & protocol for your site
+url: "https://mrmahesh.com" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown

@@ -7,5 +7,115 @@
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </head>
 <body>
-  </body>
+  <div id="cms-root"></div>
+  <script>
+    const config = {
+      "backend": {
+        "name": "github",
+        "repo": "MMVLogic/MrMahesh.com",
+        "branch": "main",
+        "auth_base": "https://github.com/login/oauth",
+        "base_url": "https://github.com",
+        "site_domain": "mrmahesh.com"
+      },
+      "publish_mode": "editorial_workflow",
+      "media_folder": "assets/images",
+      "public_folder": "/assets/images",
+      "collections": [
+        {
+          "name": "projects",
+          "label": "Homelab Reports",
+          "folder": "_projects",
+          "create": true,
+          "slug": "{{title | slugify}}",
+          "fields": [
+            {
+              "label": "Project Title",
+              "name": "title",
+              "widget": "string",
+              "required": true
+            },
+            {
+              "label": "Layout",
+              "name": "layout",
+              "widget": "hidden",
+              "default": "project_layout"
+            },
+            {
+              "label": "Date Created",
+              "name": "date",
+              "widget": "datetime",
+              "required": true
+            },
+            {
+              "label": "Status",
+              "name": "status",
+              "widget": "select",
+              "options": [
+                "PLANNED",
+                "IN_PROGRESS",
+                "TROUBLESHOOTING",
+                "COMPLETE",
+                "ARCHIVED"
+              ],
+              "default": "PLANNED"
+            },
+            {
+              "label": "Key Competencies",
+              "name": "key_focus",
+              "widget": "string",
+              "hint": "Comma-separated list (e.g., Networking, Security, Virtualization)"
+            },
+            {
+              "label": "Project Overview (Markdown)",
+              "name": "body",
+              "widget": "markdown",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "posts",
+          "label": "Weekly Updates/Blog",
+          "folder": "_posts",
+          "create": true,
+          "slug": "{{year}}-{{month}}-{{day}}-{{title | slugify}}",
+          "fields": [
+            {
+              "label": "Title",
+              "name": "title",
+              "widget": "string",
+              "required": true
+            },
+            {
+              "label": "Layout",
+              "name": "layout",
+              "widget": "hidden",
+              "default": "post"
+            },
+            {
+              "label": "Publish Date",
+              "name": "date",
+              "widget": "datetime",
+              "required": true
+            },
+            {
+              "label": "Body Content (Markdown)",
+              "name": "body",
+              "widget": "markdown",
+              "required": true
+            },
+            {
+              "label": "Tags",
+              "name": "tags",
+              "widget": "list",
+              "required": false
+            }
+          ]
+        }
+      ]
+    };
+    CMS.init({ config });
+  </script>
+</body>
 </html>

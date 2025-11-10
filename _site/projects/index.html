@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }} // MrMahesh.com</title>
+    <title>Projects // MrMahesh.com</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* All Custom CSS from original index.html */
@@ -73,7 +73,18 @@
             </div>
         </div>
 
-        {{ content }}
+        <div class="flex flex-col space-y-8">
+
+    <!-- Search Section -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-500">
+        <p class="text-xl md:text-2xl font-bold text-gray-200 mb-4 flex items-center">
+            <span class="mr-2 text-yellow-400 text-3xl">🔎</span> &gt; SEARCH_ARCHIVES_
+        </p>
+        <input type="text" id="search-input" placeholder="Type to search posts and projects..." class="w-full bg-[#2c3e50] text-gray-100 p-3 rounded-lg border-2 border-gray-600 focus:border-[#3498db] focus:outline-none">
+        <div id="results-container" class="mt-4"></div>
+    </div>
+
+</div>
 
         <div class="text-center mt-8 pt-4 border-t border-dashed border-gray-600">
             <p class="text-sm text-gray-500">

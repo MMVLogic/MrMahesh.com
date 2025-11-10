@@ -1,0 +1,25 @@
+---
+layout: null
+---
+[
+  {% for post in site.posts %}
+    {
+      "title": "{{ post.title | escape }}",
+      "url": "{{ site.baseurl }}{{ post.url }}",
+      "date": "{{ post.date | date: '%B %d, %Y' }}",
+      "body": "{{ post.content | strip_html | strip_newlines | remove: '
+' | escape }}"
+    }
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %},
+  {% for project in site.projects %}
+    {
+      "title": "{{ project.title | escape }}",
+      "url": "{{ site.baseurl }}{{ project.url }}",
+      "date": "{{ project.date | date: '%B %d, %Y' }}",
+      "body": "{{ project.content | strip_html | strip_newlines | remove: '
+' | escape }}"
+    }
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]

@@ -47,6 +47,20 @@
             0%, 100% { border-color: rgba(52, 152, 219, 0.5); }
             50% { border-color: rgba(52, 152, 219, 1); }
         }
+
+        /* Styles for Kramdown TOC */
+        #markdown-toc {
+            list-style: disc;
+            margin-left: 2rem; /* Indent the list */
+            padding-left: 1rem;
+        }
+        #markdown-toc ul {
+            margin-left: 1.5rem;
+            list-style: circle;
+        }
+        #markdown-toc li {
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-[#1f2937] text-gray-100 flex items-center justify-center min-h-screen p-4 scanlines">
@@ -82,6 +96,48 @@
         </p>
         <input type="text" id="search-input" placeholder="Type to search posts and projects..." class="w-full bg-[#2c3e50] text-gray-100 p-3 rounded-lg border-2 border-gray-600 focus:border-[#3498db] focus:outline-none">
         <div id="results-container" class="mt-4"></div>
+    </div>
+
+    <!-- Project Listing -->
+    <div class="space-y-6">
+        
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-200 mb-2">
+                <a href="/projects/2025-11-11-my-workflow-supercharged/" class="text-[#3498db] hover:underline">My Workflow Supercharged: How the Gemini CLI Revolutionized My Vibe Coding</a>
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">November 11, 2025</p>
+            <div class="text-gray-300">
+                <p>I don’t consider myself a traditional coder who builds everything from scratch. I like to be the orchestrator, the one who has the vision and directs the tools to bring it to life. For a while, my process for building this website was anything but orchestral. It was a slow, boring, and manual grind.</p>
+
+            </div>
+            <a href="/projects/2025-11-11-my-workflow-supercharged/" class="text-[#2ecc71] hover:underline mt-4 inline-block">View Project &rarr;</a>
+        </div>
+        
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-200 mb-2">
+                <a href="/projects/2025-11-09-example-project/" class="text-[#3498db] hover:underline">Example Project: Building a Virtualized Home Lab</a>
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">November 09, 2025</p>
+            <div class="text-gray-300">
+                <p>This is a short introduction to the project. We will be building a home lab from scratch using Proxmox for virtualization, pfSense for routing and firewall, and several virtual machines to host various services. The goal is to create a stable, secure, and well-documented environment for testing and learning.</p>
+
+            </div>
+            <a href="/projects/2025-11-09-example-project/" class="text-[#2ecc71] hover:underline mt-4 inline-block">View Project &rarr;</a>
+        </div>
+        
+    </div>
+
+    <!-- Pagination links -->
+    <div class="flex justify-between items-center mt-8 text-lg">
+        
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">&larr; Newer Projects</span>
+        
+
+        <span class="text-gray-400">Page: 1 of 1</span>
+
+        
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">Older Projects &rarr;</span>
+        
     </div>
 
 </div>

@@ -1,0 +1,45 @@
+---
+layout: default
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- Project Header -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+        <h1 class="text-3xl md:text-5xl font-bold text-[#3498db] mb-2">{{ page.title }}</h1>
+        <p class="text-sm text-gray-500 mb-4">
+            Published on: {{ page.date | date: "%B %d, %Y" }}
+            {% if page.status %} | Status: <span class="font-bold text-[#e74c3c]">{{ page.status }}</span>{% endif %}
+        </p>
+        {% if page.key_focus %}
+        <div class="flex flex-wrap gap-2">
+            <span class="text-gray-400">Key Competencies:</span>
+            {% assign competencies = page.key_focus | split: ',' %}
+            {% for competency in competencies %}
+                <span class="bg-gray-600 text-gray-200 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">{{ competency | strip }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <article class="prose prose-invert max-w-none text-gray-300 prose-h2:text-[#3498db] prose-h2:border-b prose-h2:border-dashed prose-h2:border-gray-600 prose-h2:pb-2 prose-a:text-[#2ecc71] hover:prose-a:underline">
+        {{ content }}
+    </article>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-8 text-lg">
+        {% if page.previous %}
+            <a href="{{ page.previous.url | relative_url }}" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f2937] transition-all duration-300">&larr; Previous Project</a>
+        {% else %}
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">&larr; Previous Project</span>
+        {% endif %}
+
+        {% if page.next %}
+            <a href="{{ page.next.url | relative_url }}" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f2937] transition-all duration-300">Next Project &rarr;</a>
+        {% else %}
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">Next Project &rarr;</span>
+        {% endif %}
+    </div>
+
+</div>

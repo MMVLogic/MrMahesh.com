@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }} // MrMahesh.com</title>
+    <title>Example Project: Building a Virtualized Home Lab // MrMahesh.com</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* All Custom CSS from original index.html */
@@ -87,7 +87,93 @@
             </div>
         </div>
 
-        {{ content }}
+        <div class="flex flex-col space-y-8">
+
+    <!-- Project Header -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+        <h1 class="text-3xl md:text-5xl font-bold text-[#3498db] mb-2">Example Project: Building a Virtualized Home Lab</h1>
+        <p class="text-sm text-gray-500 mb-4">
+            Published on: November 09, 2025
+             | Status: <span class="font-bold text-[#e74c3c]">IN_PROGRESS</span>
+        </p>
+        
+        <div class="flex flex-wrap gap-2">
+            <span class="text-gray-400">Key Competencies:</span>
+            
+            
+                <span class="bg-gray-600 text-gray-200 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Virtualization</span>
+            
+                <span class="bg-gray-600 text-gray-200 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Networking</span>
+            
+                <span class="bg-gray-600 text-gray-200 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Security</span>
+            
+        </div>
+        
+    </div>
+
+    <!-- Main Content -->
+    <article class="prose prose-invert max-w-none text-gray-300 prose-h2:text-[#3498db] prose-h2:border-b prose-h2:border-dashed prose-h2:border-gray-600 prose-h2:pb-2 prose-a:text-[#2ecc71] hover:prose-a:underline">
+        <p>This is a short introduction to the project. We will be building a home lab from scratch using Proxmox for virtualization, pfSense for routing and firewall, and several virtual machines to host various services. The goal is to create a stable, secure, and well-documented environment for testing and learning.</p>
+
+<p>Below is the index of this report. You can click on any item to jump directly to that section.</p>
+
+<ul id="markdown-toc">
+  <li><a href="#section-1-hardware-selection" id="markdown-toc-section-1-hardware-selection">Section 1: Hardware Selection</a>    <ul>
+      <li><a href="#11-cpu-and-motherboard" id="markdown-toc-11-cpu-and-motherboard">1.1 CPU and Motherboard</a></li>
+      <li><a href="#12-ram-and-storage" id="markdown-toc-12-ram-and-storage">1.2 RAM and Storage</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-2-proxmox-installation-and-configuration" id="markdown-toc-section-2-proxmox-installation-and-configuration">Section 2: Proxmox Installation and Configuration</a>    <ul>
+      <li><a href="#21-initial-installation" id="markdown-toc-21-initial-installation">2.1 Initial Installation</a></li>
+      <li><a href="#22-network-configuration" id="markdown-toc-22-network-configuration">2.2 Network Configuration</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-3-conclusion" id="markdown-toc-section-3-conclusion">Section 3: Conclusion</a></li>
+</ul>
+
+<h2 id="section-1-hardware-selection">Section 1: Hardware Selection</h2>
+
+<p>In this section, we discuss the hardware chosen for the project. We’ll cover the CPU, RAM, storage, and networking components. The focus is on balancing performance, power consumption, and cost.</p>
+
+<h3 id="11-cpu-and-motherboard">1.1 CPU and Motherboard</h3>
+
+<p>Details about the processor and motherboard choice. We’ll look at core count, clock speed, and power efficiency.</p>
+
+<h3 id="12-ram-and-storage">1.2 RAM and Storage</h3>
+
+<p>Details about the memory and storage configuration. We’ll discuss the benefits of ECC RAM and the different storage tiers (NVMe, SSD, HDD).</p>
+
+<h2 id="section-2-proxmox-installation-and-configuration">Section 2: Proxmox Installation and Configuration</h2>
+
+<p>This section walks through the installation of Proxmox VE. We will cover the initial setup, network configuration, and storage setup.</p>
+
+<h3 id="21-initial-installation">2.1 Initial Installation</h3>
+
+<p>Step-by-step guide to installing Proxmox from a USB drive.</p>
+
+<h3 id="22-network-configuration">2.2 Network Configuration</h3>
+
+<p>Configuring the Linux bridges and bonds for management and VM traffic.</p>
+
+<h2 id="section-3-conclusion">Section 3: Conclusion</h2>
+
+<p>A summary of the project so far and a look at the next steps. We will discuss the challenges faced and the lessons learned.</p>
+
+    </article>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-8 text-lg">
+        
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">&larr; Previous Project</span>
+        
+
+        
+            <a href="/projects/2025-11-11-my-workflow-supercharged/" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f2937] transition-all duration-300">Next Project &rarr;</a>
+        
+    </div>
+
+</div>
+
 
         <div class="text-center mt-8 pt-4 border-t border-dashed border-gray-600">
             <p class="text-sm text-gray-500">

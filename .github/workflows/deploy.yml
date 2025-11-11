@@ -30,4 +30,3 @@ jobs:
           local-dir: ./_site/
           server-dir: public_html/
           dangerous-clean-slate: true
-          dry-run: true

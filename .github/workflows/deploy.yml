@@ -21,9 +21,6 @@ jobs:
       - name: Build the site
         run: bundle exec jekyll build
 
-      - name: List files for debugging
-        run: ls -laR
-
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
@@ -33,3 +30,4 @@ jobs:
           local-dir: ./_site/
           server-dir: public_html/
           dangerous-clean-slate: true
+          dry-run: true

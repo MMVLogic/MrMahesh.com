@@ -5,6 +5,10 @@ description: "A professional showcase of IT Homelab projects and technical docum
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://mrmahesh.com" # the base hostname & protocol for your site
 
+# Add this to the top-level of your _config.yml
+plugins:
+  - jekyll-paginate-v2
+
 # Build settings
 markdown: kramdown
 theme: minima # You can remove this if you aren't using the default theme
@@ -19,6 +23,16 @@ collections:
   posts:
     output: true
     permalink: /updates/:year/:month/:day/:title/
+
+# --- Pagination Settings ---
+# You can edit these settings, especially 'per_page'.
+pagination:
+  enabled: true
+  per_page: 3 # Number of posts to show per page
+  permalink: '/projects/page/:num/' # The URL structure for paginated pages
+  collection: 'projects' # The collection to paginate
+  sort_field: 'date'
+  sort_reverse: true
 
 # Files excluded from the build process
 exclude:

@@ -15,4 +15,41 @@ permalink: /projects/
         <div id="results-container" class="mt-4"></div>
     </div>
 
+    <!-- Project Listing -->
+    <div class="space-y-6">
+        {% for project in paginator.posts %}
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-200 mb-2">
+                <a href="{{ project.url | relative_url }}" class="text-[#3498db] hover:underline">{{ project.title }}</a>
+            </h2>
+            <p class="text-sm text-gray-500 mb-4">{{ project.date | date: "%B %d, %Y" }}</p>
+            <div class="text-gray-300">
+                {{ project.excerpt }}
+            </div>
+            <a href="{{ project.url | relative_url }}" class="text-[#2ecc71] hover:underline mt-4 inline-block">View Project &rarr;</a>
+        </div>
+        {% else %}
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+            <p class="text-center text-gray-400">No projects found. Check back soon!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination links -->
+    <div class="flex justify-between items-center mt-8 text-lg">
+        {% if paginator.previous_page %}
+            <a href="{{ paginator.previous_page_path | relative_url }}" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f2937] transition-all duration-300">&larr; Newer Projects</a>
+        {% else %}
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">&larr; Newer Projects</span>
+        {% endif %}
+
+        <span class="text-gray-400">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+
+        {% if paginator.next_page %}
+            <a href="{{ paginator.next_page_path | relative_url }}" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f29-37] transition-all duration-300">Older Projects &rarr;</a>
+        {% else %}
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">Older Projects &rarr;</span>
+        {% endif %}
+    </div>
+
 </div>

@@ -1,37 +1,31 @@
-name: Deploy Jekyll Site
+name: Deploy Jekyll Site to Hostinger
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: write
-
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: Set up Ruby and install dependencies
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2' # Match your local Ruby version
-
-      - name: Install dependencies
-        run: |
-          gem install bundler
-          bundle install
+          bundler-cache: true # Caches gems for faster builds
 
       - name: Build the site
         run: bundle exec jekyll build
 
-      - name: Deploy to deploy branch
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-          publish_branch: deploy
-          force_orphan: true
+          server: 194.164.64.102
+          username: u670764745
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./_site/
+          server-dir: public_html/

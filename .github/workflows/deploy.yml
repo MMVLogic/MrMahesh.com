@@ -29,3 +29,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./_site/
           server-dir: public_html/
+          dangerous-clean-slate: true

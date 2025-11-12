@@ -1,11 +1,5 @@
 backend:
-  name: github
-  repo: MMVLogic/MrMahesh.com # e.g., MrMahesh/mrmahesh.com
-  branch: main # The branch the CMS should push changes to
-  # This configures the CMS to use GitHub's native authentication
-  auth_base: https://github.com/login/oauth
-  base_url: https://github.com
-  site_domain: mrmahesh.com # or your custom domain
+  name: git-gateway
 
 publish_mode: editorial_workflow # Recommended: requires approval before publishing
 media_folder: "assets/images" # Media files will be stored in your repo here

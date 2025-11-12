@@ -25,4 +25,4 @@ jobs:
         run: sudo apt-get -y install lftp
 
       - name: Debug FTP Directory Listing
-        run: lftp -u u670764745,${{ secrets.FTP_PASSWORD }} -e "ls -R; quit" 194.164.64.102
+        run: lftp -u u670764745,${{ secrets.FTP_PASSWORD }} -e "set ssl:verify-certificate no; ls -R; quit" 194.164.64.102

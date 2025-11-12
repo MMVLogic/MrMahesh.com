@@ -21,12 +21,8 @@ jobs:
       - name: Build the site
         run: bundle exec jekyll build
 
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@4.3.3
-        with:
-          server: 194.164.64.102
-          username: u670764745
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./_site/
-          server-dir: public_html/
-          dangerous-clean-slate: true
+      - name: Install lftp
+        run: sudo apt-get -y install lftp
+
+      - name: Debug FTP Directory Listing
+        run: lftp -u u670764745,${{ secrets.FTP_PASSWORD }} -e "ls -R; quit" 194.164.64.102

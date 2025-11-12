@@ -28,5 +28,5 @@ jobs:
           username: u670764745
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./_site/
-          server-dir: public_html/
+          server-dir: domains/mrmahesh.com/public_html/
           dangerous-clean-slate: true

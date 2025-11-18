@@ -11,7 +11,7 @@ plugins:
 
 # Build settings
 markdown: kramdown
-theme: minima # You can remove this if you aren't using the default theme
+theme: vintage-material-theme # You can remove this if you aren't using the default theme
 
 # Define your Custom Content Types (Collections)
 collections:

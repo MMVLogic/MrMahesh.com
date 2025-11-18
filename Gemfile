@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "jekyll", "~> 4.3"
-gem "minima", "~> 2.5"
+gem "vintage-material-theme"
 gem "webrick", "~> 1.7"
 gem "jekyll-paginate-v2"
 

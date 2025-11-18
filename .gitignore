@@ -1,0 +1,6 @@
+_site/
+_site/*
+.jekyll-cache/
+custom-cms/node_modules/
+node_modules/
+.DS_Store

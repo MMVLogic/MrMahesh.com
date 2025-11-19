@@ -47,11 +47,14 @@ If you've been following my little corner of the internet, you know this site's 
 My core issue is that I’m a CNC Machinist by day and a wannabe DevOps engineer by night, not a professional website builder! I don't have the time—or the patience—to dive down endless rabbit holes to figure out simple tasks.
 ###The Initial Plan (and Why it Failed)
 My original thought, bless its naive heart, was to just use an existing solution. The first suggestion, courtesy of Gemini, was to explore Netlify CMS.
-### **🤦‍♂️ The Problem:** It was the same reason I prefer using gemini-cli to design my site over a drag-and-drop builder: I don't want to spend my precious few hours of "night-shift" learning concepts I might only use once or twice. When I'm forced to use a pre-built tool, I end up spending all my time asking an AI how to make that specific software do what I want. That time could be spent on my actual projects! Plus, what if the software gets a new version? My trusty AI might not even know the new commands yet.
+
+### **🤦‍♂️ The Problem:** 
+It was the same reason I prefer using gemini-cli to design my site over a drag-and-drop builder: I don't want to spend my precious few hours of "night-shift" learning concepts I might only use once or twice. When I'm forced to use a pre-built tool, I end up spending all my time asking an AI how to make that specific software do what I want. That time could be spent on my actual projects! Plus, what if the software gets a new version? My trusty AI might not even know the new commands yet.
 For me, the best way to work is asking Gemini for how to do something according to industry standards, then I choose the path, and finally, I write a script for repeated tasks.
 ###The Pivot to "Good Enough": My Hand-Curated CMS
 Failing to get Netlify to work in a way that didn't feel like a time-suck, I decided the solution had to be homegrown and minimalist. I needed something that let me spend 90% of my time writing the post and 10% on publishing it.
 I didn't create a CMS—I curated one. It’s a simple system that logs into my admin dashboard, where I can manage existing posts and draft new ones. Since all the webpage design is stored in a layouts folder, every new post automatically gets the same look, even if I publish a thousand of them! My job is now just to focus on the Markdown.
+
 ### **Building Security: A Tangent on Hashing and Salt**
 My first version had the username and password stored in plain text. It was only running on my private server, but the moment I thought, "What if this gets pushed to Git?" I spiraled into a new learning rabbit hole (a fun one this time!).
 Here is my simplified, amateur-level understanding of what I implemented:
@@ -62,6 +65,7 @@ Here is my simplified, amateur-level understanding of what I implemented:
 3. When I log in, the system grabs the stored salt from the hash, combines it with my entered password, and re-hashes it.
 4. If the new hash matches the stored hash, I'm authenticated! Sprinkling that salt makes a massive difference in preventing dictionary attacks.
 I also set up JSON Web Tokens (JWT) for session management. Now, once I'm logged in, that token handles subsequent requests, so I don't have to keep re-entering credentials. It all runs off a single .env file since I'm the only user. Simple, secure (enough!), and effective.
+
 ### **The Final Messy Lesson (and a Reminder about CI/CD)**
 After all that security work, I made a classic mistake: I forgot to add the .env file to my .gitignore list. 🤦‍♂️ That's the beauty and the curse of a CI/CD pipeline—it lets you roll back mistakes, but anyone can also go into your old workflow runs to see past errors.
 So, tonight’s agenda includes running BFG Repo-Cleaner to wipe the old repository's history clean.

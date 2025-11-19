@@ -44,3 +44,5 @@ exclude:
 include:
   - admin/
 
+kramdown:
+  hard_wrap: true

@@ -7,10 +7,10 @@ tags: Gemini-CLI, workflow, Automation, CI/CD
 
 * auto-gen TOC:
 {:toc}
-<br></br>
+<br>
 ## **My Workflow Supercharged:** How Gemini CLI Revolutionized My Vibe Coding
 <sub>November 11, 2025</sub>
-<br></br>
+<br>
 
 I don't consider myself a traditional coder who builds or knows everything to build from scratch. I like to be the orchestrator, the one who has the vision and directs the tools to bring it to life. For a while, my process for building this website was anything but grave. It was a slow, boring, and manual grind.
 

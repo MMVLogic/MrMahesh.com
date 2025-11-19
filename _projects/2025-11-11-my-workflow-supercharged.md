@@ -7,11 +7,12 @@ tags: Gemini-CLI, workflow, Automation, CI/CD
 
 * auto-gen TOC:
 {:toc}
-___
+<br></br>
 ## **My Workflow Supercharged:** How Gemini CLI Revolutionized My Vibe Coding
-<su>November 11, 2025</sub>
+<sub>November 11, 2025</sub>
+<br></br>
 
-I don't consider myself a traditional coder who builds everything from scratch. I like to be the orchestrator, the one who has the vision and directs the tools to bring it to life. For a while, my process for building this website was anything but orchestral. It was a slow, boring, and manual grind.
+I don't consider myself a traditional coder who builds or knows everything to build from scratch. I like to be the orchestrator, the one who has the vision and directs the tools to bring it to life. For a while, my process for building this website was anything but grave. It was a slow, boring, and manual grind.
 
 It started with an idea and a conversation with the Gemini web chat. I'd get a block of code, copy it into VS Code, make some minor changes, and then manually upload the files to my server. Every single change, no matter how small, required the same tedious process. It was a workflow that killed momentum and pushed creative ideas to "tomorrow."
 

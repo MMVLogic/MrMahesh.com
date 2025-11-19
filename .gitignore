@@ -1,6 +1,23 @@
+# Jekyll & Bundler
 _site/
-_site/*
 .jekyll-cache/
-custom-cms/node_modules/
+.jekyll-metadata
+vendor/
+
+# Node.js
 node_modules/
+custom-cms/node_modules/
+npm-debug.log*
+
+# Environment files (IMPORTANT)
+.env
+
+# Log files
+*.log
+
+# macOS files
 .DS_Store
+
+# Other
+_admin.zip
+report.txt

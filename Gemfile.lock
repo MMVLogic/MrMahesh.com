@@ -88,6 +88,8 @@ GEM
       unicode-display_width (>= 1.1.1, < 3)
     thor (1.4.0)
     unicode-display_width (2.6.0)
+    vintage-material-theme (0.1.0)
+      jekyll (~> 4.2)
     webrick (1.9.1)
 
 PLATFORMS
@@ -99,6 +101,7 @@ DEPENDENCIES
   jekyll (~> 4.3)
   jekyll-paginate-v2
   minima (~> 2.5)
+  vintage-material-theme
   webrick (~> 1.7)
 
 BUNDLED WITH

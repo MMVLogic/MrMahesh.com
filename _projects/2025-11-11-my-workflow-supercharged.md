@@ -1,15 +1,15 @@
 ---
-title: Gemini-CLI supercharges my workflow
+title: All about MrMahesh.com
 layout: project_post
 status: In Progress
-tags: Gemini-CLI
+tags: Gemini-CLI, workflow, Automation, CI/CD
 ---
 
 * auto-gen TOC:
 {:toc}
-
-## My Workflow Supercharged: How the Gemini CLI Revolutionized My Vibe Coding
-November 11, 2025
+___
+## **My Workflow Supercharged:** How Gemini CLI Revolutionized My Vibe Coding
+<su>November 11, 2025</sub>
 
 I don't consider myself a traditional coder who builds everything from scratch. I like to be the orchestrator, the one who has the vision and directs the tools to bring it to life. For a while, my process for building this website was anything but orchestral. It was a slow, boring, and manual grind.
 
@@ -19,7 +19,7 @@ Then, everything changed. I stumbled upon a Network Chuck video about running Ge
 
 This is what I call "supercharged vibe coding."
 
-My new workflow is built on a simple philosophy: **the best way to learn fast is to fail fast.** The Gemini CLI, combined with Git, has become the engine for this philosophy. Now, I can have an idea, conceptualize it, prototype it, deploy it, test it, find the issues, and repair them at a speed I never thought possible. The frustration is gone, replaced by a dopamine rush that has me coding at 1 AM, excited to build out my homelab and website through the night.
+My new workflow is built on a simple philosophy: **the best way to learn quickly is to fail fast.** The Gemini CLI, combined with Git, has become the engine for this philosophy. Now, I can have an idea, conceptualize it, prototype it, deploy it, test it, find the issues, and repair them at a speed I never thought possible. The frustration is gone, replaced by a dopamine rush that has me coding at 1 AM, excited to build out my homelab and website through the night.
 
 My process is a continuous loop:
 

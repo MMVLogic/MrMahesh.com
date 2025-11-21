@@ -1,36 +1,42 @@
 const appContainer = document.getElementById('app');
 
+const BASE_URL = '';
+
 const API = {
-    login: (username, password) => fetch('/api/login', {
+    login: (username, password) => fetch(`${BASE_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
+        credentials: 'include',
     }).then(res => res.json()),
 
-    logout: () => fetch('/api/logout', { method: 'POST' }).then(res => res.json()),
+    logout: () => fetch(`${BASE_URL}/api/logout`, { method: 'POST', credentials: 'include' }).then(res => res.json()),
 
-    checkAuth: () => fetch('/api/check-auth').then(res => res.json()),
+    checkAuth: () => fetch(`${BASE_URL}/api/check-auth`, { credentials: 'include' }).then(res => res.json()),
 
-    getLayouts: () => fetch('/api/layouts').then(res => res.json()),
+    getLayouts: () => fetch(`${BASE_URL}/api/layouts`, { credentials: 'include' }).then(res => res.json()),
 
-    getContent: () => fetch('/api/content').then(res => res.json()),
+    getContent: () => fetch(`${BASE_URL}/api/content`, { credentials: 'include' }).then(res => res.json()),
 
-    getFile: (type, filename) => fetch(`/api/content/${type}/${filename}`).then(res => res.json()),
+    getFile: (type, filename) => fetch(`${BASE_URL}/api/content/${type}/${filename}`, { credentials: 'include' }).then(res => res.json()),
 
-    saveFile: (type, filename, content) => fetch(`/api/content/${type}`, {
+    saveFile: (type, filename, content) => fetch(`${BASE_URL}/api/content/${type}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename, content }),
+        credentials: 'include',
     }).then(res => res.json()),
 
-    deleteFile: (type, filename) => fetch(`/api/content/${type}/${filename}`, {
+    deleteFile: (type, filename) => fetch(`${BASE_URL}/api/content/${type}/${filename}`, {
         method: 'DELETE',
+        credentials: 'include',
     }).then(res => res.json()),
 
-    getPreview: (markdown) => fetch('/api/preview', {
+    getPreview: (markdown) => fetch(`${BASE_URL}/api/preview`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ markdown }),
+        credentials: 'include',
     }).then(res => res.json()),
 };
 

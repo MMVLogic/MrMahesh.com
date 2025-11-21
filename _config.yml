@@ -11,7 +11,7 @@ plugins:
 
 # Build settings
 markdown: kramdown
-theme: vintage-material-theme # You can remove this if you aren't using the default theme
+theme: minima # You can remove this if you aren't using the default theme
 
 # Define your Custom Content Types (Collections)
 collections:
@@ -23,6 +23,9 @@ collections:
   posts:
     output: true
     permalink: /updates/:year/:month/:day/:title/
+  cms:
+    output: true
+    permalink: /cms/:path/
 
 # --- Pagination Settings ---
 # You can edit these settings, especially 'per_page'.
@@ -41,8 +44,7 @@ exclude:
   - node_modules
   - vendor/
 
-include:
-  - admin/
+
 
 kramdown:
   hard_wrap: true

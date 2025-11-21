@@ -9,9 +9,16 @@ const { marked } = require('marked');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
+
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+}));
+
 
 // --- Configuration ---
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -41,7 +48,7 @@ app.use(
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
         'style-src': ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
-        'connect-src': ["'self'", 'https://cdn.jsdelivr.net'],
+        'connect-src': ["'self'", 'https://cdn.jsdelivr.net', 'http://localhost:3000', 'http://127.0.0.1:3000'],
       },
     },
   })
@@ -105,7 +112,7 @@ app.post('/api/login', loginLimiter, async (req, res) => {
     const isMatch = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
     if (isMatch) {
       const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
-      res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+      res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
       res.json({ success: true });
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -145,7 +152,7 @@ app.get('/api/content', authMiddleware, async (req, res) => {
       posts: posts.filter(p => p.endsWith('.md')),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error reading content directories', error });
+    res.status(500).json({ message: 'Error reading content directories', error: error.message, stack: error.stack });
   }
 });
 

@@ -40,13 +40,11 @@ It hasn't all been smooth sailing. I hit a major wall when I tried to implement 
 Each challenge, however, is just another lap in this rapid-fire learning cycle. With an AI system that can keep up with my ideas, I'm no longer just a user—I'm an orchestrator, turning concepts into reality at the speed of thought.
 
 Alright, the dopamine is wearing off, and my bed is calling. It's time to sign off.
-
 <br>
 
 ## 🚀 **My Journey from Blog Post Headache to a Homemade CMS:** Embracing the "Good Enough" Solution
 
 <sub>November 19, 2025</sub>
-
 <br>
 
 Hey everyone!
@@ -60,7 +58,6 @@ My original thought, bless its naive heart, was to just use an existing solution
 
 **🤦‍♂️ The Problem:** 
 It was the same reason I prefer using gemini-cli to design my site over a drag-and-drop builder: I don't want to spend my precious few hours of "night-shift" learning concepts I might only use once or twice. When I'm forced to use a pre-built tool, I end up spending all my time asking an AI how to make that specific software do what I want. That time could be spent on my actual projects! Plus, what if the software gets a new version? My trusty AI might not even know the new commands yet.
-
 For me, the best way to work is to ask Gemini how to do something according to industry standards, then I choose the path, and finally, I write a script for repeated tasks.
 
 ### **The Pivot to "Good Enough": My Hand-Curated CMS**

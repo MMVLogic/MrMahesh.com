@@ -15,7 +15,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4000'],
   credentials: true,
 }));
 
@@ -48,7 +48,7 @@ app.use(
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
         'style-src': ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
-        'connect-src': ["'self'", 'https://cdn.jsdelivr.net', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+        'connect-src': ["'self'", 'https://cdn.jsdelivr.net', 'http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4000'],
       },
     },
   })

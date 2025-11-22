@@ -37,14 +37,16 @@ pagination:
   sort_field: 'date'
   sort_reverse: true
 
+# Files to include in the build process
+include:
+  - admin
+
 # Files excluded from the build process
 exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
   - vendor/
-
-
 
 kramdown:
   hard_wrap: true

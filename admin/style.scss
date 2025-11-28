@@ -1,0 +1,29 @@
+@import "../../assets/_shared-styles.scss";
+
+body {
+    background-color: #f8f9fa;
+}
+
+#app {
+    max-width: 960px;
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+textarea {
+    font-family: monospace;
+    min-height: 400px;
+}
+
+.preview-pane {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    padding: 1rem;
+    min-height: 400px;
+}

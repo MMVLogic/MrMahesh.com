@@ -1,27 +1,47 @@
+figure {
+  margin: 0 5%;
+  text-align: center;
+}
+
+figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+figure figcaption {
+  /* This makes the text italics */
+  font-style: italic !important;
+  /* Optional: Adds a little space between image and text */
+  margin-top: 8px;
+}
+
 body {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
 #app {
-    max-width: 960px;
+  max-width: 960px;
 }
 
 .list-group-item {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .list-group-item:hover {
-    background-color: #e9ecef;
+  background-color: #e9ecef;
 }
 
 textarea {
-    font-family: monospace;
-    min-height: 400px;
+  font-family: monospace;
+  min-height: 400px;
 }
 
 .preview-pane {
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    padding: 1rem;
-    min-height: 400px;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  padding: 1rem;
+  min-height: 400px;
 }
+
+/*# sourceMappingURL=style.css.map */

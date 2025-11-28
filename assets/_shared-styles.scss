@@ -1,0 +1,18 @@
+figure {
+  margin: 0 5%;
+  text-align: center;
+}
+
+figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+figure figcaption {
+  /* This makes the text italics */
+  font-style: italic !important;
+  
+  /* Optional: Adds a little space between image and text */
+  margin-top: 8px; 
+}

@@ -218,7 +218,7 @@ const renderEditor = async (type, filename) => {
              <div class="row">
                 <div class="col-md-12">
                      <label class="form-label">Preview</label>
-                     <div id="preview" class="border p-2" style="min-height: 200px; background: white;"></div>
+                     <div id="preview" class="border p-2" style="min-height: 200px; background: white; overflow-y: auto; max-height: 400px;"></div>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Save</button>

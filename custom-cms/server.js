@@ -20,19 +20,16 @@ app.use(cors({
 }));
 
 
+const { db } = require('./database.js');
+
 // --- Configuration ---
 const JWT_SECRET = process.env.JWT_SECRET;
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-// For initial setup, we use a pre-hashed password for "password" if the .env is not set.
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '$2b$10$f/2.z6.iPz5v.AP89a369uP/2a.YotX.V.p55KxGj3sY4f3j2.i';
 
 if (!JWT_SECRET) {
   console.error('FATAL ERROR: JWT_SECRET is not defined. Please create a .env file.');
   process.exit(1);
 }
-if (ADMIN_PASSWORD_HASH === '$2b$10$f/2.z6.iPz5v.AP89a369uP/2a.YotX.V.p55KxGj3sY4f3j2.i') {
-    console.warn('WARNING: Using default password. Please set a secure ADMIN_PASSWORD_HASH in your .env file.');
-}
+
 
 
 const contentDir = path.join(__dirname, '..');
@@ -104,22 +101,28 @@ const checkAuthStatusMiddleware = (req, res, next) => {
 // --- Login ---
 app.post('/api/login', loginLimiter, async (req, res) => {
   const { username, password } = req.body;
-  if (username !== ADMIN_USERNAME) {
-    return res.status(401).json({ success: false, message: 'Invalid credentials' });
-  }
 
-  try {
-    const isMatch = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
-    if (isMatch) {
-      const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
-      res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
-      res.json({ success: true });
-    } else {
-      res.status(401).json({ success: false, message: 'Invalid credentials' });
+  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Server error during authentication' });
     }
-  } catch (error) {
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    try {
+      const isMatch = await bcrypt.compare(password, user.password_hash);
+      if (isMatch) {
+        const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+        res.json({ success: true });
+      } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
+      }
+    } catch (error) {
       res.status(500).json({ success: false, message: 'Server error during authentication' });
-  }
+    }
+  });
 });
 
 // --- Logout ---
@@ -131,6 +134,31 @@ app.post('/api/logout', (req, res) => {
 app.get('/api/check-auth', checkAuthStatusMiddleware, (req, res) => {
   res.json({ authenticated: req.isAuthenticated });
 });
+
+// --- Add new user ---
+app.post('/api/users', authMiddleware, async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ success: false, message: 'Username and password are required' });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        db.run('INSERT INTO users (username, password_hash) VALUES (?, ?)', [username, hashedPassword], function(err) {
+            if (err) {
+                if (err.message.includes('UNIQUE constraint failed')) {
+                    return res.status(409).json({ success: false, message: 'Username already exists' });
+                }
+                return res.status(500).json({ success: false, message: 'Error creating user' });
+            }
+            res.status(201).json({ success: true, message: 'User created successfully', userId: this.lastID });
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 
 // --- Get all layouts ---
 app.get('/api/layouts', authMiddleware, async (req, res) => {

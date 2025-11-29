@@ -14,8 +14,6 @@ tags: Gemini-CLI, workflow, Automation, CI/CD
 
 <sub>November 11, 2025</sub>
 
-<br>
-
 I don't consider myself a traditional coder who builds or knows everything to build from scratch. I like to be the orchestrator, the one who has the vision and directs the tools to bring it to life. For a while, my process for building this website was anything but grave. It was a slow, boring, and manual grind.
 
 It started with an idea and a conversation with the Gemini web chat. I'd get a block of code, copy it into VS Code, make some minor changes, and then manually upload the files to my server. Every single change, no matter how small, required the same tedious process. It was a workflow that killed momentum and pushed creative ideas to "tomorrow."
@@ -45,7 +43,6 @@ Alright, the dopamine is wearing off, and my bed is calling. It's time to sign o
 ## 🚀 **My Journey from Blog Post Headache to a Homemade CMS:** Embracing the "Good Enough" Solution
 
 <sub>November 19, 2025</sub>
-<br>
 
 Hey everyone!
 If you've been following my little corner of the internet, you know this site's main mission is simple: to share my IT adventures and homelab hiccups. I'm a firm believer in documenting the real process—thoughts, actions, and especially the mistakes and fixes. Lately, I've had to press the pause button on my actual homelab projects, and here’s why: I needed to make the process of uploading these write-ups as easy as humanly possible.
@@ -54,7 +51,7 @@ If you've been following my little corner of the internet, you know this site's 
 My core issue is that I’m a CNC Machinist by day and a wannabe DevOps engineer by night, not a professional website builder! I don't have the time—or the patience—to dive down endless rabbit holes to figure out simple tasks.
 
 ### **The Initial Plan (and Why it Failed)**
-My original thought, bless its naive heart, was to just use an existing solution. The first suggestion, courtesy of Gemini, was to explore Netlify CMS.
+My original thought, bless its naive heart, was to use an existing solution. The first suggestion, courtesy of Gemini, was to explore Netlify CMS.
 
 **🤦‍♂️ The Problem:** 
 It was the same reason I prefer using gemini-cli to design my site over a drag-and-drop builder: I don't want to spend my precious few hours of "night-shift" learning concepts I might only use once or twice. When I'm forced to use a pre-built tool, I end up spending all my time asking an AI how to make that specific software do what I want. That time could be spent on my actual projects! Plus, what if the software gets a new version? My trusty AI might not even know the new commands yet.

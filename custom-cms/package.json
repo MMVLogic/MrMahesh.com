@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-css": "sass public/style.scss public/style.css"
+    "build-css": "sass public/style.scss public/style.css",
+    "db:init": "node database.js"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +23,8 @@
     "fs-extra": "^11.3.2",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "marked": "^17.0.0"
+    "marked": "^17.0.0",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "sass": "^1.94.2"

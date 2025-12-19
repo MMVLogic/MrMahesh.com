@@ -1,7 +1,7 @@
 ---
 title: All about MrMahesh.com
 layout: project_post
-status: In Progress
+status: On Hold
 tags: Gemini-CLI, workflow, Automation, CI/CD
 ---
 

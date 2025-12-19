@@ -16,3 +16,21 @@ figure figcaption {
   /* Optional: Adds a little space between image and text */
   margin-top: 8px; 
 }
+
+/* Custom styles for syntax blocks */
+.highlighter-rouge .highlight,
+div.highlighter-rouge,
+pre.highlighter-rouge code,
+code.language-plaintext {
+  color: #333; /* Dark gray for visibility on white background */
+}
+
+/* Custom styles for links */
+a:hover,
+a:focus {
+  color: inherit; /* Prevent text color change on hover/focus */
+}
+
+a:visited {
+  color: #999; /* Light gray for visited links */
+}

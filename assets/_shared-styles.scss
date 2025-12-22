@@ -34,3 +34,22 @@ a:focus {
 a:visited {
   color: #999; /* Light gray for visited links */
 }
+
+/* Custom styles for tables */
+table {
+  background-color: #1a202c; /* Set table background to match page theme */
+  color: inherit;
+  border-collapse: collapse; /* Collapse borders for a cleaner look */
+  width: 100%; /* Ensure table spans full width */
+}
+
+table th,
+table td,
+table tr,
+table tbody {
+  background-color: #1a202c; /* Set all cell/row backgrounds to match page theme */
+  color: inherit;
+  border: 1px solid white;
+  padding: 8px; /* Add some padding for readability */
+  text-align: left; /* Align text to the left */
+}

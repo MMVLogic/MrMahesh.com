@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-css": "sass public/style.scss public/style.css",
-    "db:init": "node database.js"
+    "db:init": "node database.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",

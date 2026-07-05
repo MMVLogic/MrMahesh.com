@@ -1,0 +1,8 @@
+---
+layout: null
+---
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://mrmahesh.com/sitemap.xml

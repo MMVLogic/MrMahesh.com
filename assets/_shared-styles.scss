@@ -1,3 +1,84 @@
+/* =============================================
+   MrMahesh.com — Shared Styles
+   All custom CSS consolidated from default.html
+   ============================================= */
+
+/* --- Page Fade-In Animation --- */
+body {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Custom Cursor --- */
+body {
+  font-family: 'Roboto Mono', monospace;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><rect x='0' y='0' width='24' height='24' fill='none' stroke='white' stroke-width='2'/><path d='M8 8L16 16M16 8L8 16' stroke='white' stroke-width='2'/></svg>") 12 12, auto;
+}
+
+/* --- CRT Scanlines Overlay --- */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* --- Typing Cursor Effect --- */
+.typing-effect::after {
+  content: '_';
+  animation: blink 1s step-end infinite;
+  position: relative;
+  left: 2px;
+}
+
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* --- Pulsing Border Animation --- */
+.border-animation {
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(52, 152, 219, 0.5); }
+  50% { border-color: rgba(52, 152, 219, 1); }
+}
+
+/* --- Kramdown Table of Contents --- */
+#markdown-toc {
+  list-style: disc;
+  margin-left: 2rem;
+  padding-left: 1rem;
+}
+
+#markdown-toc ul {
+  margin-left: 1.5rem;
+  list-style: circle;
+}
+
+#markdown-toc li {
+  margin-bottom: 0.5rem;
+}
+
+/* --- Prose Paragraph Spacing --- */
+.prose p {
+  margin-bottom: 1.5rem;
+  line-height: 1.75;
+}
+
+/* --- Figure Styles --- */
 figure {
   margin: 10% 5%;
   text-align: center;
@@ -10,46 +91,43 @@ figure img {
 }
 
 figure figcaption {
-  /* This makes the text italics */
   font-style: italic !important;
-  
-  /* Optional: Adds a little space between image and text */
-  margin-top: 8px; 
+  margin-top: 8px;
 }
 
-/* Custom styles for syntax blocks */
+/* --- Syntax Highlighting --- */
 .highlighter-rouge .highlight,
 div.highlighter-rouge,
 pre.highlighter-rouge code,
 code.language-plaintext {
-  color: #333; /* Dark gray for visibility on white background */
+  color: #333;
 }
 
-/* Custom styles for links */
+/* --- Link Styles --- */
 a:hover,
 a:focus {
-  color: inherit; /* Prevent text color change on hover/focus */
+  color: inherit;
 }
 
 a:visited {
-  color: #999; /* Light gray for visited links */
+  color: #999;
 }
 
-/* Custom styles for tables */
+/* --- Table Styles --- */
 table {
-  background-color: #1a202c; /* Set table background to match page theme */
+  background-color: #1a202c;
   color: inherit;
-  border-collapse: collapse; /* Collapse borders for a cleaner look */
-  width: 100%; /* Ensure table spans full width */
+  border-collapse: collapse;
+  width: 100%;
 }
 
 table th,
 table td,
 table tr,
 table tbody {
-  background-color: #1a202c; /* Set all cell/row backgrounds to match page theme */
+  background-color: #1a202c;
   color: inherit;
   border: 1px solid white;
-  padding: 8px; /* Add some padding for readability */
-  text-align: left; /* Align text to the left */
+  padding: 8px;
+  text-align: left;
 }

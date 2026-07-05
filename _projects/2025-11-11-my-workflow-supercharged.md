@@ -2,7 +2,16 @@
 title: All about MrMahesh.com
 layout: project_post
 status: On Hold
-tags: Gemini-CLI, workflow, Automation, CI/CD
+tags:
+  - Gemini-CLI
+  - workflow
+  - Automation
+  - CI/CD
+key_focus:
+  - Gemini-CLI
+  - workflow
+  - Automation
+  - CI/CD
 ---
 
 * auto-gen TOC:

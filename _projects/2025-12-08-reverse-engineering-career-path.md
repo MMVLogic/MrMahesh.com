@@ -2,7 +2,19 @@
 title: Reverse Engineering Career Paths for Targeted Role Emulation
 layout: project_post
 status: In Progress
-tags: Career-Path, Reverse-Engineering, Role-Emulation, Project, Data-Analysis, Strategy
+tags:
+  - Career-Path
+  - Reverse-Engineering
+  - Role-Emulation
+  - Project
+  - Data-Analysis
+  - Strategy
+key_focus:
+  - Career-Path
+  - Reverse-Engineering
+  - Role-Emulation
+  - Data-Analysis
+  - Strategy
 ---
 
 * auto-gen TOC:
@@ -137,7 +149,7 @@ SO it wasn't the RAM that was the issue, I found the reason for the 230 restarts
 I tried to delete the corrupted volume, but the terminal just sat there. I had encountered a Kubernetes Finalizer. The cluster was trying to be helpful by protecting a disk that was still attached to a pod. To fix it, I had to perform a 'force-delete' on the pod itself, breaking the link and allowing the cluster to finally clear the path for a fresh, clean volume. It’s a reminder that Kubernetes prefers safety over speed.
 I wiped the local data of that replica. Like a digital lizard regrowing a tail, the pod started fresh, synced with the Primary master, and turned Green for the first time in two days. This is the beauty of K8s: the system is designed to be 'disposable' and 'rebuildable'.
 
-I successfully pushed 26GB of data into my cluster without a hitch, but the moment I tried to view a single photo from my Mac, everything crumbled. It was a lesson in Asymmetric Performance: uploading is a background task, but viewing is a real-time demand. By giving my services elastic access to my RAM and fixing the underlying storage corruption, I finally turned my 'storage bin' into a 'streaming gallery.' But a true private cloud shouldn't rely on a fragile terminal tunnel. My next challenge? Moving past the temporary port-forward and building a permanent gateway using Ingress Controllers and LoadBalancers. Stay tuned for more updates, where I give this cluster a front door that never closes.
+I successfully pushed 26GB of data into my cluster without a hitch, but the moment I tried to view a single photo from my Mac, everything crumbled. It was a lesson in Asymmetric Performance: uploading is a background task, but viewing is a real-time demand. By giving my services elastic access to my RAM and fixing the underlying storage corruption, I finally turned my 'storage bin' into a 'streaming gallery.' But a true private cloud shouldn't rely on a fragile terminal tunnel. 
 
 <figure class="project-post-figure">
   <img src="/assets/Screenshot07.png"
@@ -146,3 +158,15 @@ I successfully pushed 26GB of data into my cluster without a hitch, but the mome
 The 'Aha!' moment during troubleshooting. By running a describe on the failing pod, I realized I had suffocated the service with a 192MB RAM limit. This command shows the moment I issued a patch to increase the memory to 512MB, giving the database room to breathe.
  </figcaption>
 </figure>
+
+My next challenge? Moving past the temporary port-forward and building a permanent gateway using Ingress Controllers and LoadBalancers. Stay tuned for more updates, where I give this cluster a front door that never closes.
+<br>
+
+# **Update: Day 5 - Building the Express Lanes: Network Segmentation and the Road to Ingress**
+
+<sub>January 1, 2026</sub>
+
+Before I built the front door, I had to organize the shop floor. I realized that my 26GB of data was competing for airtime with every other device in the house. By implementing VLANs, I created a dedicated 'high-speed lane' for my cluster. It’s the digital equivalent of putting my CNC machines on their own isolated power grid to ensure zero interference.
+
+
+

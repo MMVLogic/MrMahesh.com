@@ -566,10 +566,18 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < solutions.length; i++) {
                 let z_cand = solutions[i];
                 let x_cand = x_c + z_cand;
-                const min_x = Math.min(ip_x, x1) - 0.001;
-                const max_x = Math.max(ip_x, x1) + 0.001;
                 
-                if (x_cand >= min_x && x_cand <= max_x) {
+                // Calculate y_c for this z candidate:
+                const y_c_cand = y_t1 + (z_cand * (x_cand - x1)) / A;
+                
+                // Find y_ip intersection:
+                const slope = (y_t1 - y1) / (x_cand - x1);
+                const y_ip = y1 + slope * (ip_x - x1);
+                
+                // If angled line goes up (y1 > y_ip), T2 (y_c_cand) must go down (< y_ip)
+                const is_correct_direction = (y1 > y_ip) ? (y_c_cand < y_ip) : (y_c_cand > y_ip);
+                
+                if (is_correct_direction) {
                     final_z = z_cand;
                     x_t1 = x_cand;
                     break;
@@ -649,11 +657,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const slope = (y_t1 - y1) / (x_t1 - x1);
                 const x_ip = x1 + (ip_y - y1) / slope;
 
-                // Check if x_t1 lies between x1 and x_ip
-                const min_x = Math.min(x1, x_ip) - 0.001;
-                const max_x = Math.max(x1, x_ip) + 0.001;
+                // Verify the gotcha: if angled line goes right (x1 > x_ip), T2 X (x_c_val) must be to the left (< x_ip)
+                const is_correct_direction = (x1 > x_ip) ? (x_c_val < x_ip) : (x_c_val > x_ip);
 
-                if (x_t1 >= min_x && x_t1 <= max_x) {
+                if (is_correct_direction) {
                     const x_t2 = x_c_val;
 
                     logs.push(`<br>> GEOMETRIC SOLUTION FOUND (Horizontal Outgoing Line):`);

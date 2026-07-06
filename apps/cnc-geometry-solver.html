@@ -1,0 +1,572 @@
+---
+layout: default
+title: CNC Coordinate Geometry Solver
+permalink: /apps/cnc-geometry-solver/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- App Header -->
+    <div>
+        <a href="/apps/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">
+            &lt; Back to Apps Dashboard
+        </a>
+        <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-2 leading-tight">CNC Coordinate Geometry Solver</h1>
+        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+            Blend turning points and sharp corners with precise tangent arcs using vector geometry.
+        </p>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Controls -->
+        <div class="lg:col-span-5 flex flex-col space-y-6">
+            
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600 space-y-4">
+                <p class="text-lg font-bold text-gray-200 flex items-center justify-between">
+                    <span><span class="mr-2 text-yellow-500 text-2xl">📋</span> > TOOLPATH_POINTS_</span>
+                    <button id="btn-add-pt" class="bg-[#2ecc71] hover:bg-green-500 text-[#1f2937] font-bold py-1 px-3 rounded text-xs transition-colors duration-200 font-bold">
+                        + Add Point
+                    </button>
+                </p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="pb-2 font-bold w-12 text-center">No.</th>
+                                <th class="pb-2 font-bold">X Coord</th>
+                                <th class="pb-2 font-bold">Y Coord</th>
+                                <th class="pb-2 font-bold w-24 text-center">Fillet R</th>
+                                <th class="pb-2 font-bold w-12 text-center">Del</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pts-list-body">
+                            <!-- Dynamically loaded rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex space-x-2 pt-2">
+                    <button id="btn-calc" class="flex-grow bg-yellow-600 hover:bg-yellow-500 text-[#1f2937] font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-md flex items-center justify-center">
+                        ⚡ Calculate Geometry
+                    </button>
+                    <button id="btn-reset-pt" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-4 rounded-lg transition-all duration-200">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- G-Code Generated (Companion Helper) -->
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-lg font-bold text-gray-200 flex items-center">
+                        <span class="mr-2 text-[#2ecc71] text-2xl">📟</span> > GENERATED_GCODE_
+                    </p>
+                    <button id="btn-copy-gcode" class="bg-[#3498db] hover:bg-blue-500 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200">
+                        Copy Code
+                    </button>
+                </div>
+                <textarea id="gcode-out" readonly class="w-full bg-black text-green-400 font-mono p-4 rounded-lg border border-gray-800 h-48 focus:outline-none text-xs leading-relaxed resize-none"></textarea>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Visualizer & Output Table -->
+        <div class="lg:col-span-7 flex flex-col space-y-6">
+            
+            <!-- Canvas Window -->
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 flex flex-col">
+                <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
+                    <span class="mr-2 text-[#3498db] text-2xl">🖥️</span> > VISUALIZATION_GRID_
+                </p>
+                <div class="relative w-full aspect-square bg-[#0f172a] rounded-lg overflow-hidden border border-gray-800">
+                    <canvas id="canvas-visualizer" class="w-full h-full"></canvas>
+                </div>
+            </div>
+
+            <!-- Output Coordinates Table -->
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+                <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
+                    <span class="mr-2 text-yellow-500 text-2xl">📊</span> > CALCULATED_COORDINATES_
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="pb-2 font-bold pl-2">Segment Element / Point Type</th>
+                                <th class="pb-2 font-bold">X Coordinate</th>
+                                <th class="pb-2 font-bold">Y Coordinate</th>
+                                <th class="pb-2 font-bold">Fillet R</th>
+                            </tr>
+                        </thead>
+                        <tbody id="output-table-body" class="font-mono text-gray-200">
+                            <!-- Calculated coordinates pushed here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Interactive CNC Geometry Solver Logic -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Phase 1: Data State & UI Layout
+    let points = [
+        { x: 0.600, y: 0.000, r: 0 },
+        { x: 0.710, y: 0.000, r: 0.020 },
+        { x: 0.825, y: -0.157, r: 0 }
+    ];
+
+    const ptsListBody = document.getElementById('pts-list-body');
+    const outputTableBody = document.getElementById('output-table-body');
+    const gcodeOut = document.getElementById('gcode-out');
+    const canvas = document.getElementById('canvas-visualizer');
+    const ctx = canvas.getContext('2d');
+
+    // Render left column inputs
+    function renderInputs() {
+        ptsListBody.innerHTML = '';
+        points.forEach((pt, index) => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150';
+            row.innerHTML = `
+                <td class="py-2 text-center text-gray-500 font-bold">${index + 1}</td>
+                <td class="py-1 pr-2">
+                    <input type="number" step="any" value="${pt.x}" data-index="${index}" data-axis="x" 
+                           class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                </td>
+                <td class="py-1 pr-2">
+                    <input type="number" step="any" value="${pt.y}" data-index="${index}" data-axis="y" 
+                           class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                </td>
+                <td class="py-1 text-center pr-2">
+                    <input type="number" step="any" min="0" value="${pt.r}" data-index="${index}" data-axis="r" 
+                           class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-center text-xs">
+                </td>
+                <td class="py-1 text-center">
+                    <button class="btn-del text-red-500 hover:text-red-400 font-bold text-sm" data-index="${index}">
+                        &times;
+                    </button>
+                </td>
+            `;
+            ptsListBody.appendChild(row);
+        });
+
+        // Add event listeners to inputs
+        document.querySelectorAll('#pts-list-body input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                const axis = e.target.dataset.axis;
+                const val = parseFloat(e.target.value) || 0;
+                points[idx][axis] = val;
+            });
+        });
+
+        // Delete button listener
+        document.querySelectorAll('.btn-del').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                if (points.length <= 2) {
+                    alert('You must have at least 2 points to define a path.');
+                    return;
+                }
+                points.splice(idx, 1);
+                renderInputs();
+            });
+        });
+    }
+
+    // Add Point Button
+    document.getElementById('btn-add-pt').addEventListener('click', () => {
+        const lastPt = points[points.length - 1];
+        points.push({
+            x: lastPt ? parseFloat((lastPt.x + 0.1).toFixed(4)) : 0,
+            y: lastPt ? parseFloat((lastPt.y - 0.05).toFixed(4)) : 0,
+            r: 0
+        });
+        renderInputs();
+    });
+
+    // Reset Button
+    document.getElementById('btn-reset-pt').addEventListener('click', () => {
+        points = [
+            { x: 0.600, y: 0.000, r: 0 },
+            { x: 0.710, y: 0.000, r: 0.020 },
+            { x: 0.825, y: -0.157, r: 0 }
+        ];
+        renderInputs();
+        calculateAndRender();
+    });
+
+    // Phase 2: The Math Kernel (Vector Geometry)
+    function calculateTangentArc(p1, pIp, p2, radius) {
+        // Create vectors from Middle (IP) to p1 and p2
+        const v1 = { x: p1.x - pIp.x, y: p1.y - pIp.y };
+        const v2 = { x: p2.x - pIp.x, y: p2.y - pIp.y };
+
+        const len1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+        const len2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+
+        if (len1 === 0 || len2 === 0) return null;
+
+        // Normalize vectors
+        const u1 = { x: v1.x / len1, y: v1.y / len1 };
+        const u2 = { x: v2.x / len2, y: v2.y / len2 };
+
+        // Angle between them
+        const dot = u1.x * u2.x + u1.y * u2.y;
+        const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+
+        if (Math.abs(angle - Math.PI) < 0.001 || angle < 0.001) {
+            return null; // Collinear/Parallel lines
+        }
+
+        // Tangent offset distance
+        const tangentDist = radius / Math.tan(angle / 2);
+
+        // Center offset distance
+        const centerDist = radius / Math.sin(angle / 2);
+
+        // Tangent Points T1 and T2
+        const t1 = { x: pIp.x + tangentDist * u1.x, y: pIp.y + tangentDist * u1.y };
+        const t2 = { x: pIp.x + tangentDist * u2.x, y: pIp.y + tangentDist * u2.y };
+
+        // Bisector vector
+        const b = { x: u1.x + u2.x, y: u1.y + u2.y };
+        const lenB = Math.sqrt(b.x * b.x + b.y * b.y);
+        
+        let n = { x: 0, y: 0 };
+        if (lenB > 1e-9) {
+            n = { x: b.x / lenB, y: b.y / lenB };
+        } else {
+            // If vectors are opposite (should be handled by parallel block, but as fallback)
+            n = { x: -u1.y, y: u1.x };
+        }
+
+        // Center Point
+        const center = { x: pIp.x + centerDist * n.x, y: pIp.y + centerDist * n.y };
+
+        // Determine if G2 or G3 using 2D cross product of incoming/outgoing vectors
+        // (t2.x - pIp.x)*(t1.y - pIp.y) - (t2.y - pIp.y)*(t1.x - pIp.x)
+        const det = (p2.x - pIp.x) * (p1.y - pIp.y) - (p2.y - pIp.y) * (p1.x - pIp.x);
+        const isCCW = det > 0;
+        const arcDir = isCCW ? 'G3' : 'G2';
+
+        // Angles for drawing
+        const startAngle = Math.atan2(t1.y - center.y, t1.x - center.x);
+        const endAngle = Math.atan2(t2.y - center.y, t2.x - center.x);
+
+        return {
+            center,
+            t1,
+            t2,
+            startAngle,
+            endAngle,
+            anticlockwise: isCCW,
+            arcDir
+        };
+    }
+
+    // Calculation & Render Engine
+    function calculateAndRender() {
+        let results = [];
+        let renderPath = [];
+        let sharpCorners = [...points];
+
+        // Process points to compute arcs
+        for (let i = 0; i < points.length; i++) {
+            const current = points[i];
+            
+            // Start Point
+            if (i === 0) {
+                results.push({ type: 'Start Point', x: current.x, y: current.y, r: 0 });
+                renderPath.push({ type: 'G1', x: current.x, y: current.y });
+                continue;
+            }
+
+            // End Point
+            if (i === points.length - 1) {
+                results.push({ type: 'End Point', x: current.x, y: current.y, r: 0 });
+                renderPath.push({ type: 'G1', x: current.x, y: current.y });
+                continue;
+            }
+
+            // Intermediate turning points
+            if (current.r > 0) {
+                const prev = points[i - 1];
+                const next = points[i + 1];
+                const arcData = calculateTangentArc(prev, current, next, current.r);
+
+                if (arcData) {
+                    // Start of Fillet
+                    results.push({ type: 'Tangent Point 1', x: arcData.t1.x, y: arcData.t1.y, r: 0 });
+                    // Center Point
+                    results.push({ type: 'Arc Center', x: arcData.center.x, y: arcData.center.y, r: current.r });
+                    // End of Fillet
+                    results.push({ type: 'Tangent Point 2', x: arcData.t2.x, y: arcData.t2.y, r: 0 });
+
+                    // Append to drawing path
+                    renderPath.push({ type: 'G1', x: arcData.t1.x, y: arcData.t1.y });
+                    renderPath.push({ 
+                        type: arcData.arcDir, 
+                        x: arcData.t2.x, 
+                        y: arcData.t2.y, 
+                        r: current.r, 
+                        cx: arcData.center.x, 
+                        cy: arcData.center.y, 
+                        startAngle: arcData.startAngle, 
+                        endAngle: arcData.endAngle,
+                        anticlockwise: arcData.anticlockwise
+                    });
+                } else {
+                    results.push({ type: 'Intersection (Skipped Fillet)', x: current.x, y: current.y, r: 0 });
+                    renderPath.push({ type: 'G1', x: current.x, y: current.y });
+                }
+            } else {
+                results.push({ type: 'Intersection Point', x: current.x, y: current.y, r: 0 });
+                renderPath.push({ type: 'G1', x: current.x, y: current.y });
+            }
+        }
+
+        // Render Outputs
+        renderOutputTable(results);
+        generateGcode(renderPath);
+        renderCanvas(renderPath, sharpCorners, results);
+    }
+
+    // Phase 4: Output Table
+    function renderOutputTable(results) {
+        outputTableBody.innerHTML = '';
+        results.forEach(pt => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150';
+            row.innerHTML = `
+                <td class="py-2 pl-2 text-yellow-500 font-bold">${pt.type}</td>
+                <td class="py-2 font-mono">${pt.x.toFixed(4)}</td>
+                <td class="py-2 font-mono">${pt.y.toFixed(4)}</td>
+                <td class="py-2 font-mono text-gray-500">${pt.r > 0 ? pt.r.toFixed(4) : '-'}</td>
+            `;
+            outputTableBody.appendChild(row);
+        });
+    }
+
+    // G-code printer
+    function generateGcode(path) {
+        let code = [];
+        code.push(`G17 G90 G21 (Select XY Plane, Metric)`);
+        
+        if (path.length > 0) {
+            code.push(`G0 X${path[0].x.toFixed(4)} Y${path[0].y.toFixed(4)}`);
+        }
+
+        for (let i = 1; i < path.length; i++) {
+            const el = path[i];
+            if (el.type === 'G1') {
+                code.push(`G1 X${el.x.toFixed(4)} Y${el.y.toFixed(4)}`);
+            } else if (el.type === 'G2' || el.type === 'G3') {
+                code.push(`${el.type} X${el.x.toFixed(4)} Y${el.y.toFixed(4)} R${el.r.toFixed(4)}`);
+            }
+        }
+        code.push(`M30 (Program End)`);
+        gcodeOut.value = code.join('\n');
+    }
+
+    // Phase 3: The Canvas Engine
+    function renderCanvas(path, sharpCorners, pointsToMark) {
+        // Reset canvas dimensions to fit container
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.width;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Find min/max bounds across all point data to auto-scale
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+
+        // Accumulate coordinates
+        const allCoords = [];
+        sharpCorners.forEach(p => allCoords.push(p));
+        pointsToMark.forEach(p => allCoords.push(p));
+        
+        allCoords.forEach(p => {
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
+        });
+
+        // Default ranges if single coordinate
+        const dx = maxX - minX;
+        const dy = maxY - minY;
+        const centerX = minX + dx / 2;
+        const centerY = minY + dy / 2;
+
+        const maxSpan = Math.max(dx, dy, 0.01);
+        
+        // Auto-Scaling with 5% margin
+        const viewMargin = 0.05;
+        const scaleFactor = (canvas.width * (1 - 2 * viewMargin)) / maxSpan;
+
+        ctx.save();
+        
+        // Translate center of geometry to center of canvas
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        
+        // Y-Axis Inversion: positive Y is up
+        ctx.scale(scaleFactor, -scaleFactor);
+        
+        // Translate back by the geometry center
+        ctx.translate(-centerX, -centerY);
+
+        // Grid Background
+        drawAxes(minX - maxSpan, maxX + maxSpan, minY - maxSpan, maxY + maxSpan, scaleFactor);
+
+        // 1. Draw theoretical sharp corners as thin, dashed grey lines
+        if (sharpCorners.length >= 2) {
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 1.0 / scaleFactor;
+            ctx.setLineDash([4 / scaleFactor, 4 / scaleFactor]);
+            ctx.beginPath();
+            ctx.moveTo(sharpCorners[0].x, sharpCorners[0].y);
+            for (let i = 1; i < sharpCorners.length; i++) {
+                ctx.lineTo(sharpCorners[i].x, sharpCorners[i].y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset
+        }
+
+        // 2. Draw actual calculated toolpath as a thick, solid blue line
+        if (path.length > 0) {
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3.5 / scaleFactor;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            for (let i = 0; i < path.length; i++) {
+                const el = path[i];
+                if (i === 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(el.x, el.y);
+                } else if (el.type === 'G1') {
+                    ctx.lineTo(el.x, el.y);
+                } else if (el.type === 'G2' || el.type === 'G3') {
+                    // Draw arc
+                    // Since Y is inverted via scale(1, -1), CCW rotation in cartesian becomes CW in canvas space.
+                    // We pass the raw canvas anticlockwise flag and invert it so scale works properly.
+                    ctx.arc(el.cx, el.cy, el.r, el.startAngle, el.endAngle, !el.anticlockwise);
+                }
+            }
+            ctx.stroke();
+        }
+
+        // 3. Draw small dots to mark T1, T2, and Center
+        const dotRadius = 4.5 / scaleFactor;
+        pointsToMark.forEach(pt => {
+            if (pt.type === 'Tangent Point 1' || pt.type === 'Tangent Point 2') {
+                ctx.fillStyle = '#f59e0b'; // Amber
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, dotRadius, 0, 2 * Math.PI);
+                ctx.fill();
+            } else if (pt.type === 'Arc Center') {
+                ctx.fillStyle = '#ef4444'; // Red
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, dotRadius * 0.9, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Draw thin crosshair
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 1.0 / scaleFactor;
+                ctx.beginPath();
+                ctx.moveTo(pt.x - dotRadius * 2, pt.y);
+                ctx.lineTo(pt.x + dotRadius * 2, pt.y);
+                ctx.moveTo(pt.x, pt.y - dotRadius * 2);
+                ctx.lineTo(pt.x, pt.y + dotRadius * 2);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = '#10b981'; // Green for normal start/endpoints
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, dotRadius * 0.8, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        });
+
+        ctx.restore();
+    }
+
+    // Grid rendering
+    function drawAxes(minX, maxX, minY, maxY, scaleFactor) {
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 0.5 / scaleFactor;
+        
+        let gridStep = 0.05;
+        if (maxX - minX > 2.0) gridStep = 0.2;
+        if (maxX - minX < 0.1) gridStep = 0.01;
+
+        const startX = Math.floor(minX / gridStep) * gridStep;
+        const endX = Math.ceil(maxX / gridStep) * gridStep;
+        const startY = Math.floor(minY / gridStep) * gridStep;
+        const endY = Math.ceil(maxY / gridStep) * gridStep;
+
+        // Draw grid lines
+        for (let x = startX; x <= endX; x += gridStep) {
+            ctx.beginPath();
+            ctx.moveTo(x, minY);
+            ctx.lineTo(x, maxY);
+            ctx.stroke();
+        }
+        for (let y = startY; y <= endY; y += gridStep) {
+            ctx.beginPath();
+            ctx.moveTo(minX, y);
+            ctx.lineTo(maxX, y);
+            ctx.stroke();
+        }
+
+        // Main axes lines
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.5 / scaleFactor;
+        ctx.beginPath();
+        ctx.moveTo(minX, 0);
+        ctx.lineTo(maxX, 0);
+        ctx.moveTo(0, minY);
+        ctx.lineTo(0, maxY);
+        ctx.stroke();
+    }
+
+    // Listeners for triggers
+    document.getElementById('btn-calc').addEventListener('click', calculateAndRender);
+    
+    document.getElementById('btn-copy-gcode').addEventListener('click', () => {
+        gcodeOut.select();
+        document.execCommand('copy');
+        alert('G-code copied to clipboard!');
+    });
+
+    // Window resize handler
+    window.addEventListener('resize', () => {
+        calculateAndRender();
+    });
+
+    // Initialize Page
+    renderInputs();
+    calculateAndRender();
+});
+</script>
+
+<style>
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+</style>

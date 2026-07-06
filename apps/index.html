@@ -142,13 +142,14 @@ permalink: /apps/
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-gray-500 mb-1">Known Axis</label>
-                                <select id="sol-ip-axis" disabled class="w-full bg-[#1a202c] border border-gray-700 rounded text-gray-100 px-2 py-1 font-mono opacity-50">
+                                <select id="sol-ip-axis" class="w-full bg-[#1a202c] border border-gray-700 rounded text-gray-100 px-2 py-1 font-mono">
+                                    <option value="Y" selected>Axis 2 (Y/Z)</option>
                                     <option value="X">Axis 1 (X/Z)</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-gray-500 mb-1">Coordinate Value</label>
-                                <input type="number" step="any" id="sol-ip-val" value="0.710" class="w-full bg-[#1a202c] border border-gray-700 rounded text-gray-100 px-2 py-1 font-mono">
+                                <input type="number" step="any" id="sol-ip-val" value="0" class="w-full bg-[#1a202c] border border-gray-700 rounded text-gray-100 px-2 py-1 font-mono">
                             </div>
                         </div>
                     </div>
@@ -160,8 +161,8 @@ permalink: /apps/
                             <div>
                                 <label class="block text-gray-500 mb-1">Direction</label>
                                 <select id="sol-line2-dir" class="w-full bg-[#1a202c] border border-gray-700 rounded text-gray-100 px-2 py-1 font-mono">
+                                    <option value="horizontal" selected>Horizontal Line</option>
                                     <option value="vertical">Vertical Line</option>
-                                    <option value="horizontal">Horizontal Line</option>
                                 </select>
                             </div>
                             <div>
@@ -492,160 +493,211 @@ document.addEventListener('DOMContentLoaded', () => {
         const y1 = parseFloat(document.getElementById('sol-y1').value) || 0;
         const t1_axis = document.getElementById('sol-t1-axis').value;
         const t1_val = parseFloat(document.getElementById('sol-t1-val').value) || 0;
-        const ip_x = parseFloat(document.getElementById('sol-ip-val').value) || 0;
+        const ip_axis = document.getElementById('sol-ip-axis').value;
+        const ip_val = parseFloat(document.getElementById('sol-ip-val').value) || 0;
         const line2_dir = document.getElementById('sol-line2-dir').value;
         const R = parseFloat(document.getElementById('sol-radius').value) || 0;
 
         logs.push(`<br>> Inputs loaded:`);
         logs.push(`  - Start Point P1: (${x1}, ${y1})`);
         logs.push(`  - T1 constraint: ${t1_axis} = ${t1_val}`);
-        logs.push(`  - IP constraint: X = ${ip_x}`);
+        logs.push(`  - IP constraint: ${ip_axis} = ${ip_val}`);
         logs.push(`  - Line 2 direction: ${line2_dir}`);
         logs.push(`  - Fillet Radius R: ${R}`);
 
-        if (line2_dir !== 'vertical') {
-            logs.push(`  [ERROR] Currently, this analytical solver handles vertical Line 2 (matching the drawing).`);
-            mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
-            alert('This configuration is currently only implemented for a vertical outgoing Line 2. Please select "Vertical Line".');
-            return;
-        }
+        if (line2_dir === 'vertical') {
+            const ip_x = ip_val;
+            const x_t2 = ip_x;
 
-        // Line 2 is vertical, meaning x_t2 = ip_x = 0.710
-        const x_t2 = ip_x;
+            const x_c = x1 > ip_x ? ip_x + R : ip_x - R;
+            logs.push(`  - Arc center X-coordinate (x_c = IP_x ± R): ${x_c.toFixed(4)}`);
 
-        // Since the circle is tangent to the vertical line x = 0.710, the center x_c is at ip_x ± R
-        // To find the sign: look at P1's x coordinate relative to IP's x coordinate
-        // If x1 > ip_x, the line is on the right side of the vertical line, center must be on the right (x_c = ip_x + R)
-        const x_c = x1 > ip_x ? ip_x + R : ip_x - R;
-        logs.push(`  - Arc center X-coordinate (x_c = IP_x + R): ${x_c.toFixed(4)}`);
+            const y_t1 = t1_val;
+            const A = y_t1 - y1;
+            const B = x_c - x1;
 
-        // We solve the system:
-        // (x_t1 - x_c)^2 + (y_t1 - y_c)^2 = R^2
-        // (x_t1 - x_c)(x_t1 - x1) + (y_t1 - y_c)(y_t1 - y1) = 0
-        //
-        // Let's solve for x_t1 (X coordinate of T1) and y_c (Y coordinate of Center and T2)
-        // Here, t1_val is y_t1 (e.g. -0.013)
-        const y_t1 = t1_val;
-        const A = y_t1 - y1;
-        const B = x_c - x1;
+            if (A === 0) {
+                logs.push(`  [ERROR] Horizontal start segment division by zero.`);
+                mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+                return;
+            }
 
-        if (A === 0) {
-            logs.push(`  [ERROR] Horizontal start segment division by zero.`);
-            mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
-            return;
-        }
+            function evaluate_poly(z) {
+                return z * z * (1 + Math.pow((z + B) / A, 2)) - R * R;
+            }
 
-        // We solve: z^2 * [1 + ((z + B)/A)^2] = R^2 where z = x_t1 - x_c
-        // Since z represents the x distance of a circle point from its center, z must lie in [-R, R]
-        // We write a robust bisection solver to find the roots in [-R, 0] and [0, R]
-        function evaluate_poly(z) {
-            return z * z * (1 + Math.pow((z + B) / A, 2)) - R * R;
-        }
+            function find_root(low, high) {
+                let f_low = evaluate_poly(low);
+                let f_high = evaluate_poly(high);
+                if (f_low * f_high > 0) return null;
 
-        // Binary search / Bisection root finder
-        function find_root(low, high) {
-            let f_low = evaluate_poly(low);
-            let f_high = evaluate_poly(high);
-            if (f_low * f_high > 0) return null; // No root in this interval
+                for (let iter = 0; iter < 100; iter++) {
+                    let mid = (low + high) / 2;
+                    let f_mid = evaluate_poly(mid);
+                    if (Math.abs(f_mid) < 1e-12) return mid;
+                    if (f_low * f_mid < 0) {
+                        high = mid;
+                        f_high = f_mid;
+                    } else {
+                        low = mid;
+                        f_low = f_mid;
+                    }
+                }
+                return (low + high) / 2;
+            }
 
-            for (let iter = 0; iter < 100; iter++) {
-                let mid = (low + high) / 2;
-                let f_mid = evaluate_poly(mid);
-                if (Math.abs(f_mid) < 1e-12) return mid;
-                if (f_low * f_mid < 0) {
-                    high = mid;
-                    f_high = f_mid;
-                } else {
-                    low = mid;
-                    f_low = f_mid;
+            let z1 = find_root(-R, 0);
+            let z2 = find_root(0, R);
+            
+            let solutions = [];
+            if (z1 !== null) solutions.push(z1);
+            if (z2 !== null) solutions.push(z2);
+
+            if (solutions.length === 0) {
+                logs.push(`  [ERROR] No real solutions found. The geometry is physically impossible for the given parameters.`);
+                mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+                alert('No physical solutions found! Check if the fillet radius R is too large or coordinates are incorrect.');
+                return;
+            }
+
+            let final_z = null;
+            let x_t1 = 0;
+            
+            for (let i = 0; i < solutions.length; i++) {
+                let z_cand = solutions[i];
+                let x_cand = x_c + z_cand;
+                const min_x = Math.min(ip_x, x1) - 0.001;
+                const max_x = Math.max(ip_x, x1) + 0.001;
+                
+                if (x_cand >= min_x && x_cand <= max_x) {
+                    final_z = z_cand;
+                    x_t1 = x_cand;
+                    break;
                 }
             }
-            return (low + high) / 2;
-        }
 
-        let z1 = find_root(-R, 0);
-        let z2 = find_root(0, R);
-        
-        let solutions = [];
-        if (z1 !== null) solutions.push(z1);
-        if (z2 !== null) solutions.push(z2);
+            if (final_z === null) {
+                logs.push(`  [ERROR] No solution lies between the start point and the intersection corner.`);
+                mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+                return;
+            }
 
-        if (solutions.length === 0) {
-            logs.push(`  [ERROR] No real solutions found. The geometry is physically impossible for the given parameters.`);
-            mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
-            alert('No physical solutions found! Check if the fillet radius R is too large or coordinates are incorrect.');
-            return;
-        }
+            const y_c = y_t1 + (final_z * (x_t1 - x1)) / A;
+            const y_t2 = y_c;
 
-        // Filter the correct solution: x_t1 = x_c + z must lie between ip_x and x1
-        let final_z = null;
-        let x_t1 = 0;
-        
-        for (let i = 0; i < solutions.length; i++) {
-            let z_cand = solutions[i];
-            let x_cand = x_c + z_cand;
+            const slope = (y_t1 - y1) / (x_t1 - x1);
+            const y_ip = y1 + slope * (ip_x - x1);
+
+            logs.push(`<br>> GEOMETRIC SOLUTION FOUND (Vertical Outgoing Line):`);
+            logs.push(`  - <strong>T1 (Start of Fillet):</strong> (${x_t1.toFixed(5)}, ${y_t1.toFixed(5)})`);
+            logs.push(`  - <strong>T2 (End of Fillet):</strong> (${x_t2.toFixed(5)}, ${y_t2.toFixed(5)})`);
+            logs.push(`  - <strong>Arc Center Point C:</strong> (${x_c.toFixed(5)}, ${y_c.toFixed(5)})`);
+            logs.push(`  - <strong>IP (Corner Point):</strong> (${ip_x.toFixed(5)}, ${y_ip.toFixed(5)})`);
+
+            solvedPoints.push({ type: 'T1', x: x_t1, y: y_t1, label: 'T1' });
+            solvedPoints.push({ type: 'T2', x: x_t2, y: y_t2, label: 'T2' });
+            solvedPoints.push({ type: 'Center', x: x_c, y: y_c, r: R, label: 'Center' });
             
-            // Check if x_cand is between ip_x and x1 (with a small margin of error)
-            const min_x = Math.min(ip_x, x1) - 0.001;
-            const max_x = Math.max(ip_x, x1) + 0.001;
-            
-            if (x_cand >= min_x && x_cand <= max_x) {
-                final_z = z_cand;
-                x_t1 = x_cand;
-                break;
+            const end_y = y_t2 - R*2;
+
+            points = [
+                { id: 1, x: x1, y: y1, r: 0 },
+                { id: 2, x: ip_x, y: y_ip, r: 0 },
+                { id: 3, x: ip_x, y: end_y, r: 0 }
+            ];
+
+            const det = (ip_x - x1) * (y_t2 - y1) - (y_ip - y1) * (x_t2 - x1);
+            const isCCW = det > 0;
+            const arcDir = isCCW ? 'G3' : 'G2';
+
+            solvedPath = [
+                { type: 'G1', x: x1, y: y1 },
+                { type: 'G1', x: x_t1, y: y_t1 },
+                { type: arcDir, x: x_t2, y: y_t2, r: R, cx: x_c, cy: y_c, start: { x: x_t1, y: y_t1 } },
+                { type: 'G1', x: ip_x, y: end_y }
+            ];
+
+        } else if (line2_dir === 'horizontal') {
+            const ip_y = ip_val;
+            const y_t2 = ip_y;
+
+            // Center y_c is at ip_y ± R
+            const y_c = y1 < ip_y ? ip_y - R : ip_y + R;
+            logs.push(`  - Arc center Y-coordinate (y_c = IP_y ± R): ${y_c.toFixed(4)}`);
+
+            const y_t1 = t1_val;
+
+            // Solve for x_t1 and x_c
+            const sqVal = R * R - Math.pow(y_t1 - y_c, 2);
+            if (sqVal < 0) {
+                logs.push(`  [ERROR] Fillet radius R is too small for the Y-distance from center to tangent point.`);
+                mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+                alert('Fillet radius R is too small for the given tangent coordinate.');
+                return;
+            }
+            const z_mag = Math.sqrt(sqVal);
+            const z_options = [z_mag, -z_mag];
+            let solved = false;
+
+            for (let i = 0; i < z_options.length; i++) {
+                const z = z_options[i];
+                // perpendicularity: z * (x_t1 - x1) + (y_t1 - y_c)*(y_t1 - y1) = 0
+                const num = (y_t1 - y_c) * (y_t1 - y1);
+                const x_t1 = x1 - num / z;
+                const x_c_val = x_t1 - z;
+
+                const slope = (y_t1 - y1) / (x_t1 - x1);
+                const x_ip = x1 + (ip_y - y1) / slope;
+
+                // Check if x_t1 lies between x1 and x_ip
+                const min_x = Math.min(x1, x_ip) - 0.001;
+                const max_x = Math.max(x1, x_ip) + 0.001;
+
+                if (x_t1 >= min_x && x_t1 <= max_x) {
+                    const x_t2 = x_c_val;
+
+                    logs.push(`<br>> GEOMETRIC SOLUTION FOUND (Horizontal Outgoing Line):`);
+                    logs.push(`  - <strong>T1 (Start of Fillet):</strong> (${x_t1.toFixed(5)}, ${y_t1.toFixed(5)})`);
+                    logs.push(`  - <strong>T2 (End of Fillet):</strong> (${x_t2.toFixed(5)}, ${y_t2.toFixed(5)})`);
+                    logs.push(`  - <strong>Arc Center Point C:</strong> (${x_c_val.toFixed(5)}, ${y_c.toFixed(5)})`);
+                    logs.push(`  - <strong>IP (Corner Point):</strong> (${x_ip.toFixed(5)}, ${ip_y.toFixed(5)})`);
+
+                    solvedPoints.push({ type: 'T1', x: x_t1, y: y_t1, label: 'T1' });
+                    solvedPoints.push({ type: 'T2', x: x_t2, y: y_t2, label: 'T2' });
+                    solvedPoints.push({ type: 'Center', x: x_c_val, y: y_c, r: R, label: 'Center' });
+                    
+                    // Determine end of line direction
+                    const end_x = x_t2 < x1 ? x_t2 - R*2 : x_t2 + R*2;
+
+                    points = [
+                        { id: 1, x: x1, y: y1, r: 0 },
+                        { id: 2, x: x_ip, y: ip_y, r: 0 },
+                        { id: 3, x: end_x, y: ip_y, r: 0 }
+                    ];
+
+                    const det = (x_ip - x1) * (y_t2 - y1) - (ip_y - y1) * (x_t2 - x1);
+                    const isCCW = det > 0;
+                    const arcDir = isCCW ? 'G3' : 'G2';
+
+                    solvedPath = [
+                        { type: 'G1', x: x1, y: y1 },
+                        { type: 'G1', x: x_t1, y: y_t1 },
+                        { type: arcDir, x: x_t2, y: y_t2, r: R, cx: x_c_val, cy: y_c, start: { x: x_t1, y: y_t1 } },
+                        { type: 'G1', x: end_x, y: ip_y }
+                    ];
+
+                    solved = true;
+                    break;
+                }
+            }
+
+            if (!solved) {
+                logs.push(`  [ERROR] No physical solution found between the endpoints.`);
+                mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+                alert('No physical solutions found! Check if the fillet radius R is too large or coordinates are incorrect.');
+                return;
             }
         }
-
-        if (final_z === null) {
-            logs.push(`  [ERROR] No solution lies between the start point and the intersection corner.`);
-            mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
-            return;
-        }
-
-        // Compute y_c using the perpendicularity formula:
-        // y_c = y_t1 + [ z * (x_t1 - x1) ] / (y_t1 - y1)
-        const y_c = y_t1 + (final_z * (x_t1 - x1)) / A;
-        const y_t2 = y_c; // For vertical line tangency, y_t2 equals the center's Y
-
-        // Calculate Y-coordinate of IP corner:
-        // Find intersection of line passing through P1 and T1 with the vertical line x = ip_x
-        const slope = (y_t1 - y1) / (x_t1 - x1);
-        const y_ip = y1 + slope * (ip_x - x1);
-
-        logs.push(`<br>> GEOMETRIC SOLUTION FOUND:`);
-        logs.push(`  - <strong>T1 (Start of Fillet):</strong> (${x_t1.toFixed(5)}, ${y_t1.toFixed(5)})`);
-        logs.push(`  - <strong>T2 (End of Fillet):</strong> (${x_t2.toFixed(5)}, ${y_t2.toFixed(5)})`);
-        logs.push(`  - <strong>Arc Center Point C:</strong> (${x_c.toFixed(5)}, ${y_c.toFixed(5)})`);
-        logs.push(`  - <strong>IP (Corner Point):</strong> (${ip_x.toFixed(5)}, ${y_ip.toFixed(5)})`);
-
-        // Add points for canvas rendering
-        solvedPoints.push({ type: 'T1', x: x_t1, y: y_t1, label: 'T1' });
-        solvedPoints.push({ type: 'T2', x: x_t2, y: y_t2, label: 'T2' });
-        solvedPoints.push({ type: 'Center', x: x_c, y: y_c, r: R, label: 'Center' });
-        
-        // Target endpoint for drawing line 2 (e.g. extending vertical line down to 0)
-        const end_y = y_t2 - R*2; // Extend below tangent point
-
-        // Add points to define visual path
-        // Draw construction corner lines in red
-        points = [
-            { id: 1, x: x1, y: y1, r: 0 },
-            { id: 2, x: ip_x, y: y_ip, r: 0 },
-            { id: 3, x: ip_x, y: end_y, r: 0 }
-        ];
-
-        // Solve arc details
-        // Check Clockwise vs CCW
-        const det = (ip_x - x1) * (y_t2 - y1) - (y_ip - y1) * (x_t2 - x1);
-        const isCCW = det > 0;
-        const arcDir = isCCW ? 'G3' : 'G2';
-
-        solvedPath = [
-            { type: 'G1', x: x1, y: y1 },
-            { type: 'G1', x: x_t1, y: y_t1 },
-            { type: arcDir, x: x_t2, y: y_t2, r: R, cx: x_c, cy: y_c, start: { x: x_t1, y: y_t1 } },
-            { type: 'G1', x: ip_x, y: end_y }
-        ];
 
         mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
         generateGcode(solvedPath);
@@ -951,6 +1003,19 @@ document.addEventListener('DOMContentLoaded', () => {
         gcodeOutput.select();
         document.execCommand('copy');
         alert('G-code copied to clipboard!');
+    });
+
+    document.getElementById('sol-line2-dir').addEventListener('change', (e) => {
+        const dir = e.target.value;
+        const ipAxis = document.getElementById('sol-ip-axis');
+        const ipVal = document.getElementById('sol-ip-val');
+        if (dir === 'vertical') {
+            ipAxis.value = 'X';
+            ipVal.value = '0.710';
+        } else {
+            ipAxis.value = 'Y';
+            ipVal.value = '0';
+        }
     });
 
     document.querySelectorAll('input[name="plane"]').forEach(radio => {

@@ -1,0 +1,766 @@
+---
+layout: default
+title: CNC Geometry Solver
+permalink: /apps/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- App Header -->
+    <div>
+        <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-4 leading-tight">CNC Coordinate Geometry Solver</h1>
+        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+            A utility for CNC programmers and machinists to calculate precise tangent points and arc centers. Enter a sequence of tool path points (Intersection Points) and fillet radii, and the solver will output the resolved geometry, draw the path on the interactive grid, and generate the G-code segments.
+        </p>
+    </div>
+
+    <!-- Plane & Control Panel -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600">
+        <p class="text-xl font-bold text-gray-200 mb-4 flex items-center">
+            <span class="mr-2 text-yellow-500 text-3xl">⚙️</span> > CONFIGURATION_
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-bold text-gray-400 mb-2">Select Active Graph Plane</label>
+                <div class="flex space-x-4">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="plane" value="G17" checked class="form-radio text-yellow-500 focus:ring-yellow-500 h-4 w-4 bg-gray-700 border-gray-600">
+                        <span class="ml-2 text-gray-200 font-bold">G17 (XY Plane)</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="plane" value="G18" class="form-radio text-yellow-500 focus:ring-yellow-500 h-4 w-4 bg-gray-700 border-gray-600">
+                        <span class="ml-2 text-gray-200 font-bold">G18 (ZX Plane)</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="plane" value="G19" class="form-radio text-yellow-500 focus:ring-yellow-500 h-4 w-4 bg-gray-700 border-gray-600">
+                        <span class="ml-2 text-gray-200 font-bold">G19 (YZ Plane)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-end space-x-2">
+                <button id="btn-calculate" class="flex-1 bg-yellow-600 hover:bg-yellow-500 text-[#1f2937] font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-md flex items-center justify-center">
+                    ⚡ Solve Geometry
+                </button>
+                <button id="btn-reset" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-4 rounded-lg transition-all duration-200">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Inputs Column -->
+        <div class="lg:col-span-5 flex flex-col space-y-6">
+            
+            <!-- Points Table -->
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-lg font-bold text-gray-200 flex items-center">
+                        <span class="mr-2 text-yellow-400 text-2xl">📋</span> > TOOL_PATH_POINTS_
+                    </p>
+                    <button id="btn-add-point" class="bg-[#2ecc71] hover:bg-green-500 text-[#1f2937] font-bold py-1 px-3 rounded text-xs transition-colors duration-200">
+                        + Add Point
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="pb-2 font-bold w-12 text-center">No.</th>
+                                <th class="pb-2 font-bold" id="label-axis-1">X-Axis</th>
+                                <th class="pb-2 font-bold" id="label-axis-2">Y-Axis</th>
+                                <th class="pb-2 font-bold w-20 text-center">Fillet R</th>
+                                <th class="pb-2 font-bold w-12 text-center">Del</th>
+                            </tr>
+                        </thead>
+                        <tbody id="points-body">
+                            <!-- Points dynamic rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-[10px] text-gray-500 mt-3 italic">
+                    * Tip: Define points in path sequence. Fillet R will be inserted on the turn at that point.
+                </p>
+            </div>
+
+            <!-- G-Code Output -->
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 flex flex-col h-full">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-lg font-bold text-gray-200 flex items-center">
+                        <span class="mr-2 text-[#2ecc71] text-2xl">📟</span> > GENERATED_GCODE_
+                    </p>
+                    <button id="btn-copy-gcode" class="bg-[#3498db] hover:bg-blue-500 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200">
+                        Copy Code
+                    </button>
+                </div>
+                <textarea id="gcode-output" readonly class="w-full flex-grow bg-black text-green-400 font-mono p-4 rounded-lg border border-gray-800 h-64 focus:outline-none text-xs leading-relaxed resize-none"></textarea>
+            </div>
+
+        </div>
+
+        <!-- Canvas/Visualization Column -->
+        <div class="lg:col-span-7 flex flex-col space-y-6">
+            
+            <!-- Canvas Window -->
+            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-lg font-bold text-gray-200 flex items-center">
+                        <span class="mr-2 text-[#3498db] text-2xl">🖥️</span> > INTERACTIVE_GRID_
+                    </p>
+                    <div class="flex space-x-1">
+                        <button id="btn-zoom-in" class="bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-1 px-3 rounded text-xs transition-colors duration-200">+</button>
+                        <button id="btn-zoom-out" class="bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-1 px-3 rounded text-xs transition-colors duration-200">-</button>
+                        <button id="btn-zoom-fit" class="bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-1 px-3 rounded text-xs transition-colors duration-200">Fit</button>
+                    </div>
+                </div>
+                
+                <div class="relative w-full aspect-square bg-[#0f172a] rounded-lg overflow-hidden border border-gray-800">
+                    <canvas id="geometry-canvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+                    
+                    <!-- Mouse Coordinate Indicator -->
+                    <div class="absolute bottom-3 left-3 bg-[#1e293b] border border-gray-700 px-3 py-1.5 rounded text-[11px] font-mono text-yellow-500 shadow-md pointer-events-none">
+                        <span id="coord-indicator">X: 0.000, Y: 0.000</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Mathematical Calculations Walkthrough -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+        <p class="text-xl font-bold text-gray-200 mb-4 flex items-center">
+            <span class="mr-2 text-[#e74c3c] text-3xl">📐</span> > MATH_EXPLANATION_LOG_
+        </p>
+        <div id="math-logs" class="text-xs font-mono text-gray-400 space-y-2 h-48 overflow-y-auto bg-black p-4 rounded-lg border border-gray-800">
+            <!-- Math walkthrough details inserted here -->
+            <p class="text-gray-500 italic">No calculations run yet. Enter coordinates and click "Solve Geometry".</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Calculation Engine Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Default initial points data (represents a 90-degree corner at (0, 30) with R10 fillet)
+    let points = [
+        { id: 1, x: 0, y: 0, r: 0 },
+        { id: 2, x: 0, y: 30, r: 10 },
+        { id: 3, x: 30, y: 30, r: 0 }
+    ];
+
+    let solvedPath = []; // Contains points, lines, arcs
+    let solvedPoints = []; // Tangents and centers
+    let activePlane = 'G17'; // Default G17 (XY)
+
+    // DOM Elements
+    const pointsBody = document.getElementById('points-body');
+    const labelAxis1 = document.getElementById('label-axis-1');
+    const labelAxis2 = document.getElementById('label-axis-2');
+    const gcodeOutput = document.getElementById('gcode-output');
+    const mathLogs = document.getElementById('math-logs');
+    const canvas = document.getElementById('geometry-canvas');
+    const ctx = canvas.getContext('2d');
+    const coordIndicator = document.getElementById('coord-indicator');
+
+    // Canvas panning/zooming variables
+    let scale = 8; // pixels per unit
+    let offsetX = 0; // translation offsets
+    let offsetY = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    // Set labels based on plane selection
+    function updatePlaneLabels() {
+        const selectedRadio = document.querySelector('input[name="plane"]:checked');
+        activePlane = selectedRadio ? selectedRadio.value : 'G17';
+        
+        if (activePlane === 'G17') {
+            labelAxis1.textContent = 'X-Axis';
+            labelAxis2.textContent = 'Y-Axis';
+        } else if (activePlane === 'G18') {
+            labelAxis1.textContent = 'Z-Axis';
+            labelAxis2.textContent = 'X-Axis';
+        } else if (activePlane === 'G19') {
+            labelAxis1.textContent = 'Y-Axis';
+            labelAxis2.textContent = 'Z-Axis';
+        }
+        
+        // Redraw canvas with new axes labels
+        draw();
+    }
+
+    // Render points list inputs
+    function renderPointsList() {
+        pointsBody.innerHTML = '';
+        points.forEach((pt, index) => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150';
+            
+            row.innerHTML = `
+                <td class="py-2 text-center text-gray-500 font-bold">${index + 1}</td>
+                <td class="py-1 pr-2">
+                    <input type="number" step="any" value="${pt.x}" data-index="${index}" data-axis="x" 
+                           class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono">
+                </td>
+                <td class="py-1 pr-2">
+                    <input type="number" step="any" value="${pt.y}" data-index="${index}" data-axis="y" 
+                           class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono">
+                </td>
+                <td class="py-1 text-center pr-2">
+                    ${index > 0 && index < points.length - 1 ? `
+                        <input type="number" step="any" min="0" value="${pt.r}" data-index="${index}" data-axis="r" 
+                               class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-center">
+                    ` : `
+                        <span class="text-gray-600">-</span>
+                    `}
+                </td>
+                <td class="py-1 text-center">
+                    <button class="btn-del-point text-red-500 hover:text-red-400 font-bold text-sm" data-index="${index}">
+                        &times;
+                    </button>
+                </td>
+            `;
+            pointsBody.appendChild(row);
+        });
+
+        // Add event listeners for dynamic point inputs
+        document.querySelectorAll('#points-body input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                const axis = e.target.dataset.axis;
+                const val = parseFloat(e.target.value) || 0;
+                
+                if (axis === 'x') points[idx].x = val;
+                if (axis === 'y') points[idx].y = val;
+                if (axis === 'r') points[idx].r = Math.max(0, val);
+            });
+        });
+
+        // Delete button listener
+        document.querySelectorAll('.btn-del-point').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                if (points.length <= 2) {
+                    alert('You must have at least 2 points to define a path.');
+                    return;
+                }
+                points.splice(idx, 1);
+                renderPointsList();
+            });
+        });
+    }
+
+    // Add point button
+    document.getElementById('btn-add-point').addEventListener('click', () => {
+        const lastPt = points[points.length - 1];
+        const newPt = {
+            id: Date.now(),
+            x: lastPt ? lastPt.x + 10 : 0,
+            y: lastPt ? lastPt.y + 10 : 0,
+            r: 0
+        };
+        points.push(newPt);
+        renderPointsList();
+    });
+
+    // Reset button
+    document.getElementById('btn-reset').addEventListener('click', () => {
+        points = [
+            { id: 1, x: 0, y: 0, r: 0 },
+            { id: 2, x: 0, y: 30, r: 10 },
+            { id: 3, x: 30, y: 30, r: 0 }
+        ];
+        solvedPath = [];
+        solvedPoints = [];
+        gcodeOutput.value = '';
+        mathLogs.innerHTML = '<p class="text-gray-500 italic">No calculations run yet. Enter coordinates and click "Solve Geometry".</p>';
+        renderPointsList();
+        zoomFit();
+    });
+
+    // Calculate/Solve geometry logic
+    function solveGeometry() {
+        solvedPath = [];
+        solvedPoints = [];
+        let logs = [];
+        
+        logs.push(`> INITIALIZING GEOMETRY CALCULATOR`);
+        logs.push(`> ACTIVE PLANE: ${activePlane}`);
+        
+        let pathElements = [];
+        
+        // Loop over the points list
+        for (let i = 0; i < points.length; i++) {
+            const current = points[i];
+            
+            // Check if this point is an internal turn and has a fillet R
+            if (i > 0 && i < points.length - 1 && current.r > 0) {
+                const prev = points[i - 1];
+                const next = points[i + 1];
+                const R = current.r;
+                
+                logs.push(`<br>> Calculating fillet at P${i+1} (${current.x}, ${current.y}) with Radius R=${R}`);
+                
+                // Vectors
+                const dx_in = prev.x - current.x;
+                const dy_in = prev.y - current.y;
+                const dx_out = next.x - current.x;
+                const dy_out = next.y - current.y;
+                
+                const len_in = Math.sqrt(dx_in * dx_in + dy_in * dy_in);
+                const len_out = Math.sqrt(dx_out * dx_out + dy_out * dy_out);
+                
+                if (len_in === 0 || len_out === 0) {
+                    logs.push(`  [ERROR] Zero length segment detected. Skipped.`);
+                    continue;
+                }
+                
+                // Unit vectors
+                const ux = dx_in / len_in;
+                const uy = dy_in / len_in;
+                const wx = dx_out / len_out;
+                const wy = dy_out / len_out;
+                
+                // Angle between lines
+                const dot = ux * wx + uy * wy;
+                const theta = Math.acos(Math.max(-1, Math.min(1, dot))); // Angle in radians
+                const thetaDeg = (theta * 180 / Math.PI).toFixed(2);
+                
+                logs.push(`  - Incoming unit vector: (${ux.toFixed(4)}, ${uy.toFixed(4)})`);
+                logs.push(`  - Outgoing unit vector: (${wx.toFixed(4)}, ${wy.toFixed(4)})`);
+                logs.push(`  - Angle between segments: ${thetaDeg}°`);
+                
+                if (Math.abs(theta - Math.PI) < 0.001 || theta < 0.001) {
+                    logs.push(`  - [WARNING] Parallel segments. Fillet skipped.`);
+                    // Just G1 point
+                    pathElements.push({ type: 'G1', x: current.x, y: current.y });
+                    continue;
+                }
+                
+                // Tangent distance d from intersection point (IP)
+                const d = R / Math.tan(theta / 2);
+                logs.push(`  - Tangent distance (d): ${d.toFixed(4)}`);
+                
+                if (d > len_in || d > len_out) {
+                    logs.push(`  - [ERROR] Fillet R=${R} is too large for adjacent segment lengths!`);
+                    alert(`Fillet radius at Point ${i+1} is too large for the adjacent segments! Please decrease the radius.`);
+                    return;
+                }
+                
+                // Tangent points
+                const t1 = { x: current.x + d * ux, y: current.y + d * uy };
+                const t2 = { x: current.x + d * wx, y: current.y + d * wy };
+                
+                // Angle bisector unit vector
+                const sum_x = ux + wx;
+                const sum_y = uy + wy;
+                const sum_len = Math.sqrt(sum_x * sum_x + sum_y * sum_y);
+                const bx = sum_x / sum_len;
+                const by = sum_y / sum_len;
+                
+                // Center distance from IP
+                const h = R / Math.sin(theta / 2);
+                const center = { x: current.x + h * bx, y: current.y + h * by };
+                
+                logs.push(`  - Tangent Point 1 (Start of Arc): (${t1.x.toFixed(4)}, ${t1.y.toFixed(4)})`);
+                logs.push(`  - Tangent Point 2 (End of Arc): (${t2.x.toFixed(4)}, ${t2.y.toFixed(4)})`);
+                logs.push(`  - Arc Center Point: (${center.x.toFixed(4)}, ${center.y.toFixed(4)})`);
+                
+                // Clockwise vs Counter-clockwise check
+                // Cross product check: (Current -> Next) X (Current -> Prev)
+                // Det = (next.x - current.x)*(prev.y - current.y) - (next.y - current.y)*(prev.x - current.x)
+                const det = (next.x - current.x) * (prev.y - current.y) - (next.y - current.y) * (prev.x - current.x);
+                const isCCW = det > 0;
+                const arcDir = isCCW ? 'G3' : 'G2';
+                logs.push(`  - Turn direction: ${isCCW ? 'Counter-Clockwise (G3)' : 'Clockwise (G2)'}`);
+                
+                solvedPoints.push({ type: 'T1', x: t1.x, y: t1.y, label: `T${i}_S` });
+                solvedPoints.push({ type: 'T2', x: t2.x, y: t2.y, label: `T${i}_E` });
+                solvedPoints.push({ type: 'Center', x: center.x, y: center.y, r: R, label: `C${i}` });
+                
+                pathElements.push({ type: 'G1', x: t1.x, y: t1.y });
+                pathElements.push({ type: arcDir, x: t2.x, y: t2.y, r: R, cx: center.x, cy: center.y, start: t1 });
+                
+            } else {
+                // Normal G1 move for endpoints or points without a fillet
+                pathElements.push({ type: 'G1', x: current.x, y: current.y });
+            }
+        }
+        
+        solvedPath = pathElements;
+        logs.push(`<br>> PATH RESOLUTION COMPLETE.`);
+        
+        // Render logs
+        mathLogs.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+        
+        // Generate G-code
+        generateGcode(pathElements);
+        
+        // Redraw
+        draw();
+    }
+
+    // G-code text generator
+    function generateGcode(path) {
+        if (path.length === 0) return;
+        
+        let code = [];
+        // Map plane names to G-code formats
+        let a1 = 'X', a2 = 'Y';
+        let i_code = 'I', j_code = 'J';
+        
+        if (activePlane === 'G17') {
+            a1 = 'X'; a2 = 'Y'; i_code = 'I'; j_code = 'J';
+            code.push(`G17 (Select XY Plane)`);
+        } else if (activePlane === 'G18') {
+            a1 = 'Z'; a2 = 'X'; i_code = 'K'; j_code = 'I';
+            code.push(`G18 (Select ZX Plane)`);
+        } else if (activePlane === 'G19') {
+            a1 = 'Y'; a2 = 'Z'; i_code = 'J'; j_code = 'K';
+            code.push(`G19 (Select YZ Plane)`);
+        }
+        
+        code.push(`G90 G21 (Absolute Coordinates, Metric)`);
+        
+        // Initial point motion
+        const start = path[0];
+        code.push(`G0 ${a1}${start.x.toFixed(4)} ${a2}${start.y.toFixed(4)}`);
+        
+        let lastX = start.x;
+        let lastY = start.y;
+        
+        for (let i = 1; i < path.length; i++) {
+            const el = path[i];
+            if (el.type === 'G1') {
+                code.push(`G1 ${a1}${el.x.toFixed(4)} ${a2}${el.y.toFixed(4)}`);
+            } else if (el.type === 'G2' || el.type === 'G3') {
+                // R-format
+                const rLine = `${el.type} ${a1}${el.x.toFixed(4)} ${a2}${el.y.toFixed(4)} R${el.r.toFixed(4)}`;
+                // I/J center offset format
+                const offset_1 = el.cx - el.start.x;
+                const offset_2 = el.cy - el.start.y;
+                const ijLine = `${el.type} ${a1}${el.x.toFixed(4)} ${a2}${el.y.toFixed(4)} ${i_code}${offset_1.toFixed(4)} ${j_code}${offset_2.toFixed(4)}`;
+                
+                code.push(`${rLine}  ; (Or: ${ijLine})`);
+            }
+            lastX = el.x;
+            lastY = el.y;
+        }
+        
+        code.push(`M30 (End of Program)`);
+        gcodeOutput.value = code.join('\n');
+    }
+
+    // Canvas drawing function
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Apply camera transforms
+        ctx.save();
+        ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
+        ctx.scale(scale, -scale); // Invert Y so cartesian matches math axes (positive Y is up)
+        
+        // 1. Draw Grid
+        drawGrid();
+        
+        // 2. Draw Axes
+        drawAxes();
+        
+        // 3. Draw original input path (dotted red lines showing sharp corners)
+        drawInputPath();
+        
+        // 4. Draw solved geometry path (solid lines/arcs)
+        drawSolvedPath();
+        
+        // 5. Draw points & markers
+        drawMarkers();
+        
+        ctx.restore();
+    }
+
+    function drawGrid() {
+        const gridInterval = 10;
+        const widthRange = (canvas.width / scale) / 2;
+        const heightRange = (canvas.height / scale) / 2;
+        
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 0.5 / scale;
+        
+        const startX = Math.floor((-offsetX / scale - widthRange) / gridInterval) * gridInterval;
+        const endX = Math.ceil((-offsetX / scale + widthRange) / gridInterval) * gridInterval;
+        const startY = Math.floor((offsetY / scale - heightRange) / gridInterval) * gridInterval;
+        const endY = Math.ceil((offsetY / scale + heightRange) / gridInterval) * gridInterval;
+        
+        for (let x = startX; x <= endX; x += gridInterval) {
+            ctx.beginPath();
+            ctx.moveTo(x, startY);
+            ctx.lineTo(x, endY);
+            ctx.stroke();
+        }
+        
+        for (let y = startY; y <= endY; y += gridInterval) {
+            ctx.beginPath();
+            ctx.moveTo(startX, y);
+            ctx.lineTo(endX, y);
+            ctx.stroke();
+        }
+    }
+
+    function drawAxes() {
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1.5 / scale;
+        
+        // X/Horizontal Axis
+        ctx.beginPath();
+        ctx.moveTo(-10000, 0);
+        ctx.lineTo(10000, 0);
+        ctx.stroke();
+        
+        // Y/Vertical Axis
+        ctx.beginPath();
+        ctx.moveTo(0, -10000);
+        ctx.lineTo(0, 10000);
+        ctx.stroke();
+        
+        // Draw axis labels
+        ctx.save();
+        ctx.scale(1, -1); // Un-invert for text rendering
+        ctx.fillStyle = '#64748b';
+        ctx.font = `${Math.max(10, 12 / scale)}px monospace`;
+        
+        let label1 = 'X', label2 = 'Y';
+        if (activePlane === 'G18') { label1 = 'Z'; label2 = 'X'; }
+        if (activePlane === 'G19') { label1 = 'Y'; label2 = 'Z'; }
+        
+        ctx.fillText(label1, (canvas.width / 2 - 20) / scale - offsetX / scale, 15 / scale + offsetY / scale);
+        ctx.fillText(label2, 10 / scale - offsetX / scale, -(canvas.height / 2 - 20) / scale + offsetY / scale);
+        ctx.restore();
+    }
+
+    function drawInputPath() {
+        if (points.length < 2) return;
+        ctx.strokeStyle = 'rgba(231, 76, 60, 0.4)';
+        ctx.lineWidth = 1.5 / scale;
+        ctx.setLineDash([4 / scale, 4 / scale]);
+        
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    function drawSolvedPath() {
+        if (solvedPath.length === 0) return;
+        
+        ctx.lineWidth = 2.5 / scale;
+        
+        for (let i = 1; i < solvedPath.length; i++) {
+            const prev = solvedPath[i - 1];
+            const curr = solvedPath[i];
+            
+            if (curr.type === 'G1') {
+                ctx.strokeStyle = '#3498db'; // G1 segments in blue
+                ctx.beginPath();
+                ctx.moveTo(prev.x, prev.y);
+                ctx.lineTo(curr.x, curr.y);
+                ctx.stroke();
+            } else if (curr.type === 'G2' || curr.type === 'G3') {
+                ctx.strokeStyle = '#2ecc71'; // G2/G3 fillets in green
+                
+                // Calculate angles
+                const startAngle = Math.atan2(curr.start.y - curr.cy, curr.start.x - curr.cx);
+                const endAngle = Math.atan2(curr.y - curr.cy, curr.x - curr.cx);
+                const anticlockwise = curr.type === 'G3';
+                
+                ctx.beginPath();
+                ctx.arc(curr.cx, curr.cy, curr.r, startAngle, endAngle, anticlockwise);
+                ctx.stroke();
+            }
+        }
+    }
+
+    function drawMarkers() {
+        const radius = 4 / scale;
+        
+        // 1. Draw input points (sharp corners)
+        points.forEach((pt, index) => {
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, radius * 1.2, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Text Label
+            ctx.save();
+            ctx.scale(1, -1);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = `bold ${Math.max(9, 10 / scale)}px monospace`;
+            ctx.fillText(`P${index + 1}`, pt.x + radius, -(pt.y + radius));
+            ctx.restore();
+        });
+        
+        // 2. Draw solved tangent points and centers
+        solvedPoints.forEach(pt => {
+            if (pt.type === 'T1' || pt.type === 'T2') {
+                ctx.fillStyle = '#f1c40f'; // Tangents in yellow
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, radius, 0, 2 * Math.PI);
+                ctx.fill();
+            } else if (pt.type === 'Center') {
+                // Draw cross for arc center
+                ctx.strokeStyle = '#e67e22'; // Orange center cross
+                ctx.lineWidth = 1.5 / scale;
+                ctx.beginPath();
+                ctx.moveTo(pt.x - radius * 1.5, pt.y);
+                ctx.lineTo(pt.x + radius * 1.5, pt.y);
+                ctx.moveTo(pt.x, pt.y - radius * 1.5);
+                ctx.lineTo(pt.x, pt.y + radius * 1.5);
+                ctx.stroke();
+                
+                // Draw dotted guideline radius
+                ctx.strokeStyle = 'rgba(230, 126, 34, 0.3)';
+                ctx.lineWidth = 1 / scale;
+                ctx.setLineDash([2 / scale, 3 / scale]);
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, pt.r, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            // Text label for tangents/centers
+            ctx.save();
+            ctx.scale(1, -1);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = `${Math.max(8, 8 / scale)}px monospace`;
+            ctx.fillText(pt.label, pt.x + radius, -(pt.y + radius));
+            ctx.restore();
+        });
+    }
+
+    // Fit points into viewport
+    function zoomFit() {
+        if (points.length === 0) return;
+        
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+        
+        // Find bounds of all points and solved points
+        const allPoints = [...points, ...solvedPoints];
+        allPoints.forEach(p => {
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
+        });
+        
+        const padding = 15;
+        const dx = maxX - minX;
+        const dy = maxY - minY;
+        const centerX = minX + dx / 2;
+        const centerY = minY + dy / 2;
+        
+        const scaleX = (canvas.width - padding * 2) / Math.max(1, dx);
+        const scaleY = (canvas.height - padding * 2) / Math.max(1, dy);
+        scale = Math.max(2, Math.min(scaleX, scaleY, 20));
+        
+        offsetX = -centerX * scale;
+        offsetY = centerY * scale;
+        
+        draw();
+    }
+
+    // Canvas resizing
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.width; // Keep square
+        draw();
+    }
+    
+    // Resize listeners
+    window.addEventListener('resize', resizeCanvas);
+    setTimeout(resizeCanvas, 100);
+
+    // Zoom buttons
+    document.getElementById('btn-zoom-in').addEventListener('click', () => { scale *= 1.25; draw(); });
+    document.getElementById('btn-zoom-out').addEventListener('click', () => { scale /= 1.25; draw(); });
+    document.getElementById('btn-zoom-fit').addEventListener('click', zoomFit);
+
+    // Canvas dragging & panning
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        dragStartX = e.clientX - offsetX;
+        dragStartY = e.clientY - offsetY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            offsetX = e.clientX - dragStartX;
+            offsetY = e.clientY - dragStartY;
+            draw();
+        }
+        
+        // Coordinates display
+        const rect = canvas.getBoundingClientRect();
+        const screenX = e.clientX - rect.left;
+        const screenY = e.clientY - rect.top;
+        
+        // Translate screen coordinate to cartesian math coordinate
+        const mathX = ((screenX - canvas.width / 2) - offsetX) / scale;
+        const mathY = -(((screenY - canvas.height / 2) - offsetY) / scale);
+        
+        let label1 = 'X', label2 = 'Y';
+        if (activePlane === 'G18') { label1 = 'Z'; label2 = 'X'; }
+        if (activePlane === 'G19') { label1 = 'Y'; label2 = 'Z'; }
+        
+        coordIndicator.textContent = `${label1}: ${mathX.toFixed(3)}, ${label2}: ${mathY.toFixed(3)}`;
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // Solve button event listener
+    document.getElementById('btn-calculate').addEventListener('click', () => {
+        solveGeometry();
+        zoomFit();
+    });
+
+    // Copy to clipboard
+    document.getElementById('btn-copy-gcode').addEventListener('click', () => {
+        gcodeOutput.select();
+        document.execCommand('copy');
+        alert('G-code copied to clipboard!');
+    });
+
+    // Radio button changes
+    document.querySelectorAll('input[name="plane"]').forEach(radio => {
+        radio.addEventListener('change', updatePlaneLabels);
+    });
+
+    // Initialize App UI
+    updatePlaneLabels();
+    renderPointsList();
+    solveGeometry();
+    setTimeout(zoomFit, 150);
+});
+</script>
+
+<style>
+/* Style override for input boxes */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+</style>

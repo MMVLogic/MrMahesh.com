@@ -58,18 +58,21 @@ body {
 
 /* --- Kramdown Table of Contents --- */
 #markdown-toc {
-  list-style: disc;
-  margin-left: 2rem;
-  padding-left: 1rem;
+  list-style: disc !important;
+  margin-left: 2rem !important;
+  padding-left: 1rem !important;
+  display: block !important;
 }
 
 #markdown-toc ul {
-  margin-left: 1.5rem;
-  list-style: circle;
+  margin-left: 1.5rem !important;
+  list-style: circle !important;
+  display: block !important;
 }
 
 #markdown-toc li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem !important;
+  list-style: inherit !important;
 }
 
 /* --- Prose Paragraph Spacing --- */

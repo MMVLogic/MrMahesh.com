@@ -13,7 +13,7 @@ permalink: /apps/cnc-geometry-solver/
         </a>
         <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-2 leading-tight">CNC Coordinate Geometry Solver</h1>
         <p class="text-sm md:text-base text-gray-300 leading-relaxed">
-            Blend turning points and sharp corners with precise tangent arcs using vector geometry. Supports resolving unknowns directly from engineering drawings.
+            Blend turning points and sharp corners with precise tangent arcs using vector geometry. Resolves unknowns directly from engineering drawings.
         </p>
     </div>
 
@@ -86,61 +86,26 @@ permalink: /apps/cnc-geometry-solver/
         </p>
     </div>
 
-    <!-- Visualizer & Outputs Columns -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left Column: Outputs -->
-        <div class="lg:col-span-5 flex flex-col space-y-6">
-            
-            <!-- Output Coordinates Table -->
-            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 flex-grow">
-                <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
-                    <span class="mr-2 text-yellow-500 text-2xl">📊</span> > CALCULATED_COORDINATES_
-                </p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-700 text-gray-400">
-                                <th class="pb-2 font-bold pl-2">Point Type</th>
-                                <th class="pb-2 font-bold axis-lbl-1">Axis 1</th>
-                                <th class="pb-2 font-bold axis-lbl-2">Axis 2</th>
-                                <th class="pb-2 font-bold w-20 text-center">Fillet R</th>
-                            </tr>
-                        </thead>
-                        <tbody id="output-table-body" class="font-mono text-gray-200">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- G-Code Generated -->
-            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
-                <div class="flex justify-between items-center mb-4">
-                    <p class="text-lg font-bold text-gray-200 flex items-center">
-                        <span class="mr-2 text-[#2ecc71] text-2xl">📟</span> > GENERATED_GCODE_
-                    </p>
-                    <button id="btn-copy-gcode" class="bg-[#3498db] hover:bg-blue-500 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200">
-                        Copy Code
-                    </button>
-                </div>
-                <textarea id="gcode-out" readonly class="w-full bg-black text-green-400 font-mono p-4 rounded-lg border border-gray-800 h-48 focus:outline-none text-xs leading-relaxed resize-none"></textarea>
-            </div>
-
+    <!-- Output Coordinates Table (Full Width) -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+        <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
+            <span class="mr-2 text-yellow-500 text-2xl">📊</span> > CALCULATED_COORDINATES_
+        </p>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-700 text-gray-400">
+                        <th class="pb-2 font-bold pl-2">Point Type</th>
+                        <th class="pb-2 font-bold axis-lbl-1">Axis 1</th>
+                        <th class="pb-2 font-bold axis-lbl-2">Axis 2</th>
+                        <th class="pb-2 font-bold w-20 text-center">Fillet R</th>
+                    </tr>
+                </thead>
+                <tbody id="output-table-body" class="font-mono text-gray-200">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
         </div>
-
-        <!-- Right Column: Visualizer Canvas -->
-        <div class="lg:col-span-7 flex flex-col">
-            <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 flex flex-col h-full">
-                <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
-                    <span class="mr-2 text-[#3498db] text-2xl">🖥️</span> > VISUALIZATION_GRID_
-                </p>
-                <div class="relative w-full aspect-square bg-[#0f172a] rounded-lg overflow-hidden border border-gray-800 flex-grow">
-                    <canvas id="canvas-visualizer" class="w-full h-full"></canvas>
-                </div>
-            </div>
-        </div>
-
     </div>
 
 </div>
@@ -148,7 +113,7 @@ permalink: /apps/cnc-geometry-solver/
 <!-- Engine & Solver JS -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Phase 1 Point objects data state
+    // Points list state
     let points = [
         { type: 'standard', x: 0.600, x_unk: false, y: 0.000, y_unk: false, r: 0 },
         { type: 'ip', x: 0.710, x_unk: false, y: 0.000, y_unk: false, r: 0.020 },
@@ -156,14 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let activePlane = 'G17';
-    let solvedPoints = [];
-    let solvedPath = [];
 
     const ptsListBody = document.getElementById('pts-list-body');
     const outputTableBody = document.getElementById('output-table-body');
-    const gcodeOut = document.getElementById('gcode-out');
-    const canvas = document.getElementById('canvas-visualizer');
-    const ctx = canvas.getContext('2d');
     const labelAxis1List = document.querySelectorAll('.axis-lbl-1');
     const labelAxis2List = document.querySelectorAll('.axis-lbl-2');
 
@@ -181,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         labelAxis2List.forEach(lbl => lbl.textContent = l2);
     }
 
-    // Render left column inputs
+    // Render inputs table
     function renderInputs() {
         ptsListBody.innerHTML = '';
         points.forEach((pt, index) => {
@@ -307,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateAndRender();
     });
 
-    // Phase 2: Vector Geometry
+    // Vector geometry arc calculator
     function calculateTangentArc(p1, pIp, p2, radius) {
         const v1 = { x: p1.x - pIp.x, y: p1.y - pIp.y };
         const v2 = { x: p2.x - pIp.x, y: p2.y - pIp.y };
@@ -345,48 +305,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const center = { x: pIp.x + centerDist * n.x, y: pIp.y + centerDist * n.y };
 
-        const det = (p2.x - pIp.x) * (p1.y - pIp.y) - (p2.y - pIp.y) * (p1.x - pIp.x);
-        const isCCW = det > 0;
-        const arcDir = isCCW ? 'G3' : 'G2';
-
-        const startAngle = Math.atan2(t1.y - center.y, t1.x - center.x);
-        const endAngle = Math.atan2(t2.y - center.y, t2.x - center.x);
-
-        return {
-            center,
-            t1,
-            t2,
-            startAngle,
-            endAngle,
-            anticlockwise: isCCW,
-            arcDir
-        };
+        return { center, t1, t2 };
     }
 
-    // Advanced Solver that resolves unknown entries
+    // Resolves unknown values using vector bisectors
     function resolveUnknowns() {
-        // We look for the pattern:
-        // P1 (known) -> T1 (unknown x or y) -> IP (known) -> T2 (unknown x or y) -> P_end (known)
         let resolvedPoints = JSON.parse(JSON.stringify(points));
         
         let foundPattern = false;
-        let p1_idx = -1, t1_idx = -1, ip_idx = -1, t2_idx = -1;
+        let p1_idx = -1, t1_idx = -1, ip_idx = -1, t2_idx = -1, p_end_idx = -1;
 
-        for (let i = 0; i < points.length - 2; i++) {
+        for (let i = 0; i < points.length - 4; i++) {
             if (points[i].type === 'standard' && !points[i].x_unk && !points[i].y_unk &&
-                points[i+1].type === 'tangent' && (points[i+1].x_unk || points[i+1].y_unk) &&
-                points[i+2].type === 'ip' && !points[i+2].x_unk && !points[i+2].y_unk) {
+                points[i+1].type === 'tangent' &&
+                points[i+2].type === 'ip' && !points[i+2].x_unk && !points[i+2].y_unk &&
+                points[i+3].type === 'tangent' &&
+                points[i+4].type === 'standard' && !points[i+4].x_unk && !points[i+4].y_unk) {
                 
-                // Scan forward to find T2
-                if (i+4 < points.length && 
-                    points[i+3].type === 'tangent' && (points[i+3].x_unk || points[i+3].y_unk)) {
-                    p1_idx = i;
-                    t1_idx = i+1;
-                    ip_idx = i+2;
-                    t2_idx = i+3;
-                    foundPattern = true;
-                    break;
-                }
+                p1_idx = i;
+                t1_idx = i+1;
+                ip_idx = i+2;
+                t2_idx = i+3;
+                p_end_idx = i+4;
+                foundPattern = true;
+                break;
             }
         }
 
@@ -395,91 +337,81 @@ document.addEventListener('DOMContentLoaded', () => {
             const t1 = points[t1_idx];
             const ip = points[ip_idx];
             const t2 = points[t2_idx];
+            const p_end = points[p_end_idx];
             const R = ip.r;
 
-            // Case: Line 2 is horizontal (meaning t2 has y_unk = false, and t2.y = ip.y)
-            if (!t2.y_unk && t2.y === ip.y) {
-                const ip_y = ip.y;
-                const y_t2 = ip_y;
+            // 1. Calculate the center C using vector bisector
+            const v1 = { x: p1.x - ip.x, y: p1.y - ip.y };
+            const v2 = { x: p_end.x - ip.x, y: p_end.y - ip.y };
 
-                // Center y_c is at ip_y ± R
-                const y_c = p1.y < ip_y ? ip_y - R : ip_y + R;
+            const len1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+            const len2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
 
-                // Solve for x_t1 and x_c
-                const y_t1 = t1.y;
-                const sqVal = R * R - Math.pow(y_t1 - y_c, 2);
-                
-                if (sqVal >= 0) {
-                    const z_mag = Math.sqrt(sqVal);
-                    const z_options = [z_mag, -z_mag];
+            if (len1 > 0 && len2 > 0) {
+                const u1 = { x: v1.x / len1, y: v1.y / len1 };
+                const u2 = { x: v2.x / len2, y: v2.y / len2 };
+
+                const dot = u1.x * u2.x + u1.y * u2.y;
+                const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+
+                if (Math.abs(angle - Math.PI) > 0.001 && angle > 0.001) {
+                    const centerDist = R / Math.sin(angle / 2);
+                    const b = { x: u1.x + u2.x, y: u1.y + u2.y };
+                    const lenB = Math.sqrt(b.x * b.x + b.y * b.y);
                     
-                    for (let i = 0; i < z_options.length; i++) {
-                        const z = z_options[i];
-                        const num = (y_t1 - y_c) * (y_t1 - p1.y);
-                        const x_t1 = p1.x - num / z;
-                        const x_c_val = x_t1 - z;
+                    if (lenB > 1e-9) {
+                        const n = { x: b.x / lenB, y: b.y / lenB };
+                        const x_c = ip.x + centerDist * n.x;
+                        const y_c = ip.y + centerDist * n.y;
 
-                        // gotcha filter: if angled line goes right (p1.x > ip.x), T2 X must be to the left (< ip.x)
-                        const is_correct_direction = (p1.x > ip.x) ? (x_c_val < ip.x) : (x_c_val > ip.x);
-
-                        if (is_correct_direction) {
-                            resolvedPoints[t1_idx].x = x_t1;
-                            resolvedPoints[t1_idx].x_unk = false;
-                            resolvedPoints[t2_idx].x = x_c_val;
-                            resolvedPoints[t2_idx].x_unk = false;
-                            break;
+                        // 2. Resolve Tangent Point 1 (T1) using circle equation
+                        if (t1.x_unk && !t1.y_unk) {
+                            const sqVal = R * R - Math.pow(t1.y - y_c, 2);
+                            if (sqVal >= 0) {
+                                const z = Math.sqrt(sqVal);
+                                const x_t1_opt1 = x_c + z;
+                                const x_t1_opt2 = x_c - z;
+                                const x_t1 = Math.abs(x_t1_opt1 - p1.x) < Math.abs(x_t1_opt2 - p1.x) ? x_t1_opt1 : x_t1_opt2;
+                                
+                                resolvedPoints[t1_idx].x = x_t1;
+                                resolvedPoints[t1_idx].x_unk = false;
+                            }
+                        } else if (!t1.x_unk && t1.y_unk) {
+                            const sqVal = R * R - Math.pow(t1.x - x_c, 2);
+                            if (sqVal >= 0) {
+                                const z = Math.sqrt(sqVal);
+                                const y_t1_opt1 = y_c + z;
+                                const y_t1_opt2 = y_c - z;
+                                const y_t1 = Math.abs(y_t1_opt1 - p1.y) < Math.abs(y_t1_opt2 - p1.y) ? y_t1_opt1 : y_t1_opt2;
+                                
+                                resolvedPoints[t1_idx].y = y_t1;
+                                resolvedPoints[t1_idx].y_unk = false;
+                            }
                         }
-                    }
-                }
-            }
-            // Case: Line 2 is vertical (meaning t2 has x_unk = false, and t2.x = ip.x)
-            else if (!t2.x_unk && t2.x === ip.x) {
-                const ip_x = ip.x;
-                const x_t2 = ip_x;
 
-                // Center x_c is at ip_x ± R
-                const x_c = p1.x < ip_x ? ip_x - R : ip_x + R;
-
-                const y_t1 = t1.y;
-                const A = y_t1 - p1.y;
-                const B = x_c - p1.x;
-
-                if (A !== 0) {
-                    function evaluate_poly(z) {
-                        return z * z * (1 + Math.pow((z + B) / A, 2)) - R * R;
-                    }
-                    function find_root(low, high) {
-                        let f_low = evaluate_poly(low);
-                        let f_high = evaluate_poly(high);
-                        if (f_low * f_high > 0) return null;
-                        for (let iter = 0; iter < 100; iter++) {
-                            let mid = (low + high) / 2;
-                            let f_mid = evaluate_poly(mid);
-                            if (Math.abs(f_mid) < 1e-12) return mid;
-                            if (f_low * f_mid < 0) { high = mid; } else { low = mid; }
-                        }
-                        return (low + high) / 2;
-                    }
-                    let z1 = find_root(-R, 0);
-                    let z2 = find_root(0, R);
-                    let solutions = [];
-                    if (z1 !== null) solutions.push(z1);
-                    if (z2 !== null) solutions.push(z2);
-
-                    for (let i = 0; i < solutions.length; i++) {
-                        let z_cand = solutions[i];
-                        let x_cand = x_c + z_cand;
-                        const y_c_cand = y_t1 + (z_cand * (x_cand - p1.x)) / A;
-                        
-                        // gotcha filter: if angled line goes up (p1.y > ip.y), T2 Y must be down (< ip.y)
-                        const is_correct_direction = (p1.y > ip.y) ? (y_c_cand < ip.y) : (y_c_cand > ip.y);
-
-                        if (is_correct_direction) {
-                            resolvedPoints[t1_idx].x = x_cand;
-                            resolvedPoints[t1_idx].x_unk = false;
-                            resolvedPoints[t2_idx].y = y_c_cand;
-                            resolvedPoints[t2_idx].y_unk = false;
-                            break;
+                        // 3. Resolve Tangent Point 2 (T2) using circle equation
+                        if (t2.x_unk && !t2.y_unk) {
+                            const sqVal = R * R - Math.pow(t2.y - y_c, 2);
+                            if (sqVal >= 0) {
+                                const z = Math.sqrt(sqVal);
+                                const x_t2_opt1 = x_c + z;
+                                const x_t2_opt2 = x_c - z;
+                                const x_t2 = Math.abs(x_t2_opt1 - p_end.x) < Math.abs(x_t2_opt2 - p_end.x) ? x_t2_opt1 : x_t2_opt2;
+                                
+                                resolvedPoints[t2_idx].x = x_t2;
+                                resolvedPoints[t2_idx].x_unk = false;
+                            }
+                        } else if (!t2.x_unk && t2.y_unk) {
+                            const sqVal = R * R - Math.pow(t2.x - x_c, 2);
+                            if (sqVal >= 0) {
+                                const z = Math.sqrt(sqVal);
+                                const y_t2_opt1 = y_c + z;
+                                const y_t2_opt2 = y_c - z;
+                                const y_t2 = Math.abs(y_t2_opt1 - p_end.y) < Math.abs(y_t2_opt2 - p_end.y) ? y_t2_opt1 : y_t2_opt2;
+                                
+                                resolvedPoints[t2_idx].y = y_t2;
+                                resolvedPoints[t2_idx].y_unk = false;
+                            }
                         }
                     }
                 }
@@ -488,35 +420,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return resolvedPoints;
     }
 
-    // Calculation Engine
+    // Main calculation trigger
     function calculateAndRender() {
-        // Step 1: Check if there are unknowns and resolve them
         let hasUnknowns = points.some(pt => pt.x_unk || pt.y_unk);
         let solvedCoords = hasUnknowns ? resolveUnknowns() : points;
 
-        solvedPath = [];
-        solvedPoints = [];
         let results = [];
-        let sharpCorners = [];
 
-        // Build list of corners/elements
         for (let i = 0; i < solvedCoords.length; i++) {
             const current = solvedCoords[i];
-            
-            // Skip unresolved unknowns
             if (current.x_unk || current.y_unk) continue;
-
-            sharpCorners.push({ x: current.x, y: current.y });
 
             if (i === 0) {
                 results.push({ type: 'Start Point', x: current.x, y: current.y, r: 0 });
-                solvedPath.push({ type: 'G1', x: current.x, y: current.y });
                 continue;
             }
 
             if (i === solvedCoords.length - 1) {
                 results.push({ type: 'End Point', x: current.x, y: current.y, r: 0 });
-                solvedPath.push({ type: 'G1', x: current.x, y: current.y });
                 continue;
             }
 
@@ -531,35 +452,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         results.push({ type: 'Tangent Point 1', x: arcData.t1.x, y: arcData.t1.y, r: 0 });
                         results.push({ type: 'Arc Center', x: arcData.center.x, y: arcData.center.y, r: current.r });
                         results.push({ type: 'Tangent Point 2', x: arcData.t2.x, y: arcData.t2.y, r: 0 });
-
-                        solvedPath.push({ type: 'G1', x: arcData.t1.x, y: arcData.t1.y });
-                        solvedPath.push({ 
-                            type: arcData.arcDir, 
-                            x: arcData.t2.x, 
-                            y: arcData.t2.y, 
-                            r: current.r, 
-                            cx: arcData.center.x, 
-                            cy: arcData.center.y, 
-                            startAngle: arcData.startAngle, 
-                            endAngle: arcData.endAngle,
-                            anticlockwise: arcData.anticlockwise
-                        });
                     } else {
                         results.push({ type: 'IP Point (Unfilleted)', x: current.x, y: current.y, r: 0 });
-                        solvedPath.push({ type: 'G1', x: current.x, y: current.y });
                     }
                 }
             } else {
-                results.push({ type: current.type === 'tangent' ? 'Tangent Entry/Exit' : 'Intermediate Point', x: current.x, y: current.y, r: 0 });
-                solvedPath.push({ type: 'G1', x: current.x, y: current.y });
+                results.push({ type: current.type === 'tangent' ? 'Tangent Point' : 'Intermediate Point', x: current.x, y: current.y, r: 0 });
             }
         }
 
         renderOutputTable(results);
-        generateGcode(solvedPath);
-        renderCanvas(solvedPath, sharpCorners, results);
 
-        // Update the form values with solved values if unknowns were solved
+        // Update inputs with solved values
         if (hasUnknowns) {
             solvedCoords.forEach((sc, idx) => {
                 if (!sc.x_unk && points[idx].x_unk) {
@@ -574,7 +478,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Phase 4: Output Table
     function renderOutputTable(results) {
         outputTableBody.innerHTML = '';
         results.forEach(pt => {
@@ -590,183 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // G-code Printer
-    function generateGcode(path) {
-        let code = [];
-        let a1 = 'X', a2 = 'Y';
-        if (activePlane === 'G17') { a1 = 'X'; a2 = 'Y'; code.push(`G17 (XY Plane)`); }
-        if (activePlane === 'G18') { a1 = 'Z'; a2 = 'X'; code.push(`G18 (ZX Plane)`); }
-        if (activePlane === 'G19') { a1 = 'Y'; a2 = 'Z'; code.push(`G19 (YZ Plane)`); }
-
-        code.push(`G90 G21 (Absolute, Metric)`);
-        
-        if (path.length > 0) {
-            code.push(`G0 ${a1}${path[0].x.toFixed(4)} ${a2}${path[0].y.toFixed(4)}`);
-        }
-
-        for (let i = 1; i < path.length; i++) {
-            const el = path[i];
-            if (el.type === 'G1') {
-                code.push(`G1 ${a1}${el.x.toFixed(4)} ${a2}${el.y.toFixed(4)}`);
-            } else if (el.type === 'G2' || el.type === 'G3') {
-                code.push(`${el.type} ${a1}${el.x.toFixed(4)} ${a2}${el.y.toFixed(4)} R${el.r.toFixed(4)}`);
-            }
-        }
-        code.push(`M30 (End of Program)`);
-        gcodeOut.value = code.join('\n');
-    }
-
-    // Phase 3: Canvas Rendering Engine
-    function renderCanvas(path, sharpCorners, pointsToMark) {
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.width;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        let minX = Infinity, maxX = -Infinity;
-        let minY = Infinity, maxY = -Infinity;
-
-        const allCoords = [...sharpCorners, ...pointsToMark];
-        if (allCoords.length === 0) return;
-
-        allCoords.forEach(p => {
-            if (p.x < minX) minX = p.x;
-            if (p.x > maxX) maxX = p.x;
-            if (p.y < minY) minY = p.y;
-            if (p.y > maxY) maxY = p.y;
-        });
-
-        const dx = maxX - minX;
-        const dy = maxY - minY;
-        const centerX = minX + dx / 2;
-        const centerY = minY + dy / 2;
-
-        const maxSpan = Math.max(dx, dy, 0.01);
-        const viewMargin = 0.08;
-        const scaleFactor = (canvas.width * (1 - 2 * viewMargin)) / maxSpan;
-
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        
-        // Y-Axis Inversion: positive Y is up
-        ctx.scale(scaleFactor, -scaleFactor);
-        ctx.translate(-centerX, -centerY);
-
-        // Draw axes grid
-        drawAxes(minX - maxSpan, maxX + maxSpan, minY - maxSpan, maxY + maxSpan, scaleFactor);
-
-        // 1. Draw theoretical sharp corners (grey dashed line)
-        if (sharpCorners.length >= 2) {
-            ctx.strokeStyle = '#6b7280';
-            ctx.lineWidth = 1.0 / scaleFactor;
-            ctx.setLineDash([4 / scaleFactor, 4 / scaleFactor]);
-            ctx.beginPath();
-            ctx.moveTo(sharpCorners[0].x, sharpCorners[0].y);
-            for (let i = 1; i < sharpCorners.length; i++) {
-                ctx.lineTo(sharpCorners[i].x, sharpCorners[i].y);
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
-
-        // 2. Draw actual toolpath (thick blue solid line)
-        if (path.length > 0) {
-            ctx.strokeStyle = '#3b82f6';
-            ctx.lineWidth = 3.5 / scaleFactor;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(path[0].x, path[0].y);
-            for (let i = 1; i < path.length; i++) {
-                const el = path[i];
-                if (el.type === 'G1') {
-                    ctx.lineTo(el.x, el.y);
-                } else {
-                    ctx.arc(el.cx, el.cy, el.r, el.startAngle, el.endAngle, !el.anticlockwise);
-                }
-            }
-            ctx.stroke();
-        }
-
-        // 3. Mark Tangent 1, Tangent 2, and Center
-        const dotRadius = 4.5 / scaleFactor;
-        pointsToMark.forEach(pt => {
-            if (pt.type === 'Tangent Point 1' || pt.type === 'Tangent Point 2') {
-                ctx.fillStyle = '#f59e0b';
-                ctx.beginPath();
-                ctx.arc(pt.x, pt.y, dotRadius, 0, 2 * Math.PI);
-                ctx.fill();
-            } else if (pt.type === 'Arc Center') {
-                ctx.fillStyle = '#ef4444';
-                ctx.beginPath();
-                ctx.arc(pt.x, pt.y, dotRadius * 0.9, 0, 2 * Math.PI);
-                ctx.fill();
-
-                ctx.strokeStyle = '#ef4444';
-                ctx.lineWidth = 1.0 / scaleFactor;
-                ctx.beginPath();
-                ctx.moveTo(pt.x - dotRadius * 2, pt.y);
-                ctx.lineTo(pt.x + dotRadius * 2, pt.y);
-                ctx.moveTo(pt.x, pt.y - dotRadius * 2);
-                ctx.lineTo(pt.x, pt.y + dotRadius * 2);
-                ctx.stroke();
-            } else {
-                ctx.fillStyle = '#10b981';
-                ctx.beginPath();
-                ctx.arc(pt.x, pt.y, dotRadius * 0.7, 0, 2 * Math.PI);
-                ctx.fill();
-            }
-        });
-
-        ctx.restore();
-    }
-
-    // Grid rendering
-    function drawAxes(minX, maxX, minY, maxY, scaleFactor) {
-        ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = 0.5 / scaleFactor;
-        
-        let gridStep = 0.05;
-        if (maxX - minX > 2.0) gridStep = 0.2;
-        if (maxX - minX < 0.1) gridStep = 0.01;
-
-        const startX = Math.floor(minX / gridStep) * gridStep;
-        const endX = Math.ceil(maxX / gridStep) * gridStep;
-        const startY = Math.floor(minY / gridStep) * gridStep;
-        const endY = Math.ceil(maxY / gridStep) * gridStep;
-
-        for (let x = startX; x <= endX; x += gridStep) {
-            ctx.beginPath();
-            ctx.moveTo(x, minY);
-            ctx.lineTo(x, maxY);
-            ctx.stroke();
-        }
-        for (let y = startY; y <= endY; y += gridStep) {
-            ctx.beginPath();
-            ctx.moveTo(minX, y);
-            ctx.lineTo(maxX, y);
-            ctx.stroke();
-        }
-
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 1.2 / scaleFactor;
-        ctx.beginPath();
-        ctx.moveTo(minX, 0);
-        ctx.lineTo(maxX, 0);
-        ctx.moveTo(0, minY);
-        ctx.lineTo(0, maxY);
-        ctx.stroke();
-    }
-
-    // Listeners for triggers
     document.getElementById('btn-calc').addEventListener('click', calculateAndRender);
-    
-    document.getElementById('btn-copy-gcode').addEventListener('click', () => {
-        gcodeOut.select();
-        document.execCommand('copy');
-        alert('G-code copied to clipboard!');
-    });
 
     document.querySelectorAll('input[name="plane"]').forEach(radio => {
         radio.addEventListener('change', () => {
@@ -774,8 +501,6 @@ document.addEventListener('DOMContentLoaded', () => {
             calculateAndRender();
         });
     });
-
-    window.addEventListener('resize', calculateAndRender);
 
     // Initial setup
     updatePlaneLabels();

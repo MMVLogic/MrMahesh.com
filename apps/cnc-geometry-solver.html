@@ -328,32 +328,73 @@ document.addEventListener('DOMContentLoaded', () => {
         let resolvedPoints = JSON.parse(JSON.stringify(points));
         
         let foundPattern = false;
-        let p1_idx = -1, t1_idx = -1, ip_idx = -1, t2_idx = -1, p_end_idx = -1;
+        let ip_idx = -1, t1_idx = -1, t2_idx = -1;
 
-        for (let i = 0; i < points.length - 4; i++) {
-            if (points[i].type === 'standard' && !points[i].x_unk && !points[i].y_unk &&
-                points[i+1].type === 'tangent' &&
-                points[i+2].type === 'ip' && !points[i+2].x_unk && !points[i+2].y_unk &&
-                points[i+3].type === 'tangent' &&
-                points[i+4].type === 'standard' && !points[i+4].x_unk && !points[i+4].y_unk) {
-                
-                p1_idx = i;
-                t1_idx = i+1;
-                ip_idx = i+2;
-                t2_idx = i+3;
-                p_end_idx = i+4;
-                foundPattern = true;
-                break;
+        for (let i = 0; i < points.length; i++) {
+            if (points[i].type === 'ip') {
+                if (i - 1 >= 0 && points[i-1].type === 'tangent' &&
+                    i + 1 < points.length && points[i+1].type === 'tangent') {
+                    ip_idx = i;
+                    t1_idx = i - 1;
+                    t2_idx = i + 1;
+                    foundPattern = true;
+                    break;
+                }
             }
         }
 
         if (foundPattern) {
-            const p1 = points[p1_idx];
             const t1 = points[t1_idx];
             const ip = points[ip_idx];
             const t2 = points[t2_idx];
-            const p_end = points[p_end_idx];
             const R = ip.r;
+
+            // Construct reference standard points if they don't exist
+            let p1 = null;
+            if (t1_idx - 1 >= 0) {
+                p1 = points[t1_idx - 1];
+            } else {
+                let ref_out = { x: ip.x + 1, y: ip.y + 1 };
+                if (t2_idx + 1 < points.length) {
+                    ref_out = points[t2_idx + 1];
+                } else {
+                    ref_out = points[t2_idx];
+                }
+                const v2 = { x: ref_out.x - ip.x, y: ref_out.y - ip.y };
+                let p1_x = ip.x;
+                let p1_y = ip.y;
+                if (!t1.x_unk && t1.x === ip.x) {
+                    p1_x = ip.x;
+                    p1_y = ip.y - (v2.y !== 0 ? Math.sign(v2.y) : 1) * 0.1;
+                } else if (!t1.y_unk && t1.y === ip.y) {
+                    p1_x = ip.x - (v2.x !== 0 ? Math.sign(v2.x) : 1) * 0.1;
+                    p1_y = ip.y;
+                } else {
+                    p1_x = ip.x - 0.1;
+                    p1_y = ip.y - 0.1;
+                }
+                p1 = { type: 'standard', x: p1_x, x_unk: false, y: p1_y, y_unk: false, r: 0 };
+            }
+
+            let p_end = null;
+            if (t2_idx + 1 < points.length) {
+                p_end = points[t2_idx + 1];
+            } else {
+                const v1 = { x: p1.x - ip.x, y: p1.y - ip.y };
+                let pe_x = ip.x;
+                let pe_y = ip.y;
+                if (!t2.x_unk && t2.x === ip.x) {
+                    pe_x = ip.x;
+                    pe_y = ip.y - (v1.y !== 0 ? Math.sign(v1.y) : 1) * 0.1;
+                } else if (!t2.y_unk && t2.y === ip.y) {
+                    pe_x = ip.x - (v1.x !== 0 ? Math.sign(v1.x) : 1) * 0.1;
+                    pe_y = ip.y;
+                } else {
+                    pe_x = ip.x + 0.1;
+                    pe_y = ip.y + 0.1;
+                }
+                p_end = { type: 'standard', x: pe_x, x_unk: false, y: pe_y, y_unk: false, r: 0 };
+            }
 
             // 1. Calculate the center C using vector bisector
             const v1 = { x: p1.x - ip.x, y: p1.y - ip.y };
@@ -446,14 +487,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hasTangentPoints) {
             let ipPt = solvedCoords.find(pt => pt.type === 'ip');
-            let p1 = solvedCoords[0];
-            let p_end = solvedCoords[solvedCoords.length - 1];
             let R = ipPt ? ipPt.r : 0;
             
+            // Construct reference standard points if they don't exist in solvedCoords
+            let ipPtIdx = solvedCoords.indexOf(ipPt);
+            let p1 = solvedCoords[0];
+            let p_end = solvedCoords[solvedCoords.length - 1];
+
             let center = { x: 0, y: 0 };
             if (ipPt && R > 0) {
-                const v1 = { x: p1.x - ipPt.x, y: p1.y - ipPt.y };
-                const v2 = { x: p_end.x - ipPt.x, y: p_end.y - ipPt.y };
+                // Find effective directions for bisector
+                let ref_p1 = p1;
+                if (p1.type === 'tangent') {
+                    // Use a virtual reference
+                    let ref_out = p_end;
+                    let v2 = { x: ref_out.x - ipPt.x, y: ref_out.y - ipPt.y };
+                    let p1_x = ipPt.x;
+                    let p1_y = ipPt.y;
+                    if (!p1.x_unk && p1.x === ipPt.x) {
+                        p1_x = ipPt.x;
+                        p1_y = ipPt.y - (v2.y !== 0 ? Math.sign(v2.y) : 1) * 0.1;
+                    } else if (!p1.y_unk && p1.y === ipPt.y) {
+                        p1_x = ipPt.x - (v2.x !== 0 ? Math.sign(v2.x) : 1) * 0.1;
+                        p1_y = ipPt.y;
+                    }
+                    ref_p1 = { x: p1_x, y: p1_y };
+                }
+                
+                let ref_pe = p_end;
+                if (p_end.type === 'tangent') {
+                    let v1 = { x: ref_p1.x - ipPt.x, y: ref_p1.y - ipPt.y };
+                    let pe_x = ipPt.x;
+                    let pe_y = ipPt.y;
+                    if (!p_end.x_unk && p_end.x === ipPt.x) {
+                        pe_x = ipPt.x;
+                        pe_y = ipPt.y - (v1.y !== 0 ? Math.sign(v1.y) : 1) * 0.1;
+                    } else if (!p_end.y_unk && p_end.y === ipPt.y) {
+                        pe_x = ipPt.x - (v1.x !== 0 ? Math.sign(v1.x) : 1) * 0.1;
+                        pe_y = ipPt.y;
+                    }
+                    ref_pe = { x: pe_x, y: pe_y };
+                }
+
+                const v1 = { x: ref_p1.x - ipPt.x, y: ref_p1.y - ipPt.y };
+                const v2 = { x: ref_pe.x - ipPt.x, y: ref_pe.y - ipPt.y };
                 const len1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
                 const len2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
                 if (len1 > 0 && len2 > 0) {
@@ -478,12 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const current = solvedCoords[i];
                 if (current.x_unk || current.y_unk) continue;
 
-                if (i === 0) {
-                    results.push({ type: 'Start Point', x: current.x, y: current.y, r: 0 });
-                } else if (i === solvedCoords.length - 1) {
-                    results.push({ type: 'End Point', x: current.x, y: current.y, r: 0 });
-                } else if (current.type === 'tangent') {
-                    const ipPtIdx = solvedCoords.indexOf(ipPt);
+                if (current.type === 'tangent') {
                     const typeLabel = i < ipPtIdx ? 'Tangent Point 1' : 'Tangent Point 2';
                     results.push({ type: typeLabel, x: current.x, y: current.y, r: 0 });
                 } else if (current.type === 'ip') {
@@ -492,6 +564,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         results.push({ type: 'IP Point (Unfilleted)', x: current.x, y: current.y, r: 0 });
                     }
+                } else {
+                    const typeLabel = i === 0 ? 'Start Point' : (i === solvedCoords.length - 1 ? 'End Point' : 'Intermediate Point');
+                    results.push({ type: typeLabel, x: current.x, y: current.y, r: 0 });
                 }
             }
         } else {

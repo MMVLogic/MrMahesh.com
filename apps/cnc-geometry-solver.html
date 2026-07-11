@@ -441,38 +441,92 @@ document.addEventListener('DOMContentLoaded', () => {
         let solvedCoords = hasUnknowns ? resolveUnknowns() : points;
 
         let results = [];
+        
+        let hasTangentPoints = solvedCoords.some(pt => pt.type === 'tangent');
 
-        for (let i = 0; i < solvedCoords.length; i++) {
-            const current = solvedCoords[i];
-            if (current.x_unk || current.y_unk) continue;
-
-            if (i === 0) {
-                results.push({ type: 'Start Point', x: current.x, y: current.y, r: 0 });
-                continue;
+        if (hasTangentPoints) {
+            let ipPt = solvedCoords.find(pt => pt.type === 'ip');
+            let p1 = solvedCoords[0];
+            let p_end = solvedCoords[solvedCoords.length - 1];
+            let R = ipPt ? ipPt.r : 0;
+            
+            let center = { x: 0, y: 0 };
+            if (ipPt && R > 0) {
+                const v1 = { x: p1.x - ipPt.x, y: p1.y - ipPt.y };
+                const v2 = { x: p_end.x - ipPt.x, y: p_end.y - ipPt.y };
+                const len1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+                const len2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+                if (len1 > 0 && len2 > 0) {
+                    const u1 = { x: v1.x / len1, y: v1.y / len1 };
+                    const u2 = { x: v2.x / len2, y: v2.y / len2 };
+                    const dot = u1.x * u2.x + u1.y * u2.y;
+                    const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+                    if (Math.abs(angle - Math.PI) > 0.001 && angle > 0.001) {
+                        const centerDist = R / Math.sin(angle / 2);
+                        const b = { x: u1.x + u2.x, y: u1.y + u2.y };
+                        const lenB = Math.sqrt(b.x * b.x + b.y * b.y);
+                        if (lenB > 1e-9) {
+                            const n = { x: b.x / lenB, y: b.y / lenB };
+                            center.x = ipPt.x + centerDist * n.x;
+                            center.y = ipPt.y + centerDist * n.y;
+                        }
+                    }
+                }
             }
 
-            if (i === solvedCoords.length - 1) {
-                results.push({ type: 'End Point', x: current.x, y: current.y, r: 0 });
-                continue;
-            }
+            for (let i = 0; i < solvedCoords.length; i++) {
+                const current = solvedCoords[i];
+                if (current.x_unk || current.y_unk) continue;
 
-            if (current.type === 'ip' && current.r > 0) {
-                const prev = solvedCoords[i - 1];
-                const next = solvedCoords[i + 1];
-                
-                if (prev && next && !prev.x_unk && !prev.y_unk && !next.x_unk && !next.y_unk) {
-                    const arcData = calculateTangentArc(prev, current, next, current.r);
-
-                    if (arcData) {
-                        results.push({ type: 'Tangent Point 1', x: arcData.t1.x, y: arcData.t1.y, r: 0 });
-                        results.push({ type: 'Arc Center', x: arcData.center.x, y: arcData.center.y, r: current.r });
-                        results.push({ type: 'Tangent Point 2', x: arcData.t2.x, y: arcData.t2.y, r: 0 });
+                if (i === 0) {
+                    results.push({ type: 'Start Point', x: current.x, y: current.y, r: 0 });
+                } else if (i === solvedCoords.length - 1) {
+                    results.push({ type: 'End Point', x: current.x, y: current.y, r: 0 });
+                } else if (current.type === 'tangent') {
+                    const ipPtIdx = solvedCoords.indexOf(ipPt);
+                    const typeLabel = i < ipPtIdx ? 'Tangent Point 1' : 'Tangent Point 2';
+                    results.push({ type: typeLabel, x: current.x, y: current.y, r: 0 });
+                } else if (current.type === 'ip') {
+                    if (R > 0) {
+                        results.push({ type: 'Arc Center', x: center.x, y: center.y, r: R });
                     } else {
                         results.push({ type: 'IP Point (Unfilleted)', x: current.x, y: current.y, r: 0 });
                     }
                 }
-            } else {
-                results.push({ type: current.type === 'tangent' ? 'Tangent Point' : 'Intermediate Point', x: current.x, y: current.y, r: 0 });
+            }
+        } else {
+            for (let i = 0; i < solvedCoords.length; i++) {
+                const current = solvedCoords[i];
+                if (current.x_unk || current.y_unk) continue;
+
+                if (i === 0) {
+                    results.push({ type: 'Start Point', x: current.x, y: current.y, r: 0 });
+                    continue;
+                }
+
+                if (i === solvedCoords.length - 1) {
+                    results.push({ type: 'End Point', x: current.x, y: current.y, r: 0 });
+                    continue;
+                }
+
+                if (current.type === 'ip' && current.r > 0) {
+                    const prev = solvedCoords[i - 1];
+                    const next = solvedCoords[i + 1];
+                    
+                    if (prev && next && !prev.x_unk && !prev.y_unk && !next.x_unk && !next.y_unk) {
+                        const arcData = calculateTangentArc(prev, current, next, current.r);
+
+                        if (arcData) {
+                            results.push({ type: 'Tangent Point 1', x: arcData.t1.x, y: arcData.t1.y, r: 0 });
+                            results.push({ type: 'Arc Center', x: arcData.center.x, y: arcData.center.y, r: current.r });
+                            results.push({ type: 'Tangent Point 2', x: arcData.t2.x, y: arcData.t2.y, r: 0 });
+                        } else {
+                            results.push({ type: 'IP Point (Unfilleted)', x: current.x, y: current.y, r: 0 });
+                        }
+                    }
+                } else {
+                    results.push({ type: 'Intermediate Point', x: current.x, y: current.y, r: 0 });
+                }
             }
         }
 

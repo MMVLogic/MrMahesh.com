@@ -17,6 +17,37 @@ permalink: /apps/cnc-geometry-solver/
         </p>
     </div>
 
+    <!-- Instructions & Legend -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+        <p class="text-base font-bold text-gray-200 flex items-center">
+            <span class="mr-2 text-yellow-500 text-xl">💡</span> Quick Guide & Legend
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-gray-300 leading-relaxed">
+            <div class="space-y-2 bg-[#1f2937]/50 p-4 rounded-lg border border-gray-800">
+                <p class="font-bold text-yellow-500">1. Point Types</p>
+                <ul class="list-disc pl-4 space-y-1">
+                    <li><strong class="text-white">Standard Point:</strong> Raw path endpoints or start/stop coordinates.</li>
+                    <li><strong class="text-white">Tangent Point:</strong> The transition point where a line meets the blend radius.</li>
+                    <li><strong class="text-white">IP Point:</strong> The theoretical sharp intersection corner of your path.</li>
+                </ul>
+            </div>
+            <div class="space-y-2 bg-[#1f2937]/50 p-4 rounded-lg border border-gray-800">
+                <p class="font-bold text-yellow-500">2. Resolving Unknowns</p>
+                <p>
+                    Check the <strong class="text-yellow-500">Unk</strong> checkbox next to a coordinate (Axis 1 or Axis 2) to mark it as unknown. 
+                    The solver will automatically calculate its position by intersecting the toolpath vector with your fillet circle.
+                </p>
+            </div>
+            <div class="space-y-2 bg-[#1f2937]/50 p-4 rounded-lg border border-gray-800">
+                <p class="font-bold text-yellow-500">3. Fillet Radii</p>
+                <p>
+                    Specify the blend radius in the <strong class="text-white">Fillet R</strong> column of your IP Corner point. 
+                    The incoming and outgoing lines will blend smoothly using vector bisector geometry.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Plane Selection & Global Actions -->
     <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -38,11 +69,8 @@ permalink: /apps/cnc-geometry-solver/
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button id="btn-demo-unknowns" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 shadow-md">
-                    📂 Load Unknowns Demo
-                </button>
-                <button id="btn-reset-pt" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-4 rounded-lg transition-all duration-200">
-                    Reset
+                <button id="btn-reset-pt" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-6 rounded-lg transition-all duration-200 text-sm shadow-md">
+                    Reset Coordinates
                 </button>
             </div>
         </div>
@@ -55,10 +83,10 @@ permalink: /apps/cnc-geometry-solver/
                 <span class="mr-2 text-yellow-500 text-2xl">📋</span> > TOOLPATH_POINTS_
             </p>
             <div class="flex space-x-2">
-                <button id="btn-add-pt" class="bg-[#2ecc71] hover:bg-green-500 text-[#1f2937] font-bold py-1.5 px-4 rounded text-xs transition-colors duration-200 font-bold">
+                <button id="btn-add-pt" class="bg-[#2ecc71] hover:bg-green-500 text-[#1f2937] font-bold py-1.5 px-4 rounded text-xs transition-colors duration-200">
                     + Add Point
                 </button>
-                <button id="btn-calc" class="bg-yellow-600 hover:bg-yellow-500 text-[#1f2937] font-bold py-1.5 px-6 rounded text-xs transition-all duration-200 font-bold">
+                <button id="btn-calc" class="bg-yellow-600 hover:bg-yellow-500 text-[#1f2937] font-bold py-1.5 px-6 rounded text-xs transition-all duration-200">
                     ⚡ Calculate Geometry
                 </button>
             </div>
@@ -150,37 +178,37 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <td class="py-2 text-center text-gray-500 font-bold">${index + 1}</td>
                 <td class="py-1 pr-2">
-                    <select data-index="${index}" class="pt-type-select w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
-                        <option value="standard" ${pt.type === 'standard' ? 'selected' : ''}>Standard Point</option>
-                        <option value="tangent" ${pt.type === 'tangent' ? 'selected' : ''}>Tangent Point</option>
-                        <option value="ip" ${pt.type === 'ip' ? 'selected' : ''}>IP Point (Corner)</option>
+                    <select data-index="${index}" class="pt-type-select w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                        <option value="standard" class="bg-[#1a202c]" ${pt.type === 'standard' ? 'selected' : ''}>Standard Point</option>
+                        <option value="tangent" class="bg-[#1a202c]" ${pt.type === 'tangent' ? 'selected' : ''}>Tangent Point</option>
+                        <option value="ip" class="bg-[#1a202c]" ${pt.type === 'ip' ? 'selected' : ''}>IP Point (Corner)</option>
                     </select>
                 </td>
                 <td class="py-1 pr-2">
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-1">
                         <input type="number" step="any" value="${pt.x}" data-index="${index}" data-axis="x" ${pt.x_unk ? 'disabled value="" placeholder="?"' : ''}
-                               class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                               class="w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
                         <label class="inline-flex items-center text-[10px] text-gray-400 cursor-pointer">
-                            <input type="checkbox" data-index="${index}" data-axis="x" class="chk-unk h-3.5 w-3.5 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${pt.x_unk ? 'checked' : ''}>
-                            <span class="ml-1">Unk</span>
+                            <input type="checkbox" data-index="${index}" data-axis="x" class="chk-unk h-3 w-3 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${pt.x_unk ? 'checked' : ''}>
+                            <span class="ml-0.5 text-gray-500">Unk</span>
                         </label>
                     </div>
                 </td>
                 <td class="py-1 pr-2">
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-1">
                         <input type="number" step="any" value="${pt.y}" data-index="${index}" data-axis="y" ${pt.y_unk ? 'disabled value="" placeholder="?"' : ''}
-                               class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                               class="w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
                         <label class="inline-flex items-center text-[10px] text-gray-400 cursor-pointer">
-                            <input type="checkbox" data-index="${index}" data-axis="y" class="chk-unk h-3.5 w-3.5 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${pt.y_unk ? 'checked' : ''}>
-                            <span class="ml-1">Unk</span>
+                            <input type="checkbox" data-index="${index}" data-axis="y" class="chk-unk h-3 w-3 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${pt.y_unk ? 'checked' : ''}>
+                            <span class="ml-0.5 text-gray-500">Unk</span>
                         </label>
                     </div>
                 </td>
                 <td class="py-1 text-center pr-2">
-                    <input type="number" step="any" min="0" value="${pt.r}" data-index="${index}" data-axis="r" ${pt.type !== 'ip' ? 'disabled class="opacity-30 w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 text-center text-xs"' : 'class="w-full bg-[#2d3748] border border-gray-600 rounded text-gray-100 px-2 py-1 text-center text-xs"'} >
+                    <input type="number" step="any" min="0" value="${pt.r}" data-index="${index}" data-axis="r" ${pt.type !== 'ip' ? 'disabled class="opacity-10 w-full bg-transparent border-b border-transparent text-gray-500 px-1 py-1 text-center text-xs"' : 'class="w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 text-center text-xs"'} >
                 </td>
                 <td class="py-1 text-center">
-                    <button class="btn-del text-red-500 hover:text-red-400 font-bold text-sm" data-index="${index}">
+                    <button class="btn-del text-red-500 hover:text-red-400 font-bold text-sm px-2" data-index="${index}">
                         &times;
                     </button>
                 </td>
@@ -249,19 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { type: 'standard', x: 0.600, x_unk: false, y: 0.000, y_unk: false, r: 0 },
             { type: 'ip', x: 0.710, x_unk: false, y: 0.000, y_unk: false, r: 0.020 },
             { type: 'standard', x: 0.825, x_unk: false, y: -0.157, y_unk: false, r: 0 }
-        ];
-        renderInputs();
-        calculateAndRender();
-    });
-
-    // Load Unknowns Demo Button
-    document.getElementById('btn-demo-unknowns').addEventListener('click', () => {
-        points = [
-            { type: 'standard', x: 0.825, x_unk: false, y: -0.157, y_unk: false, r: 0 },
-            { type: 'tangent', x: 0, x_unk: true, y: -0.013, y_unk: false, r: 0 },
-            { type: 'ip', x: 0.710, x_unk: false, y: 0.000, y_unk: false, r: 0.020 },
-            { type: 'tangent', x: 0, x_unk: true, y: 0.000, y_unk: false, r: 0 },
-            { type: 'standard', x: 0.600, x_unk: false, y: 0.000, y_unk: false, r: 0 }
         ];
         renderInputs();
         calculateAndRender();

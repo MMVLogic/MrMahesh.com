@@ -1,0 +1,585 @@
+---
+layout: default
+title: Work Hours Calculator
+permalink: /apps/hours-worked-calculator/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- App Header -->
+    <div>
+        <a href="/apps/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">
+            &lt; Back to Apps Dashboard
+        </a>
+        <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-2 leading-tight">Work Hours Calculator</h1>
+        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+            Calculate daily and weekly hours worked, manage paid or unpaid breaks, and track your weekly timesheet with a clean mobile-friendly interface.
+        </p>
+    </div>
+
+    <!-- View Mode Switcher (Tabs) -->
+    <div class="border-b border-gray-700 flex space-x-6 text-sm font-bold">
+        <button id="tab-single" class="tab-btn pb-3 text-yellow-500 border-b-2 border-yellow-500 focus:outline-none">
+            ⏱️ Single Day Calculator
+        </button>
+        <button id="tab-weekly" class="tab-btn pb-3 text-gray-400 hover:text-gray-200 focus:outline-none">
+            📅 Weekly Timesheet
+        </button>
+    </div>
+
+    <!-- 1. SINGLE DAY CALCULATOR VIEW -->
+    <div id="view-single" class="space-y-8">
+        
+        <!-- Daily Settings Panel -->
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-6">
+            <p class="text-base font-bold text-gray-200 flex items-center">
+                <span class="mr-2 text-yellow-500 text-xl">🕒</span> Shift Times
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Start Time -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-400">Start Time</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="single-start-hr" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <span class="text-gray-500 font-bold">:</span>
+                        <select id="single-start-min" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <select id="single-start-ampm" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
+                            <option value="AM" class="bg-[#1a202c]" selected>AM</option>
+                            <option value="PM" class="bg-[#1a202c]">PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- End Time -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-400">End Time</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="single-end-hr" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <span class="text-gray-500 font-bold">:</span>
+                        <select id="single-end-min" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <select id="single-end-ampm" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
+                            <option value="AM" class="bg-[#1a202c]">AM</option>
+                            <option value="PM" class="bg-[#1a202c]" selected>PM</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Breaks Panel -->
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+            <div class="flex justify-between items-center">
+                <p class="text-base font-bold text-gray-200 flex items-center">
+                    <span class="mr-2 text-yellow-500 text-xl">☕</span> Breaks Ledger
+                </p>
+                <button id="btn-add-break" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-1 px-4 rounded text-xs transition-colors duration-200">
+                    + Add Break
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-700 text-gray-400">
+                            <th class="pb-2 font-bold w-32">Break Type</th>
+                            <th class="pb-2 font-bold">Label / Name</th>
+                            <th class="pb-2 font-bold w-36 text-center">Duration (Mins)</th>
+                            <th class="pb-2 font-bold w-12 text-center">Del</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breaks-list-body">
+                        <!-- Dynamic Break Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Calculated Summary Panel -->
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600">
+            <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
+                <span class="mr-2 text-yellow-500 text-2xl">📊</span> CALCULATED_SUMMARY_
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
+                    <p class="text-xs text-gray-400 font-bold">Total Elapsed Time</p>
+                    <p id="single-gross-hrs" class="text-xl font-bold font-mono text-gray-200 mt-1">0.00 hrs</p>
+                </div>
+                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
+                    <p class="text-xs text-gray-400 font-bold">Total Paid Breaks</p>
+                    <p id="single-paid-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
+                </div>
+                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
+                    <p class="text-xs text-gray-400 font-bold">Total Unpaid Breaks</p>
+                    <p id="single-unpaid-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
+                </div>
+                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
+                    <p class="text-xs text-yellow-500 font-bold">Net Worked Hours</p>
+                    <p id="single-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0.00 hrs</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 2. WEEKLY TIMESHEET VIEW -->
+    <div id="view-weekly" class="hidden space-y-8">
+        
+        <!-- Batch Settings Panel -->
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600 space-y-4">
+            <p class="text-base font-bold text-gray-200 flex items-center">
+                <span class="mr-2 text-yellow-500 text-xl">⚡</span> Batch Timesheet Copy Tool
+            </p>
+            <p class="text-xs text-gray-400 leading-relaxed">
+                Set a standard start time, end time, and unpaid break below, then copy it to all active work days to save time editing.
+            </p>
+            <div class="flex flex-col md:flex-row items-end gap-6 pt-2">
+                <div class="flex-grow space-y-2">
+                    <label class="block text-xs font-bold text-gray-400">Default Start Time</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="batch-start-hr" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <select id="batch-start-min" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <select id="batch-start-ampm" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
+                            <option value="AM" class="bg-[#1a202c]" selected>AM</option>
+                            <option value="PM" class="bg-[#1a202c]">PM</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-grow space-y-2">
+                    <label class="block text-xs font-bold text-gray-400">Default End Time</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="batch-end-hr" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <select id="batch-end-min" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <select id="batch-end-ampm" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
+                            <option value="AM" class="bg-[#1a202c]">AM</option>
+                            <option value="PM" class="bg-[#1a202c]" selected>PM</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="w-32 space-y-2">
+                    <label class="block text-xs font-bold text-gray-400">Unpaid Break (Mins)</label>
+                    <input type="number" id="batch-unpaid-break" value="30" min="0" class="w-full bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 text-center">
+                </div>
+                <button id="btn-copy-batch" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 text-xs shadow-md">
+                    Apply to Active Days
+                </button>
+            </div>
+        </div>
+
+        <!-- Weekly Log Panel -->
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+            <p class="text-base font-bold text-gray-200 flex items-center">
+                <span class="mr-2 text-yellow-500 text-xl">📅</span> Weekly Log Sheet
+            </p>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="border-b border-gray-700 text-gray-400">
+                            <th class="pb-2 font-bold w-20 text-center">Work?</th>
+                            <th class="pb-2 font-bold w-28">Day</th>
+                            <th class="pb-2 font-bold w-48">Start Time</th>
+                            <th class="pb-2 font-bold w-48">End Time</th>
+                            <th class="pb-2 font-bold w-24 text-center">Break (Min)</th>
+                            <th class="pb-2 font-bold w-28 text-right">Net Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weekly-log-body">
+                        <!-- Monday to Sunday populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Weekly Calculated Summary Panel -->
+        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600">
+            <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
+                <span class="mr-2 text-yellow-500 text-2xl">📊</span> WEEKLY_CALCULATED_SUMMARY_
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
+                    <p class="text-xs text-gray-400 font-bold">Days Worked</p>
+                    <p id="weekly-days-count" class="text-xl font-bold font-mono text-gray-200 mt-1">0 days</p>
+                </div>
+                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
+                    <p class="text-xs text-gray-400 font-bold">Total Weekly Breaks</p>
+                    <p id="weekly-total-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
+                </div>
+                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
+                    <p class="text-xs text-yellow-500 font-bold">Total Weekly Net Worked Hours</p>
+                    <p id="weekly-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0.00 hrs</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Engine & Calculation JS -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ----------------------------------------------------
+    // Helper: Populate Dropdown Options dynamically
+    // ----------------------------------------------------
+    function populateSelect(id, minVal, maxVal, selectedVal, pad = false) {
+        const select = document.getElementById(id);
+        if (!select) return;
+        select.innerHTML = '';
+        for (let i = minVal; i <= maxVal; i++) {
+            const val = pad ? i.toString().padStart(2, '0') : i.toString();
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.className = 'bg-[#1a202c]';
+            opt.textContent = val;
+            if (val == selectedVal) opt.selected = true;
+            select.appendChild(opt);
+        }
+    }
+
+    // Populate daily selectors
+    populateSelect('single-start-hr', 1, 12, 8);
+    populateSelect('single-start-min', 0, 59, 0, true);
+    populateSelect('single-end-hr', 1, 12, 4);
+    populateSelect('single-end-min', 0, 59, 0, true);
+
+    // Populate batch selectors
+    populateSelect('batch-start-hr', 1, 12, 8);
+    populateSelect('batch-start-min', 0, 59, 0, true);
+    populateSelect('batch-end-hr', 1, 12, 4);
+    populateSelect('batch-end-min', 0, 59, 0, true);
+
+    // ----------------------------------------------------
+    // Tab Switching
+    // ----------------------------------------------------
+    const tabSingle = document.getElementById('tab-single');
+    const tabWeekly = document.getElementById('tab-weekly');
+    const viewSingle = document.getElementById('view-single');
+    const viewWeekly = document.getElementById('view-weekly');
+
+    tabSingle.addEventListener('click', () => {
+        tabSingle.className = 'tab-btn pb-3 text-yellow-500 border-b-2 border-yellow-500 focus:outline-none';
+        tabWeekly.className = 'tab-btn pb-3 text-gray-400 hover:text-gray-200 focus:outline-none';
+        viewSingle.classList.remove('hidden');
+        viewWeekly.classList.add('hidden');
+    });
+
+    tabWeekly.addEventListener('click', () => {
+        tabWeekly.className = 'tab-btn pb-3 text-yellow-500 border-b-2 border-yellow-500 focus:outline-none';
+        tabSingle.className = 'tab-btn pb-3 text-gray-400 hover:text-gray-200 focus:outline-none';
+        viewWeekly.classList.remove('hidden');
+        viewSingle.classList.add('hidden');
+        renderWeekly();
+    });
+
+    // ----------------------------------------------------
+    // 1. Single Day State & Calculation
+    // ----------------------------------------------------
+    let singleBreaks = [
+        { type: 'unpaid', name: 'Lunch', duration: 30 }
+    ];
+
+    const breaksListBody = document.getElementById('breaks-list-body');
+
+    function renderSingleBreaks() {
+        breaksListBody.innerHTML = '';
+        singleBreaks.forEach((brk, index) => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150';
+            row.innerHTML = `
+                <td class="py-1.5 pr-2">
+                    <select data-index="${index}" class="break-type-select w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                        <option value="unpaid" class="bg-[#1a202c]" ${brk.type === 'unpaid' ? 'selected' : ''}>Unpaid Break</option>
+                        <option value="paid" class="bg-[#1a202c]" ${brk.type === 'paid' ? 'selected' : ''}>Paid Break</option>
+                    </select>
+                </td>
+                <td class="py-1.5 pr-2">
+                    <input type="text" value="${brk.name}" data-index="${index}" data-field="name" class="break-name-input w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs" placeholder="e.g. Lunch">
+                </td>
+                <td class="py-1.5 text-center pr-2">
+                    <input type="number" min="0" value="${brk.duration}" data-index="${index}" data-field="duration" class="break-duration-input w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs text-center">
+                </td>
+                <td class="py-1.5 text-center">
+                    <button class="btn-del-break text-red-500 hover:text-red-400 font-bold text-sm px-2" data-index="${index}">
+                        &times;
+                    </button>
+                </td>
+            `;
+            breaksListBody.appendChild(row);
+        });
+
+        // Event Listeners for Breaks
+        document.querySelectorAll('.break-type-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                singleBreaks[idx].type = e.target.value;
+                calculateSingle();
+            });
+        });
+
+        document.querySelectorAll('.break-name-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                singleBreaks[idx].name = e.target.value;
+            });
+        });
+
+        document.querySelectorAll('.break-duration-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                singleBreaks[idx].duration = parseInt(e.target.value) || 0;
+                calculateSingle();
+            });
+        });
+
+        document.querySelectorAll('.btn-del-break').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                singleBreaks.splice(idx, 1);
+                renderSingleBreaks();
+                calculateSingle();
+            });
+        });
+    }
+
+    document.getElementById('btn-add-break').addEventListener('click', () => {
+        singleBreaks.push({ type: 'unpaid', name: 'Coffee Break', duration: 15 });
+        renderSingleBreaks();
+        calculateSingle();
+    });
+
+    // Parsers & Formatters
+    function parseTimeToMins(hr, min, ampm) {
+        let hour = parseInt(hr);
+        if (ampm === 'PM' && hour !== 12) hour += 12;
+        if (ampm === 'AM' && hour === 12) hour = 0;
+        return hour * 60 + parseInt(min);
+    }
+
+    function calculateSingle() {
+        const startHr = document.getElementById('single-start-hr').value;
+        const startMin = document.getElementById('single-start-min').value;
+        const startAmpm = document.getElementById('single-start-ampm').value;
+
+        const endHr = document.getElementById('single-end-hr').value;
+        const endMin = document.getElementById('single-end-min').value;
+        const endAmpm = document.getElementById('single-end-ampm').value;
+
+        const startMins = parseTimeToMins(startHr, startMin, startAmpm);
+        let endMins = parseTimeToMins(endHr, endMin, endAmpm);
+
+        // If end time is before start time, assume shift crossed midnight
+        if (endMins < startMins) {
+            endMins += 24 * 60;
+        }
+
+        const elapsedMins = endMins - startMins;
+
+        let totalPaidBreakMins = 0;
+        let totalUnpaidBreakMins = 0;
+        singleBreaks.forEach(b => {
+            if (b.type === 'paid') totalPaidBreakMins += b.duration;
+            else totalUnpaidBreakMins += b.duration;
+        });
+
+        const netMins = elapsedMins - totalUnpaidBreakMins;
+        const netHrs = Math.max(0, netMins / 60);
+
+        document.getElementById('single-gross-hrs').textContent = `${(elapsedMins / 60).toFixed(2)} hrs`;
+        document.getElementById('single-paid-breaks').textContent = `${totalPaidBreakMins} mins`;
+        document.getElementById('single-unpaid-breaks').textContent = `${totalUnpaidBreakMins} mins`;
+        document.getElementById('single-net-hrs').textContent = `${netHrs.toFixed(2)} hrs`;
+    }
+
+    document.querySelectorAll('.time-select').forEach(sel => {
+        sel.addEventListener('change', calculateSingle);
+    });
+
+    // ----------------------------------------------------
+    // 2. Weekly State & Calculation
+    // ----------------------------------------------------
+    const daysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    let weeklyDays = daysName.map(day => ({
+        day,
+        work: day !== 'Saturday' && day !== 'Sunday',
+        startHr: 8,
+        startMin: '00',
+        startAmpm: 'AM',
+        endHr: 4,
+        endMin: '30',
+        endAmpm: 'PM',
+        unpaidBreak: 30
+    }));
+
+    const weeklyLogBody = document.getElementById('weekly-log-body');
+
+    function renderWeekly() {
+        weeklyLogBody.innerHTML = '';
+        weeklyDays.forEach((day, index) => {
+            const row = document.createElement('tr');
+            row.className = `border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150 ${!day.work ? 'opacity-40' : ''}`;
+            row.innerHTML = `
+                <td class="py-2 text-center">
+                    <input type="checkbox" data-index="${index}" class="weekly-work-chk h-4 w-4 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${day.work ? 'checked' : ''}>
+                </td>
+                <td class="py-2 font-bold text-gray-300">${day.day}</td>
+                <td class="py-1 pr-2">
+                    <div class="flex items-center space-x-1">
+                        <select data-index="${index}" data-field="startHr" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
+                            ${[...Array(12).keys()].map(h => `<option value="${h+1}" class="bg-[#1a202c]" ${day.startHr === h+1 ? 'selected' : ''}>${h+1}</option>`).join('')}
+                        </select>
+                        <span class="text-gray-500">:</span>
+                        <select data-index="${index}" data-field="startMin" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
+                            <!-- 00 to 59 in 5 min steps -->
+                            ${[...Array(12).keys()].map(m => {
+                                const val = (m * 5).toString().padStart(2, '0');
+                                return `<option value="${val}" class="bg-[#1a202c]" ${day.startMin === val ? 'selected' : ''}>${val}</option>`;
+                            }).join('')}
+                        </select>
+                        <select data-index="${index}" data-field="startAmpm" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
+                            <option value="AM" class="bg-[#1a202c]" ${day.startAmpm === 'AM' ? 'selected' : ''}>AM</option>
+                            <option value="PM" class="bg-[#1a202c]" ${day.startAmpm === 'PM' ? 'selected' : ''}>PM</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="py-1 pr-2">
+                    <div class="flex items-center space-x-1">
+                        <select data-index="${index}" data-field="endHr" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
+                            ${[...Array(12).keys()].map(h => `<option value="${h+1}" class="bg-[#1a202c]" ${day.endHr === h+1 ? 'selected' : ''}>${h+1}</option>`).join('')}
+                        </select>
+                        <span class="text-gray-500">:</span>
+                        <select data-index="${index}" data-field="endMin" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
+                            ${[...Array(12).keys()].map(m => {
+                                const val = (m * 5).toString().padStart(2, '0');
+                                return `<option value="${val}" class="bg-[#1a202c]" ${day.endMin === val ? 'selected' : ''}>${val}</option>`;
+                            }).join('')}
+                        </select>
+                        <select data-index="${index}" data-field="endAmpm" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
+                            <option value="AM" class="bg-[#1a202c]" ${day.endAmpm === 'AM' ? 'selected' : ''}>AM</option>
+                            <option value="PM" class="bg-[#1a202c]" ${day.endAmpm === 'PM' ? 'selected' : ''}>PM</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="py-1 text-center pr-2">
+                    <input type="number" min="0" value="${day.unpaidBreak}" data-index="${index}" data-field="unpaidBreak" class="weekly-input w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs text-center" ${!day.work ? 'disabled' : ''}>
+                </td>
+                <td class="py-2 font-mono text-right text-gray-300 font-bold weekly-day-net" data-index="${index}">
+                    0.00 hrs
+                </td>
+            `;
+            weeklyLogBody.appendChild(row);
+        });
+
+        // Event Listeners for Weekly Sheet
+        document.querySelectorAll('.weekly-work-chk').forEach(chk => {
+            chk.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                weeklyDays[idx].work = e.target.checked;
+                renderWeekly();
+                calculateWeekly();
+            });
+        });
+
+        document.querySelectorAll('.weekly-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                const field = e.target.dataset.field;
+                let val = e.target.value;
+                if (field === 'startHr' || field === 'endHr' || field === 'unpaidBreak') {
+                    val = parseInt(val) || 0;
+                }
+                weeklyDays[idx][field] = val;
+                calculateWeekly();
+            });
+        });
+
+        calculateWeekly();
+    }
+
+    // Copy batch daily settings
+    document.getElementById('btn-copy-batch').addEventListener('click', () => {
+        const startHr = parseInt(document.getElementById('batch-start-hr').value);
+        const startMin = document.getElementById('batch-start-min').value;
+        const startAmpm = document.getElementById('batch-start-ampm').value;
+
+        const endHr = parseInt(document.getElementById('batch-end-hr').value);
+        const endMin = document.getElementById('batch-end-min').value;
+        const endAmpm = document.getElementById('batch-end-ampm').value;
+
+        const unpaidBreak = parseInt(document.getElementById('batch-unpaid-break').value) || 0;
+
+        weeklyDays.forEach(day => {
+            if (day.work) {
+                day.startHr = startHr;
+                day.startMin = startMin;
+                day.startAmpm = startAmpm;
+                day.endHr = endHr;
+                day.endMin = endMin;
+                day.endAmpm = endAmpm;
+                day.unpaidBreak = unpaidBreak;
+            }
+        });
+
+        renderWeekly();
+        calculateWeekly();
+    });
+
+    function calculateWeekly() {
+        let weeklyTotalMins = 0;
+        let weeklyTotalBreaks = 0;
+        let activeDays = 0;
+
+        weeklyDays.forEach((day, index) => {
+            const netCell = document.querySelector(`.weekly-day-net[data-index="${index}"]`);
+            if (!day.work) {
+                if (netCell) netCell.textContent = 'Day Off';
+                return;
+            }
+
+            activeDays++;
+            const startMins = parseTimeToMins(day.startHr, day.startMin, day.startAmpm);
+            let endMins = parseTimeToMins(day.endHr, day.endMin, day.endAmpm);
+
+            if (endMins < startMins) {
+                endMins += 24 * 60;
+            }
+
+            const elapsedMins = endMins - startMins;
+            const netMins = elapsedMins - day.unpaidBreak;
+            const netHrs = Math.max(0, netMins / 60);
+
+            weeklyTotalMins += netMins;
+            weeklyTotalBreaks += day.unpaidBreak;
+
+            if (netCell) netCell.textContent = `${netHrs.toFixed(2)} hrs`;
+        });
+
+        const weeklyTotalHrs = Math.max(0, weeklyTotalMins / 60);
+
+        document.getElementById('weekly-days-count').textContent = `${activeDays} days`;
+        document.getElementById('weekly-total-breaks').textContent = `${weeklyTotalBreaks} mins`;
+        document.getElementById('weekly-net-hrs').textContent = `${weeklyTotalHrs.toFixed(2)} hrs`;
+    }
+
+    // Initial setup
+    renderSingleBreaks();
+    calculateSingle();
+});
+</script>

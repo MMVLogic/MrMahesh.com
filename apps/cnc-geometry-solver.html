@@ -96,6 +96,7 @@ permalink: /apps/cnc-geometry-solver/
             <table class="w-full text-left text-xs border-collapse">
                 <thead>
                     <tr class="border-b border-gray-700 text-gray-400">
+                        <th class="pb-2 font-bold w-16 text-center">Move</th>
                         <th class="pb-2 font-bold w-12 text-center">No.</th>
                         <th class="pb-2 font-bold w-44">Point Type</th>
                         <th class="pb-2 font-bold axis-lbl-1">Axis 1</th>
@@ -174,8 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ptsListBody.innerHTML = '';
         points.forEach((pt, index) => {
             const row = document.createElement('tr');
-            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150';
+            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150 cursor-move';
+            row.setAttribute('draggable', 'true');
             row.innerHTML = `
+                <td class="py-2 text-center text-gray-500 font-bold select-none flex items-center justify-center space-x-1 min-w-[70px]">
+                    <span class="drag-handle cursor-grab text-gray-600 active:cursor-grabbing text-sm font-normal">⋮⋮</span>
+                    <button class="btn-move-up text-gray-400 hover:text-yellow-500 font-bold px-0.5" data-index="${index}" title="Move Up">▲</button>
+                    <button class="btn-move-down text-gray-400 hover:text-yellow-500 font-bold px-0.5" data-index="${index}" title="Move Down">▼</button>
+                </td>
                 <td class="py-2 text-center text-gray-500 font-bold">${index + 1}</td>
                 <td class="py-1 pr-2">
                     <select data-index="${index}" class="pt-type-select w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
@@ -213,6 +220,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </td>
             `;
+
+            // HTML5 Drag and Drop events
+            row.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', index);
+                row.classList.add('opacity-40', 'bg-gray-800');
+            });
+            
+            row.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggingRow = document.querySelector('.opacity-40');
+                if (draggingRow && draggingRow !== row) {
+                    const bounding = row.getBoundingClientRect();
+                    const offset = e.clientY - bounding.top - bounding.height / 2;
+                    if (offset < 0) {
+                        row.parentNode.insertBefore(draggingRow, row);
+                    } else {
+                        row.parentNode.insertBefore(draggingRow, row.nextSibling);
+                    }
+                }
+            });
+            
+            row.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const newPoints = [];
+                const rows = ptsListBody.querySelectorAll('tr');
+                rows.forEach(r => {
+                    const selectEl = r.querySelector('.pt-type-select');
+                    if (selectEl) {
+                        const idx = parseInt(selectEl.dataset.index);
+                        newPoints.push(points[idx]);
+                    }
+                });
+                points = newPoints;
+                renderInputs();
+                calculateAndRender();
+            });
+            
+            row.addEventListener('dragend', () => {
+                row.classList.remove('opacity-40', 'bg-gray-800');
+                renderInputs();
+            });
+
             ptsListBody.appendChild(row);
         });
 
@@ -222,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = parseInt(e.target.dataset.index);
                 points[idx].type = e.target.value;
                 renderInputs();
+                calculateAndRender();
             });
         });
 
@@ -231,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const axis = e.target.dataset.axis;
                 const val = parseFloat(e.target.value) || 0;
                 points[idx][axis] = val;
+                calculateAndRender();
             });
         });
 
@@ -240,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const axis = e.target.dataset.axis;
                 points[idx][axis + '_unk'] = e.target.checked;
                 renderInputs();
+                calculateAndRender();
             });
         });
 
@@ -253,6 +305,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 points.splice(idx, 1);
                 renderInputs();
+                calculateAndRender();
+            });
+        });
+
+        // Up/down buttons listeners
+        document.querySelectorAll('.btn-move-up').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(e.currentTarget.dataset.index);
+                if (idx > 0) {
+                    const temp = points[idx];
+                    points[idx] = points[idx - 1];
+                    points[idx - 1] = temp;
+                    renderInputs();
+                    calculateAndRender();
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-move-down').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(e.currentTarget.dataset.index);
+                if (idx < points.length - 1) {
+                    const temp = points[idx];
+                    points[idx] = points[idx + 1];
+                    points[idx + 1] = temp;
+                    renderInputs();
+                    calculateAndRender();
+                }
             });
         });
     }

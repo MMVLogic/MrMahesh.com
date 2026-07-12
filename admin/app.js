@@ -86,7 +86,20 @@ const stringifyFrontmatter = (frontmatter) => {
     return Object.entries(frontmatter).map(([key, value]) => {
         if (Array.isArray(value)) {
             if (value.length === 0) return `${key}: []`;
-            return `${key}:\n` + value.map(val => `  - "${val}"`).join('\n');
+            return `${key}:\n` + value.map(val => {
+                if (typeof val === 'object' && val !== null) {
+                    const indent = '  ';
+                    const lines = Object.entries(val).map(([k, v], idx) => {
+                        const prefix = idx === 0 ? '- ' : '  ';
+                        if (typeof v === 'string') {
+                            return `${indent}${prefix}${k}: "${v}"`;
+                        }
+                        return `${indent}${prefix}${k}: ${v}`;
+                    });
+                    return lines.join('\n');
+                }
+                return `  - "${val}"`;
+            }).join('\n');
         }
         return `${key}: "${value}"`;
     }).join('\n');
@@ -241,7 +254,9 @@ const renderEditor = async (type, filename) => {
 
     let fieldsHTML = '';
     if (type === 'recipes') {
-        const ingredientsText = Array.isArray(frontmatter.ingredients) ? frontmatter.ingredients.join('\n') : '';
+        const ingredientsText = Array.isArray(frontmatter.ingredients) 
+            ? frontmatter.ingredients.map(ing => typeof ing === 'object' && ing !== null ? JSON.stringify(ing) : ing).join('\n') 
+            : '';
         fieldsHTML = `
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -401,7 +416,17 @@ const renderEditor = async (type, filename) => {
             const cook_time = document.getElementById('recipe-cook').value;
             const yields = document.getElementById('recipe-yields').value;
             const ingredientsInput = document.getElementById('recipe-ingredients').value;
-            const ingredients = ingredientsInput.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            const ingredients = ingredientsInput.split('\n').map(line => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('{')) {
+                    try {
+                        return JSON.parse(trimmed);
+                    } catch (e) {
+                        return trimmed;
+                    }
+                }
+                return trimmed;
+            }).filter(line => line !== '');
 
             newFrontmatter = {
                 title,

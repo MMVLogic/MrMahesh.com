@@ -109,9 +109,13 @@ permalink: /apps/hours-worked-calculator/
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
+                    <p class="text-xs text-yellow-500 font-bold">Net Worked Hours</p>
+                    <p id="single-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0h 0m</p>
+                </div>
                 <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
                     <p class="text-xs text-gray-400 font-bold">Total Elapsed Time</p>
-                    <p id="single-gross-hrs" class="text-xl font-bold font-mono text-gray-200 mt-1">0.00 hrs</p>
+                    <p id="single-gross-hrs" class="text-xl font-bold font-mono text-gray-200 mt-1">0h 0m</p>
                 </div>
                 <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
                     <p class="text-xs text-gray-400 font-bold">Total Paid Breaks</p>
@@ -120,10 +124,6 @@ permalink: /apps/hours-worked-calculator/
                 <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
                     <p class="text-xs text-gray-400 font-bold">Total Unpaid Breaks</p>
                     <p id="single-unpaid-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
-                </div>
-                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
-                    <p class="text-xs text-yellow-500 font-bold">Net Worked Hours</p>
-                    <p id="single-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0.00 hrs</p>
                 </div>
             </div>
         </div>
@@ -214,6 +214,10 @@ permalink: /apps/hours-worked-calculator/
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
+                    <p class="text-xs text-yellow-500 font-bold">Total Weekly Net Worked Hours</p>
+                    <p id="weekly-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0h 0m</p>
+                </div>
                 <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
                     <p class="text-xs text-gray-400 font-bold">Days Worked</p>
                     <p id="weekly-days-count" class="text-xl font-bold font-mono text-gray-200 mt-1">0 days</p>
@@ -221,10 +225,6 @@ permalink: /apps/hours-worked-calculator/
                 <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
                     <p class="text-xs text-gray-400 font-bold">Total Weekly Breaks</p>
                     <p id="weekly-total-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
-                </div>
-                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
-                    <p class="text-xs text-yellow-500 font-bold">Total Weekly Net Worked Hours</p>
-                    <p id="weekly-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0.00 hrs</p>
                 </div>
             </div>
         </div>
@@ -373,6 +373,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return hour * 60 + parseInt(min);
     }
 
+    function formatMinsToHoursAndMins(totalMins) {
+        if (totalMins <= 0) return '0h 0m';
+        const hrs = Math.floor(totalMins / 60);
+        const mins = totalMins % 60;
+        if (hrs === 0) return `${mins}m`;
+        if (mins === 0) return `${hrs}h`;
+        return `${hrs}h ${mins}m`;
+    }
+
     function calculateSingle() {
         const startHr = document.getElementById('single-start-hr').value;
         const startMin = document.getElementById('single-start-min').value;
@@ -399,13 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
             else totalUnpaidBreakMins += b.duration;
         });
 
-        const netMins = elapsedMins - totalUnpaidBreakMins;
-        const netHrs = Math.max(0, netMins / 60);
+        const netMins = Math.max(0, elapsedMins - totalUnpaidBreakMins);
 
-        document.getElementById('single-gross-hrs').textContent = `${(elapsedMins / 60).toFixed(2)} hrs`;
+        document.getElementById('single-gross-hrs').textContent = formatMinsToHoursAndMins(elapsedMins);
         document.getElementById('single-paid-breaks').textContent = `${totalPaidBreakMins} mins`;
         document.getElementById('single-unpaid-breaks').textContent = `${totalUnpaidBreakMins} mins`;
-        document.getElementById('single-net-hrs').textContent = `${netHrs.toFixed(2)} hrs`;
+        document.getElementById('single-net-hrs').textContent = formatMinsToHoursAndMins(netMins);
     }
 
     document.querySelectorAll('.time-select').forEach(sel => {
@@ -562,20 +570,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const elapsedMins = endMins - startMins;
-            const netMins = elapsedMins - day.unpaidBreak;
-            const netHrs = Math.max(0, netMins / 60);
+            const netMins = Math.max(0, elapsedMins - day.unpaidBreak);
 
             weeklyTotalMins += netMins;
             weeklyTotalBreaks += day.unpaidBreak;
 
-            if (netCell) netCell.textContent = `${netHrs.toFixed(2)} hrs`;
+            if (netCell) netCell.textContent = formatMinsToHoursAndMins(netMins);
         });
-
-        const weeklyTotalHrs = Math.max(0, weeklyTotalMins / 60);
 
         document.getElementById('weekly-days-count').textContent = `${activeDays} days`;
         document.getElementById('weekly-total-breaks').textContent = `${weeklyTotalBreaks} mins`;
-        document.getElementById('weekly-net-hrs').textContent = `${weeklyTotalHrs.toFixed(2)} hrs`;
+        document.getElementById('weekly-net-hrs').textContent = formatMinsToHoursAndMins(weeklyTotalMins);
     }
 
     // Initial setup

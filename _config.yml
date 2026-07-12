@@ -25,6 +25,10 @@ collections:
   posts:
     output: true
     permalink: /updates/:year/:month/:day/:title/
+  # The 'recipes' collection will contain your favorite recipes.
+  recipes:
+    output: true
+    permalink: /recipes/:path/
   cms:
     output: true
     permalink: /cms/:path/

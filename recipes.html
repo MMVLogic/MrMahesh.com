@@ -1,0 +1,52 @@
+---
+layout: default
+title: Recipes
+permalink: /recipes/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- Header -->
+    <div>
+        <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-4 leading-tight">My Favorite Recipes</h1>
+        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+            A curated collection of delicious, tried-and-tested dishes that I love to cook and share. Easy, clean instructions with interactive checklists.
+        </p>
+    </div>
+
+    <!-- Recipes Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for recipe in site.recipes %}
+        <a href="{{ recipe.url | relative_url }}" class="group block bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 hover:border-yellow-500 hover:bg-[#2d3748] transition-all duration-200">
+            <div class="flex items-start space-x-4">
+                <div class="text-4xl text-yellow-500 group-hover:scale-110 transition-transform duration-200">
+                    🍳
+                </div>
+                <div class="space-y-2 flex-grow">
+                    <h2 class="text-xl font-bold text-gray-100 group-hover:text-yellow-500 transition-colors duration-200">
+                        {{ recipe.title }}
+                    </h2>
+                    <div class="flex flex-wrap gap-3 text-[10px] font-mono text-gray-400">
+                        <span>⏱️ {{ recipe.prep_time }}</span>
+                        <span>🔥 {{ recipe.cook_time }}</span>
+                        <span>🍽️ {{ recipe.yields }}</span>
+                    </div>
+                    {% if recipe.description %}
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        {{ recipe.description }}
+                    </p>
+                    {% endif %}
+                    <span class="inline-flex items-center text-xs font-bold text-yellow-500 group-hover:underline">
+                        View Recipe &rarr;
+                    </span>
+                </div>
+            </div>
+        </a>
+        {% else %}
+        <div class="col-span-2 bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+            <p class="text-center text-gray-400">No recipes added yet. Check back soon!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>

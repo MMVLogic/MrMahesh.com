@@ -35,6 +35,7 @@ if (!JWT_SECRET) {
 const contentDir = path.join(__dirname, '..');
 const projectsDir = path.join(contentDir, '_projects');
 const postsDir = path.join(contentDir, '_posts');
+const recipesDir = path.join(contentDir, '_recipes');
 const layoutsDir = path.join(contentDir, '_layouts');
 
 // --- Middleware ---
@@ -175,9 +176,11 @@ app.get('/api/content', authMiddleware, async (req, res) => {
   try {
     const projects = await fs.readdir(projectsDir);
     const posts = await fs.readdir(postsDir);
+    const recipes = await fs.exists(recipesDir) ? await fs.readdir(recipesDir) : [];
     res.json({
       projects: projects.filter(p => p.endsWith('.md')),
       posts: posts.filter(p => p.endsWith('.md')),
+      recipes: recipes.filter(r => r.endsWith('.md')),
     });
   } catch (error) {
     res.status(500).json({ message: 'Error reading content directories', error: error.message, stack: error.stack });
@@ -187,7 +190,11 @@ app.get('/api/content', authMiddleware, async (req, res) => {
 // --- Get single content item ---
 app.get('/api/content/:type/:filename', authMiddleware, async (req, res) => {
     const { type, filename } = req.params;
-    const dir = type === 'projects' ? projectsDir : postsDir;
+    let dir;
+    if (type === 'projects') dir = projectsDir;
+    else if (type === 'posts') dir = postsDir;
+    else if (type === 'recipes') dir = recipesDir;
+    else return res.status(400).json({ message: 'Invalid content type' });
     const filePath = path.join(dir, filename);
 
     try {
@@ -202,7 +209,11 @@ app.get('/api/content/:type/:filename', authMiddleware, async (req, res) => {
 app.post('/api/content/:type', authMiddleware, async (req, res) => {
     const { type } = req.params;
     const { filename, content } = req.body;
-    const dir = type === 'projects' ? projectsDir : postsDir;
+    let dir;
+    if (type === 'projects') dir = projectsDir;
+    else if (type === 'posts') dir = postsDir;
+    else if (type === 'recipes') dir = recipesDir;
+    else return res.status(400).json({ message: 'Invalid content type' });
     const filePath = path.join(dir, filename);
 
     try {
@@ -216,7 +227,11 @@ app.post('/api/content/:type', authMiddleware, async (req, res) => {
 // --- Delete content item ---
 app.delete('/api/content/:type/:filename', authMiddleware, async (req, res) => {
     const { type, filename } = req.params;
-    const dir = type === 'projects' ? projectsDir : postsDir;
+    let dir;
+    if (type === 'projects') dir = projectsDir;
+    else if (type === 'posts') dir = postsDir;
+    else if (type === 'recipes') dir = recipesDir;
+    else return res.status(400).json({ message: 'Invalid content type' });
     const filePath = path.join(dir, filename);
 
     try {

@@ -1,0 +1,98 @@
+---
+layout: default
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- Recipe Header -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+            <div>
+                <a href="/recipes/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">
+                    &lt; Back to Recipes
+                </a>
+                <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-2">{{ page.title }}</h1>
+            </div>
+            <!-- Metadata pill -->
+            <div class="flex flex-wrap gap-4 text-xs font-mono text-gray-300 bg-gray-800/60 p-3 rounded-lg border border-gray-700">
+                <div>⏱️ <span class="text-gray-400">Prep:</span> <span class="font-bold text-yellow-500">{{ page.prep_time }}</span></div>
+                <div>🔥 <span class="text-gray-400">Cook:</span> <span class="font-bold text-yellow-500">{{ page.cook_time }}</span></div>
+                <div>🍽️ <span class="text-gray-400">Yields:</span> <span class="font-bold text-yellow-500">{{ page.yields }}</span></div>
+            </div>
+        </div>
+        {% if page.description %}
+            <p class="text-sm text-gray-300 leading-relaxed italic border-l-2 border-yellow-500 pl-3">
+                {{ page.description }}
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Ingredients column -->
+        <div class="lg:col-span-1 bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 h-fit space-y-4">
+            <h2 class="text-xl font-bold text-yellow-500 border-b border-dashed border-gray-600 pb-2">
+                🛒 Ingredients
+            </h2>
+            <p class="text-[10px] text-gray-500 italic">Check items off as you prep/cook</p>
+            <ul class="space-y-3">
+                {% for ingredient in page.ingredients %}
+                    <li class="flex items-start text-sm text-gray-300 cursor-pointer select-none group">
+                        <input type="checkbox" class="ingredient-checkbox mt-1 h-4 w-4 bg-gray-700 border-gray-600 text-yellow-500 rounded focus:ring-0 cursor-pointer">
+                        <span class="ml-3 group-hover:text-white transition-colors duration-150 ingredient-text">{{ ingredient }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Instructions column -->
+        <div class="lg:col-span-2 bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
+            <h2 class="text-xl font-bold text-yellow-500 border-b border-dashed border-gray-600 pb-2 mb-6">
+                🍳 Preparation & Cooking
+            </h2>
+            <article class="prose prose-invert max-w-none text-gray-300 prose-h3:text-yellow-500 prose-h3:mt-6 prose-h3:mb-2 prose-h4:text-gray-200 prose-h4:font-bold prose-h4:mt-4 prose-h4:mb-1 prose-a:text-yellow-500 hover:prose-a:underline">
+                {{ content }}
+            </article>
+        </div>
+    </div>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-8 text-sm font-bold">
+        {% if page.previous %}
+            <a href="{{ page.previous.url | relative_url }}" class="px-4 py-2 rounded-full border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-[#1f2937] transition-all duration-300">&larr; Previous Recipe</a>
+        {% else %}
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">&larr; Previous Recipe</span>
+        {% endif %}
+
+        {% if page.next %}
+            <a href="{{ page.next.url | relative_url }}" class="px-4 py-2 rounded-full border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-[#1f2937] transition-all duration-300">Next Recipe &rarr;</a>
+        {% else %}
+            <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">Next Recipe &rarr;</span>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Interactive checkboxes logic
+    document.querySelectorAll('.ingredient-checkbox').forEach(chk => {
+        const textSpan = chk.nextElementSibling;
+        
+        chk.addEventListener('change', () => {
+            if (chk.checked) {
+                textSpan.classList.add('line-through', 'text-gray-500');
+            } else {
+                textSpan.classList.remove('line-through', 'text-gray-500');
+            }
+        });
+
+        // Click on list item to toggle check
+        chk.parentElement.addEventListener('click', (e) => {
+            if (e.target !== chk) {
+                chk.checked = !chk.checked;
+                chk.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+});
+</script>

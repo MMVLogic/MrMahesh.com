@@ -52,5 +52,9 @@ exclude:
   - admin
   - custom-cms
 
+# Donation Settings
+stripe_donation_url: "https://donate.stripe.com/placeholder"
+paypal_me_username: "placeholder"
+
 kramdown:
   hard_wrap: true

@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td class="py-2 text-center text-gray-500 font-bold">${index + 1}</td>
                 <td class="py-1 pr-2">
-                    <select data-index="${index}" class="pt-type-select w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                    <select data-index="${index}" class="pt-type-select min-w-[130px] w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
                         <option value="standard" class="bg-[#1a202c]" ${pt.type === 'standard' ? 'selected' : ''}>Standard Point</option>
                         <option value="tangent" class="bg-[#1a202c]" ${pt.type === 'tangent' ? 'selected' : ''}>Tangent Point</option>
                         <option value="ip" class="bg-[#1a202c]" ${pt.type === 'ip' ? 'selected' : ''}>IP Point (Corner)</option>
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="py-1 pr-2">
                     <div class="flex items-center space-x-1">
                         <input type="number" step="any" value="${pt.x}" data-index="${index}" data-axis="x" ${pt.x_unk ? 'disabled value="" placeholder="?"' : ''}
-                               class="w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                                class="min-w-[70px] w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
                         <label class="inline-flex items-center text-[10px] text-gray-400 cursor-pointer">
                             <input type="checkbox" data-index="${index}" data-axis="x" class="chk-unk h-3 w-3 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${pt.x_unk ? 'checked' : ''}>
                             <span class="ml-0.5 text-gray-500">Unk</span>
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="py-1 pr-2">
                     <div class="flex items-center space-x-1">
                         <input type="number" step="any" value="${pt.y}" data-index="${index}" data-axis="y" ${pt.y_unk ? 'disabled value="" placeholder="?"' : ''}
-                               class="w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                                class="min-w-[70px] w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 focus:outline-none focus:border-yellow-500 font-mono text-xs">
                         <label class="inline-flex items-center text-[10px] text-gray-400 cursor-pointer">
                             <input type="checkbox" data-index="${index}" data-axis="y" class="chk-unk h-3 w-3 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${pt.y_unk ? 'checked' : ''}>
                             <span class="ml-0.5 text-gray-500">Unk</span>
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </td>
                 <td class="py-1 text-center pr-2">
-                    <input type="number" step="any" min="0" value="${pt.r}" data-index="${index}" data-axis="r" ${pt.type !== 'ip' ? 'disabled class="opacity-10 w-full bg-transparent border-b border-transparent text-gray-500 px-1 py-1 text-center text-xs"' : 'class="w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 text-center text-xs"'} >
+                    <input type="number" step="any" min="0" value="${pt.r}" data-index="${index}" data-axis="r" ${pt.type !== 'ip' ? 'disabled class="opacity-10 min-w-[50px] w-full bg-transparent border-b border-transparent text-gray-500 px-1 py-1 text-center text-xs"' : 'class="min-w-[50px] w-full bg-transparent border-b border-gray-700 text-gray-100 px-1 py-1 text-center text-xs"'} >
                 </td>
                 <td class="py-1 text-center">
                     <button class="btn-del text-red-500 hover:text-red-400 font-bold text-sm px-2" data-index="${index}">

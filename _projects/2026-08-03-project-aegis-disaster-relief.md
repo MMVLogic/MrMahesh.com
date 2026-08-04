@@ -54,3 +54,8 @@ When field operators paste a raw, unstructured transcription or manifest, the lo
 The application features a clean, high-impact **Streamlit** dashboard designed for chaotic field environments. It displays system telemetry (e.g., local system memory overhead, showing execution limits like `1.8 GB / 4.0 GB`), active routing vectors, and the global supply dispatch ledger.
 
 By proving that generative models can be run successfully at the offline edge, Project Aegis establishes a secure, zero-network blueprint for global humanitarian crisis management.
+
+---
+
+## **GitHub Repository**
+* View the source code and configuration details on GitHub: [MMVLogic/project-aegis](https://github.com/MMVLogic/project-aegis)

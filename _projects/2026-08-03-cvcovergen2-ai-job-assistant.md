@@ -79,3 +79,8 @@ The pipeline runs sequentially to ensure zero manual copying or data entry:
 By automating the tailoring process, CVCoverGen2 saves hours of repetitive copywriting while ensuring that my applications directly address the specific requirements of every job. 
 
 Crucially, because the instructions are stored separately in `inst.txt`, I can constantly refine the writing style, prompt formats, and ATS target keywords without changing a single line of Python code. It is a highly efficient, lightweight DevOps approach to the job search.
+
+---
+
+## **GitHub Repository**
+* View the source code and configuration details on GitHub: [MMVLogic/CVCoverGen2](https://github.com/MMVLogic/CVCoverGen2)

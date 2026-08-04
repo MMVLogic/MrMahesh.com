@@ -73,3 +73,8 @@ The application is implemented as a production-ready API and dashboard:
 ## **Key Takeaways**
 
 SENTINEL proves that AI security doesn't require slow or expensive setups. By combining lightweight local machine learning models for the initial gatekeeping with advanced generative LLMs for threat analysis, we achieve immediate, high-fidelity security guardrails with minimal resource overhead.
+
+---
+
+## **GitHub Repository**
+* View the source code and configuration details on GitHub: [MMVLogic/SENTINEL](https://github.com/MMVLogic/SENTINEL)

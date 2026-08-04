@@ -79,3 +79,8 @@ The system features a reactive local dashboard built with **Streamlit**:
 *   **Leakage Analyzer:** Highlights discrepancies in red, warning operators of custom tax code mismatch or weight leakage.
 
 By anchoring AI document parsing to rigorous mathematical data structures, LogiKeep AI delivers absolute, audit-grade precision for global shipping compliance.
+
+---
+
+## **GitHub Repository**
+* View the source code and configuration details on GitHub: [MMVLogic/MMLogicInt](https://github.com/MMVLogic/MMLogicInt)

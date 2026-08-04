@@ -38,7 +38,7 @@ collections:
 pagination:
   enabled: true
   per_page: 3 # Number of posts to show per page
-  permalink: '/projects/page/:num/' # The URL structure for paginated pages
+  permalink: '/page/:num/' # The URL structure for paginated pages
   collection: 'projects' # The collection to paginate
   sort_field: 'date'
   sort_reverse: true

@@ -29,6 +29,9 @@ collections:
   recipes:
     output: true
     permalink: /recipes/:path/
+  guides:
+    output: true
+    permalink: /learnwithme/:path/
   cms:
     output: true
     permalink: /cms/:path/

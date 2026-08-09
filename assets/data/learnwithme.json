@@ -1,0 +1,23 @@
+---
+layout: null
+permalink: /assets/data/learnwithme.json
+---
+[
+  {% assign published_guides = site.guides | where: "status", "Published" %}
+  {% for guide in published_guides %}
+  {
+    "id": "{{ guide.slug }}",
+    "title": {{ guide.title | jsonify }},
+    "category": {{ guide.category | default: "DevOps" | jsonify }},
+    "tags": {{ guide.tags | jsonify }},
+    "date": "{{ guide.date | date: '%Y-%m-%d' }}",
+    "status": {{ guide.status | jsonify }},
+    "concept": {{ guide.concept | default: "" | jsonify }},
+    "reasoning": {{ guide.reasoning | default: "" | jsonify }},
+    "how": {{ guide.how | default: "" | jsonify }},
+    "content": {{ guide.content | jsonify }},
+    "challenge": {{ guide.challenge | jsonify }},
+    "answer": {{ guide.answer | jsonify }}
+  }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]

@@ -1,0 +1,286 @@
+---
+layout: default
+title: Learn With Me
+permalink: /learnwithme/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- Header & Statistics Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-gray-700 pb-6">
+        <div>
+            <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-2 leading-tight">Learn With Me</h1>
+            <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+                An open-source interactive knowledge base detailing the **Why, When, and How** behind my coding, devops, and system architecture tasks.
+            </p>
+        </div>
+        <!-- Stats widget -->
+        <div class="bg-[#1a202c] p-4 rounded-xl border border-gray-700 font-mono text-xs text-gray-400 space-y-1.5 min-w-[200px]">
+            <p class="text-yellow-500 font-bold border-b border-gray-800 pb-1 mb-1">&gt; SYSTEM_STATUS_</p>
+            <p>• total_lessons: <span id="stat-count" class="text-[#2ecc71] font-bold">0</span></p>
+            <p>• sync_type: <span class="text-[#3498db]">Jamstack JSON</span></p>
+            <p>• last_sync: <span class="text-orange-500">Live Load</span></p>
+        </div>
+    </div>
+
+    <!-- Search & Filters Toolbar -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600 space-y-4">
+        <!-- Search -->
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-yellow-500 font-bold font-mono select-none">
+                $ search_
+            </span>
+            <input type="text" id="search-bar" 
+                   class="w-full bg-[#111827] border border-gray-700 rounded-lg pl-24 pr-4 py-3 text-sm font-mono text-gray-200 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all duration-200" 
+                   placeholder="type terms (e.g. ssh, docker)...">
+        </div>
+
+        <!-- Filter Tags -->
+        <div class="flex flex-wrap gap-2 items-center text-xs font-mono">
+            <span class="text-gray-400 font-bold mr-1">Filter by category:</span>
+            <button class="filter-btn active px-3 py-1 rounded bg-yellow-500 text-[#1f2937] font-bold transition-all duration-200" data-category="All">All</button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="DevOps">DevOps</button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="CNC & Math">CNC & Math</button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Homelab">Homelab</button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Cybersecurity">Cybersecurity</button>
+        </div>
+    </div>
+
+    <!-- Feed Container -->
+    <div id="learning-feed" class="space-y-8">
+        <!-- Rendered dynamically via JS -->
+        <div class="text-center py-12 text-gray-400">Loading lessons...</div>
+    </div>
+
+</div>
+
+<!-- Interactive Engine Logic -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const feed = document.getElementById('learning-feed');
+    const searchBar = document.getElementById('search-bar');
+    const statCount = document.getElementById('stat-count');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    let allLessons = [];
+    let currentFilter = 'All';
+    let currentQuery = '';
+
+    // Fetch seed data
+    fetch('/assets/data/learnwithme.json')
+        .then(res => res.json())
+        .then(data => {
+            allLessons = data;
+            statCount.textContent = allLessons.length;
+            filterAndRender();
+        })
+        .catch(err => {
+            console.error("Failed to load learning data:", err);
+            feed.innerHTML = `
+                <div class="bg-[#1a202c] p-6 rounded-xl border border-red-500 text-center space-y-2">
+                    <p class="text-red-500 font-bold">⚠️ Failed to Load Database</p>
+                    <p class="text-xs text-gray-400">Please verify that /assets/data/learnwithme.json exists and is structured correctly.</p>
+                </div>
+            `;
+        });
+
+    // Filtering handler
+    function filterAndRender() {
+        const filtered = allLessons.filter(lesson => {
+            const matchesCategory = currentFilter === 'All' || lesson.category === currentFilter;
+            const matchesSearch = currentQuery === '' || 
+                lesson.title.toLowerCase().includes(currentQuery) ||
+                lesson.concept.toLowerCase().includes(currentQuery) ||
+                lesson.how.toLowerCase().includes(currentQuery) ||
+                lesson.tags.some(tag => tag.toLowerCase().includes(currentQuery));
+            return matchesCategory && matchesSearch;
+        });
+
+        renderFeed(filtered);
+    }
+
+    // Render loop
+    function renderFeed(lessons) {
+        if (lessons.length === 0) {
+            feed.innerHTML = `
+                <div class="bg-[#1a202c] p-8 rounded-xl border-2 border-dashed border-gray-700 text-center">
+                    <p class="text-gray-400 font-mono text-sm">&gt; NO_RECORDS_FOUND_</p>
+                </div>
+            `;
+            return;
+        }
+
+        feed.innerHTML = lessons.map(lesson => {
+            const tagsHtml = (lesson.tags || []).map(tag => `
+                <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 hover:text-gray-300 text-[10px] font-mono border border-gray-700">
+                    #${tag}
+                </span>
+            `).join('');
+
+            let conceptText = lesson.concept || '';
+            let reasoningText = lesson.reasoning || '';
+            let howText = lesson.how || '';
+
+            if ((!conceptText || !reasoningText || !howText) && lesson.content) {
+                const whyMatch = lesson.content.match(/###\s*(?:💡\s*)?WHY[\s\S]*?(?=###|$)/i);
+                const decisionMatch = lesson.content.match(/###\s*(?:⚖️\s*)?THE LOGICAL DECISION[\s\S]*?(?=###|$)/i);
+                const howMatch = lesson.content.match(/###\s*(?:⚙️\s*)?HOW[\s\S]*?(?=###|$)/i);
+
+                if (whyMatch && !conceptText) {
+                    conceptText = whyMatch[0].replace(/###\s*(?:💡\s*)?WHY.*?\n/, '').trim();
+                }
+                if (decisionMatch && !reasoningText) {
+                    reasoningText = decisionMatch[0].replace(/###\s*(?:⚖️\s*)?THE LOGICAL DECISION.*?\n/, '').trim();
+                }
+                if (howMatch && !howText) {
+                    howText = howMatch[0].replace(/###\s*(?:⚙️\s*)?HOW.*?\n/, '').trim();
+                }
+                if (!conceptText && !reasoningText && !howText) {
+                    conceptText = lesson.content;
+                }
+            }
+
+            // Clean string formatting helper for HTML presentation
+            const formatMarkdown = (text) => {
+                if (!text) return '';
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code class="bg-[#1f2937] text-orange-400 px-1 rounded font-mono text-xs">$1</code>')
+                    .replace(/\n/g, '<br>');
+            };
+
+            return `
+                <article class="bg-[#1a202c] rounded-xl border border-gray-700 shadow-xl overflow-hidden hover:border-yellow-500 transition-all duration-300">
+                    
+                    <!-- Card Header -->
+                    <div class="bg-[#243346] px-6 py-4 border-b border-gray-700 flex flex-wrap justify-between items-center gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-yellow-500 text-[#1f2937] text-[10px] font-bold font-mono">
+                                    ${lesson.category || 'DevOps'}
+                                </span>
+                                <span class="text-xs text-gray-400 font-mono">${lesson.date}</span>
+                            </div>
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-100 font-mono tracking-tight">${lesson.title}</h2>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">${tagsHtml}</div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6 space-y-6">
+                        
+                        <!-- Columns Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            
+                            <!-- Column 1: The WHY & WHEN -->
+                            <div class="space-y-6">
+                                <div class="space-y-2">
+                                    <h3 class="text-sm font-bold text-[#3498db] font-mono border-b border-gray-800 pb-1 flex items-center">
+                                        <span class="mr-1.5">💡</span> WHY (The Concept)
+                                    </h3>
+                                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                                        ${formatMarkdown(conceptText)}
+                                    </p>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="text-sm font-bold text-[#2ecc71] font-mono border-b border-gray-800 pb-1 flex items-center">
+                                        <span class="mr-1.5">⚖️</span> THE LOGICAL DECISION
+                                    </h3>
+                                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                                        ${formatMarkdown(reasoningText)}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: The HOW (Implementation) -->
+                            <div class="space-y-2 lg:border-l lg:border-gray-800 lg:pl-6">
+                                <h3 class="text-sm font-bold text-orange-400 font-mono border-b border-gray-800 pb-1 flex items-center">
+                                    <span class="mr-1.5">⚙️</span> HOW (Implementation Code)
+                                </h3>
+                                <div class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                                    <div class="how-md font-mono">${howText.includes('```') ? renderCodeBlock(howText) : formatMarkdown(howText)}</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Active Recall Challenge Accordion -->
+                        <div class="border border-gray-800 rounded-lg overflow-hidden mt-4">
+                            <button onclick="toggleRecall('${lesson.id}')"
+                                    class="w-full bg-[#111827] px-4 py-3 flex justify-between items-center text-xs md:text-sm font-mono text-yellow-500 hover:bg-gray-800 focus:outline-none transition-colors duration-200">
+                                <span>🧠 ACTIVE_RECALL_CHALLENGE (Test Your Knowledge)</span>
+                                <span id="icon-${lesson.id}">[+] Expand</span>
+                            </button>
+                            <div id="recall-${lesson.id}" class="hidden bg-[#111827] border-t border-gray-800 p-4 space-y-4 text-xs md:text-sm">
+                                <p class="text-gray-300 leading-relaxed">${formatMarkdown(lesson.challenge)}</p>
+                                
+                                <button onclick="toggleAnswer('${lesson.id}')"
+                                        class="px-3 py-1.5 bg-yellow-500 text-[#1f2937] font-bold rounded font-mono hover:bg-yellow-400 transition-colors duration-200">
+                                    Reveal Solution
+                                </button>
+                                
+                                <div id="answer-${lesson.id}" class="hidden p-3 bg-gray-900 border-l-4 border-[#2ecc71] font-mono text-gray-300">
+                                    ${formatMarkdown(lesson.answer)}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </article>
+            `;
+        }).join('');
+    }
+
+    // Helper to render code blocks
+    function renderCodeBlock(text) {
+        // Simple parser to extract code block contents
+        return text.replace(/```(bash|yaml|javascript|json)?([\s\S]*?)```/g, (match, lang, code) => {
+            return `
+                <pre class="bg-gray-900 border border-gray-800 rounded-lg p-3 overflow-x-auto text-[11px] md:text-xs text-green-400 font-mono my-2 select-all"><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            `;
+        }).replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
+          .replace(/`(.*?)`/g, '<code class="bg-gray-900 text-orange-400 px-1 rounded font-mono">$1</code>');
+    }
+
+    // Input handlers
+    searchBar.addEventListener('input', (e) => {
+        currentQuery = e.target.value.toLowerCase().trim();
+        filterAndRender();
+    });
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => {
+                b.classList.remove('active', 'bg-yellow-500', 'text-[#1f2937]');
+                b.classList.add('bg-[#2c3e50]', 'text-gray-300');
+            });
+            btn.classList.add('active', 'bg-yellow-500', 'text-[#1f2937]');
+            btn.classList.remove('bg-[#2c3e50]', 'text-gray-300');
+            
+            currentFilter = btn.getAttribute('data-category');
+            filterAndRender();
+        });
+    });
+});
+
+// Toggle Recall Container
+function toggleRecall(id) {
+    const container = document.getElementById(`recall-${id}`);
+    const icon = document.getElementById(`icon-${id}`);
+    if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        icon.textContent = '[-] Collapse';
+    } else {
+        container.classList.add('hidden');
+        icon.textContent = '[+] Expand';
+        document.getElementById(`answer-${id}`).classList.add('hidden'); // auto-collapse solution too
+    }
+}
+
+// Toggle Solution Box
+function toggleAnswer(id) {
+    const box = document.getElementById(`answer-${id}`);
+    box.classList.toggle('hidden');
+}
+</script>

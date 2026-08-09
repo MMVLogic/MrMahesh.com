@@ -5,7 +5,15 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
 const path = require('path');
-const { marked } = require('marked');
+let marked;
+(async () => {
+  try {
+    const m = await import('marked');
+    marked = m.marked || m.default;
+  } catch (err) {
+    console.error('Failed to load marked:', err);
+  }
+})();
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcrypt');
@@ -15,7 +23,14 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4000'],
+  origin: [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:4000',
+    'https://cms.mrmahesh.com',
+    'http://cms.mrmahesh.com',
+    'https://mrmahesh.com'
+  ],
   credentials: true,
 }));
 
@@ -32,10 +47,11 @@ if (!JWT_SECRET) {
 
 
 
-const contentDir = path.join(__dirname, '..');
+const contentDir = process.env.CONTENT_DIR || path.join(__dirname, '..');
 const projectsDir = path.join(contentDir, '_projects');
 const postsDir = path.join(contentDir, '_posts');
 const recipesDir = path.join(contentDir, '_recipes');
+const guidesDir = path.join(contentDir, '_guides');
 const layoutsDir = path.join(contentDir, '_layouts');
 
 // --- Middleware ---
@@ -46,7 +62,16 @@ app.use(
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
         'style-src': ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
-        'connect-src': ["'self'", 'https://cdn.jsdelivr.net', 'http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4000'],
+        'connect-src': [
+          "'self'",
+          'https://cdn.jsdelivr.net',
+          'http://localhost:3000',
+          'http://127.0.0.1:3000',
+          'http://localhost:4000',
+          'https://cms.mrmahesh.com',
+          'http://cms.mrmahesh.com',
+          'https://mrmahesh.com'
+        ],
       },
     },
   })
@@ -174,13 +199,15 @@ app.get('/api/layouts', authMiddleware, async (req, res) => {
 // --- Get all content ---
 app.get('/api/content', authMiddleware, async (req, res) => {
   try {
-    const projects = await fs.readdir(projectsDir);
-    const posts = await fs.readdir(postsDir);
+    const projects = await fs.exists(projectsDir) ? await fs.readdir(projectsDir) : [];
+    const posts = await fs.exists(postsDir) ? await fs.readdir(postsDir) : [];
     const recipes = await fs.exists(recipesDir) ? await fs.readdir(recipesDir) : [];
+    const guides = await fs.exists(guidesDir) ? await fs.readdir(guidesDir) : [];
     res.json({
       projects: projects.filter(p => p.endsWith('.md')),
       posts: posts.filter(p => p.endsWith('.md')),
       recipes: recipes.filter(r => r.endsWith('.md')),
+      guides: guides.filter(g => g.endsWith('.md')),
     });
   } catch (error) {
     res.status(500).json({ message: 'Error reading content directories', error: error.message, stack: error.stack });
@@ -194,6 +221,7 @@ app.get('/api/content/:type/:filename', authMiddleware, async (req, res) => {
     if (type === 'projects') dir = projectsDir;
     else if (type === 'posts') dir = postsDir;
     else if (type === 'recipes') dir = recipesDir;
+    else if (type === 'guides') dir = guidesDir;
     else return res.status(400).json({ message: 'Invalid content type' });
     const filePath = path.join(dir, filename);
 
@@ -213,6 +241,7 @@ app.post('/api/content/:type', authMiddleware, async (req, res) => {
     if (type === 'projects') dir = projectsDir;
     else if (type === 'posts') dir = postsDir;
     else if (type === 'recipes') dir = recipesDir;
+    else if (type === 'guides') dir = guidesDir;
     else return res.status(400).json({ message: 'Invalid content type' });
     const filePath = path.join(dir, filename);
 
@@ -231,6 +260,7 @@ app.delete('/api/content/:type/:filename', authMiddleware, async (req, res) => {
     if (type === 'projects') dir = projectsDir;
     else if (type === 'posts') dir = postsDir;
     else if (type === 'recipes') dir = recipesDir;
+    else if (type === 'guides') dir = guidesDir;
     else return res.status(400).json({ message: 'Invalid content type' });
     const filePath = path.join(dir, filename);
 
@@ -243,12 +273,16 @@ app.delete('/api/content/:type/:filename', authMiddleware, async (req, res) => {
 });
 
 // --- Markdown Preview ---
-app.post('/api/preview', authMiddleware, (req, res) => {
+app.post('/api/preview', authMiddleware, async (req, res) => {
     const { markdown } = req.body;
     if (typeof markdown !== 'string') {
         return res.status(400).json({ message: 'Invalid Markdown content' });
     }
-    const html = marked(markdown);
+    if (!marked) {
+        const m = await import('marked');
+        marked = m.marked || m.default;
+    }
+    const html = (marked && marked.parse) ? marked.parse(markdown) : (typeof marked === 'function' ? marked(markdown) : markdown);
     res.json({ html });
 });
 

@@ -1,3 +1,237 @@
+:root {
+  --bg-dark: #030712;
+  --card-bg: rgba(17, 24, 39, 0.75);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(99, 102, 241, 0.4);
+  --accent-primary: #6366f1;
+  --accent-hover: #4f46e5;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --preview-bg: #0b0f19;
+  --input-bg: #0f172a;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 45%);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 1040px;
+}
+
+/* Glassmorphic Cards */
+.card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  color: var(--text-main);
+}
+
+.card-title {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+  background-color: #131d33 !important;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+/* Textarea / Markdown Editor */
+textarea.form-control {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  min-height: 380px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* Preview Pane */
+.preview-pane, #preview {
+  background-color: var(--preview-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: 250px;
+  color: var(--text-main);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#preview h1, #preview h2, #preview h3 {
+  color: #fff;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.3rem;
+}
+
+#preview code {
+  background: rgba(255, 255, 255, 0.08);
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+#preview pre {
+  background: #030712;
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+#preview pre code {
+  background: transparent;
+  padding: 0;
+}
+
+#preview a {
+  color: #818cf8;
+  text-decoration: underline;
+}
+
+#preview blockquote {
+  border-left: 3px solid var(--accent-primary);
+  padding-left: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* List Groups */
+.list-group-item {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  border-radius: 12px !important;
+  transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border-color: var(--border-hover) !important;
+  transform: translateX(4px);
+}
+
+.list-group-item a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.list-group-item a:hover {
+  color: #818cf8;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%) !important;
+  border: none !important;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 10px 18px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 8px 16px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #dc2626 !important;
+  color: #fff !important;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  border-radius: 10px;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Badges */
+.badge.bg-secondary {
+  background-color: rgba(99, 102, 241, 0.2) !important;
+  border: 1px solid rgba(99, 102, 241, 0.35) !important;
+  color: #c7d2fe !important;
+  padding: 6px 10px;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+h3 {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+
 figure {
   margin: 0 5%;
   text-align: center;
@@ -7,41 +241,11 @@ figure img {
   width: 100%;
   height: auto;
   display: block;
+  border-radius: 8px;
 }
 
 figure figcaption {
-  /* This makes the text italics */
   font-style: italic !important;
-  /* Optional: Adds a little space between image and text */
+  color: var(--text-muted);
   margin-top: 8px;
 }
-
-body {
-  background-color: #f8f9fa;
-}
-
-#app {
-  max-width: 960px;
-}
-
-.list-group-item {
-  cursor: pointer;
-}
-
-.list-group-item:hover {
-  background-color: #e9ecef;
-}
-
-textarea {
-  font-family: monospace;
-  min-height: 400px;
-}
-
-.preview-pane {
-  background-color: #fff;
-  border: 1px solid #ced4da;
-  padding: 1rem;
-  min-height: 400px;
-}
-
-/*# sourceMappingURL=style.css.map */

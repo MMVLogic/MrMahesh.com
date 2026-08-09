@@ -150,12 +150,12 @@ const renderDashboard = (content) => {
             <button id="logout-btn" class="btn btn-danger">Logout</button>
         </div>
         <div class="row">
-            <div class="col-md-4 mb-4">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h3>Homelab Reports (_projects)</h3>
+                        <h3>Homelab (_projects)</h3>
                         <div class="list-group mb-3" id="projects-list" style="max-height: 400px; overflow-y: auto;">
-                            ${content.projects.map(p => `
+                            ${(content.projects || []).map(p => `
                                 <div class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="#" data-type="projects" data-filename="${p}">${p}</a>
                                     <button class="btn btn-danger btn-sm delete-btn" data-type="projects" data-filename="${p}">Delete</button>
@@ -166,12 +166,12 @@ const renderDashboard = (content) => {
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h3>Weekly Updates (_posts)</h3>
+                        <h3>Updates (_posts)</h3>
                         <div class="list-group mb-3" id="posts-list" style="max-height: 400px; overflow-y: auto;">
-                            ${content.posts.map(p => `
+                            ${(content.posts || []).map(p => `
                                 <div class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="#" data-type="posts" data-filename="${p}">${p}</a>
                                     <button class="btn btn-danger btn-sm delete-btn" data-type="posts" data-filename="${p}">Delete</button>
@@ -182,7 +182,7 @@ const renderDashboard = (content) => {
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
                         <h3>Recipes (_recipes)</h3>
@@ -195,6 +195,22 @@ const renderDashboard = (content) => {
                             `).join('')}
                         </div>
                         <button class="btn btn-success w-100" id="new-recipe-btn">New Recipe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-warning">
+                    <div class="card-body">
+                        <h3 class="text-warning">Guides (_guides)</h3>
+                        <div class="list-group mb-3" id="guides-list" style="max-height: 400px; overflow-y: auto;">
+                            ${(content.guides || []).map(g => `
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="#" data-type="guides" data-filename="${g}">${g}</a>
+                                    <button class="btn btn-danger btn-sm delete-btn" data-type="guides" data-filename="${g}">Delete</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="btn btn-warning w-100 font-bold" id="new-guide-btn">+ New Guide</button>
                     </div>
                 </div>
             </div>
@@ -229,6 +245,7 @@ const renderDashboard = (content) => {
     document.getElementById('new-project-btn').addEventListener('click', () => renderEditor('projects'));
     document.getElementById('new-post-btn').addEventListener('click', () => renderEditor('posts'));
     document.getElementById('new-recipe-btn').addEventListener('click', () => renderEditor('recipes'));
+    document.getElementById('new-guide-btn').addEventListener('click', () => renderEditor('guides'));
 };
 
 const renderEditor = async (type, filename) => {
@@ -237,6 +254,8 @@ const renderEditor = async (type, filename) => {
         defaultContent = '---\ntitle: New Recipe\nlayout: recipe\ndescription: A short tasty description.\nprep_time: 15 mins\ncook_time: 15 mins\nyields: 4 servings\ningredients:\n  - 1 cup flour\n  - 1 tsp sugar\n---\n\n### Step-by-Step Instructions\n\n1. Step one...\n';
     } else if (type === 'projects') {
         defaultContent = '---\ntitle: New Project\nlayout: project_post\nstatus: In Progress\nkey_focus:\n  - Homelab\n---\n\n';
+    } else if (type === 'guides') {
+        defaultContent = '---\ntitle: "New Study Guide"\nlayout: default\ncategory: "DevOps"\ndate: ' + new Date().toISOString().split('T')[0] + '\ntags:\n  - General\nstatus: "Draft"\nchallenge: "Enter diagnostic self-test question here"\nanswer: "Enter solution here"\n---\n\n### 💡 WHY (The Concept)\nExplain the background theory...\n\n### ⚖️ THE LOGICAL DECISION\nExplain the AI\'s reasoning and trade-offs...\n\n### ⚙️ HOW (Implementation Code)\n```bash\n# Enter commands here\n```\n';
     }
 
     const [file, layouts] = await Promise.all([
@@ -249,6 +268,7 @@ const renderEditor = async (type, filename) => {
     let defaultFilenamePattern = 'new-post-';
     if (type === 'recipes') defaultFilenamePattern = 'new-recipe-';
     else if (type === 'projects') defaultFilenamePattern = 'new-project-';
+    else if (type === 'guides') defaultFilenamePattern = new Date().toISOString().split('T')[0] + '-guide-';
     
     const newFilename = filename ? filename : defaultFilenamePattern + Date.now() + '.md';
 
@@ -283,6 +303,44 @@ const renderEditor = async (type, filename) => {
             <div class="mb-3">
                 <label for="recipe-ingredients" class="form-label">Ingredients (One per line)</label>
                 <textarea class="form-control" id="recipe-ingredients" rows="6" placeholder="e.g. 1 cup flour\n2 large eggs">${ingredientsText}</textarea>
+            </div>
+        `;
+    } else if (type === 'guides') {
+        fieldsHTML = `
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" value="${frontmatter.title || ''}" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category">
+                        <option value="DevOps" ${frontmatter.category === 'DevOps' ? 'selected' : ''}>DevOps</option>
+                        <option value="CNC & Math" ${frontmatter.category === 'CNC & Math' ? 'selected' : ''}>CNC & Math</option>
+                        <option value="Homelab" ${frontmatter.category === 'Homelab' ? 'selected' : ''}>Homelab</option>
+                        <option value="Cybersecurity" ${frontmatter.category === 'Cybersecurity' ? 'selected' : ''}>Cybersecurity</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="status" class="form-label font-bold text-primary">Publishing Status</label>
+                    <select class="form-select border-primary" id="status">
+                        <option value="Draft" ${frontmatter.status === 'Draft' ? 'selected' : ''}>📝 Draft (Staging / Hidden)</option>
+                        <option value="Published" ${frontmatter.status === 'Published' ? 'selected' : ''}>🚀 Published (Live on Site)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags</label>
+                <div id="tags-container" class="d-flex flex-wrap gap-2 mb-2"></div>
+                <input type="text" class="form-control" id="tags-input" placeholder="Add tags, separated by commas">
+            </div>
+            <div class="mb-3">
+                <label for="challenge" class="form-label">Active Recall Challenge (Question)</label>
+                <input type="text" class="form-control" id="challenge" value="${frontmatter.challenge || ''}">
+            </div>
+            <div class="mb-3">
+                <label for="answer" class="form-label">Challenge Solution (Answer)</label>
+                <textarea class="form-control font-monospace" id="answer" rows="2">${frontmatter.answer || ''}</textarea>
             </div>
         `;
     } else {
@@ -436,6 +494,23 @@ const renderEditor = async (type, filename) => {
                 cook_time,
                 yields,
                 ingredients
+            };
+        } else if (type === 'guides') {
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+            const status = document.getElementById('status').value;
+            const challenge = document.getElementById('challenge').value;
+            const answer = document.getElementById('answer').value;
+            newFrontmatter = {
+                ...frontmatter,
+                title,
+                layout: 'default',
+                category,
+                date: frontmatter.date || new Date().toISOString().split('T')[0],
+                tags,
+                status,
+                challenge,
+                answer
             };
         } else {
             const title = document.getElementById('title').value;

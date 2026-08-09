@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mrmahesh-cms-deployment
+  namespace: media
+  labels:
+    app: mrmahesh-cms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mrmahesh-cms
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mrmahesh-cms
+    spec:
+      nodeName: m-latitude-e5450
+      containers:
+        - name: cms-server
+          image: mrmahesh-cms:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_PATH
+              value: "/app/data/cms.db"
+            - name: CONTENT_DIR
+              value: "/content"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mrmahesh-cms-secret
+                  key: JWT_SECRET
+          volumeMounts:
+            - name: db-storage
+              mountPath: /app/data
+            - name: content-storage
+              mountPath: /content
+            - name: server-code
+              mountPath: /app/server.js
+            - name: db-code
+              mountPath: /app/database.js
+            - name: public-code
+              mountPath: /app/public
+          livenessProbe:
+            httpGet:
+              path: /api/check-auth
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/check-auth
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: mrmahesh-cms-db-pvc
+        - name: content-storage
+          persistentVolumeClaim:
+            claimName: mrmahesh-cms-content-pvc
+        - name: server-code
+          hostPath:
+            path: /home/m/custom-cms/server.js
+        - name: db-code
+          hostPath:
+            path: /home/m/custom-cms/database.js
+        - name: public-code
+          hostPath:
+            path: /home/m/custom-cms/public

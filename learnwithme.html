@@ -271,20 +271,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Toggle Guide Expand/Collapse
+// Toggle Guide Expand/Collapse (Single-Open Accordion Behavior)
 function toggleGuide(id) {
-    const body = document.getElementById(`guide-body-${id}`);
-    const btn = document.getElementById(`guide-toggle-btn-${id}`);
-    if (body.classList.contains('hidden')) {
-        body.classList.remove('hidden');
-        btn.textContent = '[-] Collapse';
-        btn.classList.add('bg-yellow-500', 'text-[#1f2937]');
-        btn.classList.remove('bg-[#111827]', 'text-yellow-500');
-    } else {
+    const targetBody = document.getElementById(`guide-body-${id}`);
+    const targetBtn = document.getElementById(`guide-toggle-btn-${id}`);
+    const isOpening = targetBody.classList.contains('hidden');
+
+    // Collapse all currently open guides
+    document.querySelectorAll('[id^="guide-body-"]').forEach(body => {
         body.classList.add('hidden');
+    });
+
+    // Reset all buttons to default "[+] View Guide"
+    document.querySelectorAll('[id^="guide-toggle-btn-"]').forEach(btn => {
         btn.textContent = '[+] View Guide';
         btn.classList.remove('bg-yellow-500', 'text-[#1f2937]');
         btn.classList.add('bg-[#111827]', 'text-yellow-500');
+    });
+
+    // If the clicked guide was closed, expand it
+    if (isOpening) {
+        targetBody.classList.remove('hidden');
+        targetBtn.textContent = '[-] Collapse';
+        targetBtn.classList.add('bg-yellow-500', 'text-[#1f2937]');
+        targetBtn.classList.remove('bg-[#111827]', 'text-yellow-500');
     }
 }
 

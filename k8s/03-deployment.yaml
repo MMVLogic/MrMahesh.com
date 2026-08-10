@@ -34,6 +34,8 @@ spec:
               value: "/app/data/cms.db"
             - name: CONTENT_DIR
               value: "/content"
+            - name: GIT_SSH_COMMAND
+              value: "ssh -i /root/.ssh/cms_deploy_key -o StrictHostKeyChecking=accept-new"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -44,6 +46,8 @@ spec:
               mountPath: /app/data
             - name: content-storage
               mountPath: /content
+            - name: ssh-storage
+              mountPath: /root/.ssh
             - name: server-code
               mountPath: /app/server.js
             - name: db-code
@@ -74,8 +78,11 @@ spec:
           persistentVolumeClaim:
             claimName: mrmahesh-cms-db-pvc
         - name: content-storage
-          persistentVolumeClaim:
-            claimName: mrmahesh-cms-content-pvc
+          hostPath:
+            path: /home/m/mrmahesh-site
+        - name: ssh-storage
+          hostPath:
+            path: /home/m/.ssh
         - name: server-code
           hostPath:
             path: /home/m/custom-cms/server.js

@@ -4,8 +4,8 @@ FROM node:18-alpine
 # Set working directory inside the container
 WORKDIR /app
 
-# Install build dependencies for sqlite3 native compilation on alpine
-RUN apk add --no-cache python3 make g++
+# Install build dependencies for sqlite3 native compilation on alpine and git/ssh for publishing
+RUN apk add --no-cache python3 make g++ git openssh-client
 
 # Copy package descriptors first to leverage Docker layer caching
 COPY package*.json ./
@@ -23,7 +23,7 @@ ENV NODE_ENV=production \
     CONTENT_DIR=/content
 
 # Create data and content mount points
-RUN mkdir -p /app/data /content
+RUN mkdir -p /app/data /content /root/.ssh
 
 # Expose web server port
 EXPOSE 3000

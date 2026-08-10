@@ -46,10 +46,10 @@ permalink: /learnwithme/
         </div>
     </div>
 
-    <!-- Feed Container -->
-    <div id="learning-feed" class="space-y-8">
+    <!-- Feed Container (Index List) -->
+    <div id="learning-feed" class="space-y-4">
         <!-- Rendered dynamically via JS -->
-        <div class="text-center py-12 text-gray-400">Loading lessons...</div>
+        <div class="text-center py-12 text-gray-400 font-mono text-sm">&gt; LOADING_GUIDES_DATABASE...</div>
     </div>
 
 </div>
@@ -90,16 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesCategory = currentFilter === 'All' || lesson.category === currentFilter;
             const matchesSearch = currentQuery === '' || 
                 lesson.title.toLowerCase().includes(currentQuery) ||
-                lesson.concept.toLowerCase().includes(currentQuery) ||
-                lesson.how.toLowerCase().includes(currentQuery) ||
-                lesson.tags.some(tag => tag.toLowerCase().includes(currentQuery));
+                (lesson.content && lesson.content.toLowerCase().includes(currentQuery)) ||
+                (lesson.tags && lesson.tags.some(tag => tag.toLowerCase().includes(currentQuery)));
             return matchesCategory && matchesSearch;
         });
 
         renderFeed(filtered);
     }
 
-    // Render loop
+    // Render loop (Index / Accordion Style)
     function renderFeed(lessons) {
         if (lessons.length === 0) {
             feed.innerHTML = `
@@ -112,29 +111,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         feed.innerHTML = lessons.map(lesson => {
             const tagsHtml = (lesson.tags || []).map(tag => `
-                <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 hover:text-gray-300 text-[10px] font-mono border border-gray-700">
+                <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[10px] font-mono border border-gray-700">
                     #${tag}
                 </span>
             `).join('');
 
-            let conceptText = lesson.concept || '';
-            let reasoningText = lesson.reasoning || '';
-            let howText = lesson.how || '';
+            let conceptText = '';
+            let reasoningText = '';
+            let howText = '';
 
-            if ((!conceptText || !reasoningText || !howText) && lesson.content) {
-                const whyMatch = lesson.content.match(/###\s*(?:💡\s*)?WHY[\s\S]*?(?=###|$)/i);
-                const decisionMatch = lesson.content.match(/###\s*(?:⚖️\s*)?THE LOGICAL DECISION[\s\S]*?(?=###|$)/i);
-                const howMatch = lesson.content.match(/###\s*(?:⚙️\s*)?HOW[\s\S]*?(?=###|$)/i);
+            if (lesson.content) {
+                const whyMatch = lesson.content.match(/###\s*(?:💡\s*)?WHY[^\n]*\n([\s\S]*?)(?=###|$)/i);
+                const decisionMatch = lesson.content.match(/###\s*(?:⚖️\s*)?THE LOGICAL DECISION[^\n]*\n([\s\S]*?)(?=###|$)/i);
+                const howMatch = lesson.content.match(/###\s*(?:⚙️\s*)?HOW[^\n]*\n([\s\S]*?)(?=###|$)/i);
 
-                if (whyMatch && !conceptText) {
-                    conceptText = whyMatch[0].replace(/###\s*(?:💡\s*)?WHY.*?\n/, '').trim();
-                }
-                if (decisionMatch && !reasoningText) {
-                    reasoningText = decisionMatch[0].replace(/###\s*(?:⚖️\s*)?THE LOGICAL DECISION.*?\n/, '').trim();
-                }
-                if (howMatch && !howText) {
-                    howText = howMatch[0].replace(/###\s*(?:⚙️\s*)?HOW.*?\n/, '').trim();
-                }
+                if (whyMatch) conceptText = whyMatch[1].trim();
+                if (decisionMatch) reasoningText = decisionMatch[1].trim();
+                if (howMatch) howText = howMatch[1].trim();
+
                 if (!conceptText && !reasoningText && !howText) {
                     conceptText = lesson.content;
                 }
@@ -146,67 +140,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 return text
                     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/`(.*?)`/g, '<code class="bg-[#1f2937] text-orange-400 px-1 rounded font-mono text-xs">$1</code>')
+                    .replace(/`(.*?)`/g, '<code class="bg-[#111827] text-orange-400 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-800">$1</code>')
+                    .replace(/\n\n/g, '<br><br>')
                     .replace(/\n/g, '<br>');
             };
 
             return `
-                <article class="bg-[#1a202c] rounded-xl border border-gray-700 shadow-xl overflow-hidden hover:border-yellow-500 transition-all duration-300">
+                <article class="bg-[#1a202c] rounded-xl border border-gray-700 shadow-xl overflow-hidden transition-all duration-300 hover:border-yellow-500">
                     
-                    <!-- Card Header -->
-                    <div class="bg-[#243346] px-6 py-4 border-b border-gray-700 flex flex-wrap justify-between items-center gap-3">
-                        <div class="space-y-1">
+                    <!-- Clickable Index Row Header -->
+                    <div onclick="toggleGuide('${lesson.id}')"
+                         class="cursor-pointer bg-[#243346] hover:bg-[#2c3e50] px-6 py-4 flex flex-wrap justify-between items-center gap-3 select-none transition-colors duration-200">
+                        <div class="space-y-1.5">
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-yellow-500 text-[#1f2937] text-[10px] font-bold font-mono">
+                                <span class="px-2 py-0.5 rounded bg-yellow-500 text-[#1f2937] text-[10px] font-bold font-mono uppercase tracking-wider">
                                     ${lesson.category || 'DevOps'}
                                 </span>
                                 <span class="text-xs text-gray-400 font-mono">${lesson.date}</span>
                             </div>
-                            <h2 class="text-xl md:text-2xl font-bold text-gray-100 font-mono tracking-tight">${lesson.title}</h2>
+                            <h2 class="text-lg md:text-xl font-bold text-gray-100 font-mono tracking-tight flex items-center gap-2">
+                                <span>${lesson.title}</span>
+                            </h2>
+                            <div class="flex flex-wrap gap-1.5 pt-1">${tagsHtml}</div>
                         </div>
-                        <div class="flex flex-wrap gap-1.5">${tagsHtml}</div>
+                        <div class="flex items-center">
+                            <span id="guide-toggle-btn-${lesson.id}" class="px-3 py-1.5 rounded-lg bg-[#111827] border border-gray-600 text-yellow-500 text-xs font-mono font-bold hover:bg-yellow-500 hover:text-[#1f2937] transition-all duration-200">
+                                [+] View Guide
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="p-6 space-y-6">
+                    <!-- Single Column Expandable Body -->
+                    <div id="guide-body-${lesson.id}" class="hidden p-6 md:p-8 space-y-6 bg-[#1a202c] border-t border-gray-700">
                         
-                        <!-- Columns Grid -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            
-                            <!-- Column 1: The WHY & WHEN -->
-                            <div class="space-y-6">
-                                <div class="space-y-2">
-                                    <h3 class="text-sm font-bold text-[#3498db] font-mono border-b border-gray-800 pb-1 flex items-center">
-                                        <span class="mr-1.5">💡</span> WHY (The Concept)
-                                    </h3>
-                                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
-                                        ${formatMarkdown(conceptText)}
-                                    </p>
-                                </div>
-                                <div class="space-y-2">
-                                    <h3 class="text-sm font-bold text-[#2ecc71] font-mono border-b border-gray-800 pb-1 flex items-center">
-                                        <span class="mr-1.5">⚖️</span> THE LOGICAL DECISION
-                                    </h3>
-                                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
-                                        ${formatMarkdown(reasoningText)}
-                                    </p>
-                                </div>
+                        <!-- 1. WHY -->
+                        ${conceptText ? `
+                        <div class="space-y-2">
+                            <h3 class="text-sm md:text-base font-bold text-[#3498db] font-mono border-b border-gray-800 pb-1.5 flex items-center">
+                                <span class="mr-2 text-lg">💡</span> WHY (The Concept)
+                            </h3>
+                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
+                                ${formatMarkdown(conceptText)}
                             </div>
-
-                            <!-- Column 2: The HOW (Implementation) -->
-                            <div class="space-y-2 lg:border-l lg:border-gray-800 lg:pl-6">
-                                <h3 class="text-sm font-bold text-orange-400 font-mono border-b border-gray-800 pb-1 flex items-center">
-                                    <span class="mr-1.5">⚙️</span> HOW (Implementation Code)
-                                </h3>
-                                <div class="text-xs md:text-sm text-gray-300 leading-relaxed">
-                                    <div class="how-md font-mono">${howText.includes('```') ? renderCodeBlock(howText) : formatMarkdown(howText)}</div>
-                                </div>
-                            </div>
-
                         </div>
+                        ` : ''}
 
-                        <!-- Active Recall Challenge Accordion -->
-                        <div class="border border-gray-800 rounded-lg overflow-hidden mt-4">
+                        <!-- 2. THE LOGICAL DECISION -->
+                        ${reasoningText ? `
+                        <div class="space-y-2">
+                            <h3 class="text-sm md:text-base font-bold text-[#2ecc71] font-mono border-b border-gray-800 pb-1.5 flex items-center">
+                                <span class="mr-2 text-lg">⚖️</span> THE LOGICAL DECISION
+                            </h3>
+                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
+                                ${formatMarkdown(reasoningText)}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- 3. HOW -->
+                        ${howText ? `
+                        <div class="space-y-2">
+                            <h3 class="text-sm md:text-base font-bold text-orange-400 font-mono border-b border-gray-800 pb-1.5 flex items-center">
+                                <span class="mr-2 text-lg">⚙️</span> HOW (Implementation Code)
+                            </h3>
+                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
+                                <div class="how-md font-mono">${howText.includes('```') ? renderCodeBlock(howText) : formatMarkdown(howText)}</div>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- 4. Challenge Accordion -->
+                        ${lesson.challenge ? `
+                        <div class="border border-gray-800 rounded-lg overflow-hidden mt-6">
                             <button onclick="toggleRecall('${lesson.id}')"
                                     class="w-full bg-[#111827] px-4 py-3 flex justify-between items-center text-xs md:text-sm font-mono text-yellow-500 hover:bg-gray-800 focus:outline-none transition-colors duration-200">
                                 <span>🧠 ACTIVE_RECALL_CHALLENGE (Test Your Knowledge)</span>
@@ -225,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </div>
                         </div>
+                        ` : ''}
 
                     </div>
                 </article>
@@ -234,13 +240,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper to render code blocks
     function renderCodeBlock(text) {
-        // Simple parser to extract code block contents
         return text.replace(/```(bash|yaml|javascript|json)?([\s\S]*?)```/g, (match, lang, code) => {
             return `
-                <pre class="bg-gray-900 border border-gray-800 rounded-lg p-3 overflow-x-auto text-[11px] md:text-xs text-green-400 font-mono my-2 select-all"><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                <pre class="bg-gray-900 border border-gray-800 rounded-lg p-3.5 overflow-x-auto text-[11px] md:text-xs text-green-400 font-mono my-2 select-all"><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
             `;
         }).replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
-          .replace(/`(.*?)`/g, '<code class="bg-gray-900 text-orange-400 px-1 rounded font-mono">$1</code>');
+          .replace(/`(.*?)`/g, '<code class="bg-gray-900 text-orange-400 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-800">$1</code>')
+          .replace(/\n\n/g, '<br><br>')
+          .replace(/\n/g, '<br>');
     }
 
     // Input handlers
@@ -264,6 +271,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Toggle Guide Expand/Collapse
+function toggleGuide(id) {
+    const body = document.getElementById(`guide-body-${id}`);
+    const btn = document.getElementById(`guide-toggle-btn-${id}`);
+    if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        btn.textContent = '[-] Collapse';
+        btn.classList.add('bg-yellow-500', 'text-[#1f2937]');
+        btn.classList.remove('bg-[#111827]', 'text-yellow-500');
+    } else {
+        body.classList.add('hidden');
+        btn.textContent = '[+] View Guide';
+        btn.classList.remove('bg-yellow-500', 'text-[#1f2937]');
+        btn.classList.add('bg-[#111827]', 'text-yellow-500');
+    }
+}
+
 // Toggle Recall Container
 function toggleRecall(id) {
     const container = document.getElementById(`recall-${id}`);
@@ -274,7 +298,7 @@ function toggleRecall(id) {
     } else {
         container.classList.add('hidden');
         icon.textContent = '[+] Expand';
-        document.getElementById(`answer-${id}`).classList.add('hidden'); // auto-collapse solution too
+        document.getElementById(`answer-${id}`).classList.add('hidden');
     }
 }
 

@@ -4,10 +4,10 @@
  */
 
 window.MrMaheshAuth = (() => {
-    // Config: replace with your Supabase Project settings or pass via window.SUPABASE_CONFIG
+    // Config: Supabase Project settings
     const config = window.SUPABASE_CONFIG || {
-        url: 'https://placeholder-project.supabase.co',
-        anonKey: 'placeholder-anon-key'
+        url: 'https://xigxtoxxeyiokmalyydx.supabase.co',
+        anonKey: 'sb_publishable_bDz4w-zYq29J7tXaX3T0IA_DASPlkTr'
     };
 
     let supabaseClient = null;

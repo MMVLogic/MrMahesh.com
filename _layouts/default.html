@@ -169,6 +169,12 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window.SUPABASE_CONFIG = {
+            url: "{{ site.supabase_url | default: 'https://xigxtoxxeyiokmalyydx.supabase.co' }}",
+            anonKey: "{{ site.supabase_anon_key | default: 'sb_publishable_bDz4w-zYq29J7tXaX3T0IA_DASPlkTr' }}"
+        };
+    </script>
     <script src="/assets/js/auth.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script>
     <script>

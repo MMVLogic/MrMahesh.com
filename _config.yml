@@ -62,5 +62,11 @@ exclude:
 stripe_donation_url: "https://donate.stripe.com/placeholder"
 paypal_me_username: "placeholder"
 
+# Supabase Authentication & Database Configuration
+supabase_url: "https://xigxtoxxeyiokmalyydx.supabase.co"
+supabase_anon_key: "sb_publishable_bDz4w-zYq29J7tXaX3T0IA_DASPlkTr"
+
 kramdown:
-  hard_wrap: true
+  input: GFM
+  auto_ids: true
+  syntax_highlighter: rouge

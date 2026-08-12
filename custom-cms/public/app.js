@@ -278,6 +278,19 @@ const renderDashboard = async (content) => {
         </div>
       </div>
 
+      <!-- Store Products (_products) -->
+      <div class="col-md-6 collection-col">
+        <div class="card h-100 p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h5 mb-0">🛒 Store Products <span class="badge bg-secondary ms-1">${content.products ? content.products.length : 0}</span></h3>
+            <button class="btn btn-success btn-sm new-btn" data-type="products">+ New Product</button>
+          </div>
+          <div class="list-group flex-grow-1 file-list" id="products-list">
+            ${renderFileList(content.products, 'products')}
+          </div>
+        </div>
+      </div>
+
       <!-- Standalone Pages -->
       <div class="col-md-12 collection-col">
         <div class="card p-3">
@@ -434,12 +447,16 @@ const renderEditor = async (type, filename) => {
     </div>
   `;
 
+  let defaultContent = `---\ntitle: New ${type.slice(0, -1)}\nlayout: ${type === 'posts' ? 'post' : type === 'projects' ? 'project' : type === 'recipes' ? 'recipe' : 'default'}\ndate: ${new Date().toISOString().split('T')[0]}\nstatus: In Progress\ntags: \n---\n\nWrite your markdown content here...`;
+  
+  if (type === 'products') {
+    defaultContent = `---\ntitle: "New Product Blueprint"\nprice: 9.00\ncategory: "woodworking"\ncategory_label: "🪵 Woodworking"\nstripe_link: "https://buy.stripe.com/..."\nfeatures:\n  - "Scalable dimensional cut list"\n  - "Step-by-step PDF assembly guide"\n  - "Instant digital download package"\nlayout: default\n---\n\n### Overview\nParametric building plans and schematics for workshop builders...\n`;
+  }
+
   const [file, layouts] = await Promise.all([
     filename
       ? API.getFile(type, filename)
-      : {
-          content: `---\ntitle: New ${type.slice(0, -1)}\nlayout: ${type === 'posts' ? 'post' : type === 'projects' ? 'project' : type === 'recipes' ? 'recipe' : 'default'}\ndate: ${new Date().toISOString().split('T')[0]}\nstatus: In Progress\ntags: \n---\n\nWrite your markdown content here...`,
-        },
+      : { content: defaultContent },
     API.getLayouts(),
   ]);
 

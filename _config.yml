@@ -32,6 +32,9 @@ collections:
   guides:
     output: true
     permalink: /learnwithme/:path/
+  products:
+    output: true
+    permalink: /store/:path/
   cms:
     output: true
     permalink: /cms/:path/

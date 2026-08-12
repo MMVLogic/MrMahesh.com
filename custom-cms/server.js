@@ -53,6 +53,7 @@ const projectsDir = path.join(contentDir, '_projects');
 const postsDir = path.join(contentDir, '_posts');
 const recipesDir = path.join(contentDir, '_recipes');
 const guidesDir = path.join(contentDir, '_guides');
+const productsDir = path.join(contentDir, '_products');
 const layoutsDir = path.join(contentDir, '_layouts');
 
 // --- Git Helper ---
@@ -288,6 +289,7 @@ app.get('/api/content', authMiddleware, async (req, res) => {
     const posts = (await fs.pathExists(postsDir)) ? await fs.readdir(postsDir) : [];
     const recipes = (await fs.pathExists(recipesDir)) ? await fs.readdir(recipesDir) : [];
     const guides = (await fs.pathExists(guidesDir)) ? await fs.readdir(guidesDir) : [];
+    const products = (await fs.pathExists(productsDir)) ? await fs.readdir(productsDir) : [];
 
     // Root standalone pages
     const rootFiles = (await fs.pathExists(contentDir)) ? await fs.readdir(contentDir) : [];
@@ -298,6 +300,7 @@ app.get('/api/content', authMiddleware, async (req, res) => {
       posts: posts.filter(p => (p.endsWith('.md') || p.endsWith('.html')) && !p.startsWith('.')),
       recipes: recipes.filter(r => (r.endsWith('.md') || r.endsWith('.html')) && !r.startsWith('.')),
       guides: guides.filter(g => (g.endsWith('.md') || g.endsWith('.html')) && !g.startsWith('.')),
+      products: products.filter(pr => (pr.endsWith('.md') || pr.endsWith('.html')) && !pr.startsWith('.')),
       pages,
     });
   } catch (error) {
@@ -313,6 +316,7 @@ app.get('/api/content/:type/:filename', authMiddleware, async (req, res) => {
   else if (type === 'posts') dir = postsDir;
   else if (type === 'recipes') dir = recipesDir;
   else if (type === 'guides') dir = guidesDir;
+  else if (type === 'products') dir = productsDir;
   else if (type === 'pages') dir = contentDir;
   else return res.status(400).json({ message: 'Invalid content type' });
 
@@ -334,6 +338,7 @@ app.post('/api/content/:type', authMiddleware, async (req, res) => {
   else if (type === 'posts') dir = postsDir;
   else if (type === 'recipes') dir = recipesDir;
   else if (type === 'guides') dir = guidesDir;
+  else if (type === 'products') dir = productsDir;
   else if (type === 'pages') dir = contentDir;
   else return res.status(400).json({ message: 'Invalid content type' });
 
@@ -355,6 +360,7 @@ app.delete('/api/content/:type/:filename', authMiddleware, async (req, res) => {
   else if (type === 'posts') dir = postsDir;
   else if (type === 'recipes') dir = recipesDir;
   else if (type === 'guides') dir = guidesDir;
+  else if (type === 'products') dir = productsDir;
   else if (type === 'pages') dir = contentDir;
   else return res.status(400).json({ message: 'Invalid content type' });
 

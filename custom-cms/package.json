@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-css": "sass public/style.scss public/style.css",
     "db:init": "node database.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "rsync -avz --exclude 'node_modules' --exclude '.git' --exclude 'cms.db' ./ m@192.168.20.182:/home/m/custom-cms/ && ssh -i ~/.ssh/id_ed25519_remote m@192.168.20.182 'kubectl rollout restart deployment mrmahesh-cms-deployment -n media'",
+    "sync:ui": "rsync -avz ./public/ m@192.168.20.182:/home/m/custom-cms/public/"
   },
   "keywords": [],
   "author": "",

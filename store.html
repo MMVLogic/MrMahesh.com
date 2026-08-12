@@ -1,0 +1,239 @@
+---
+layout: default
+title: Digital Store & Tooling Blueprints
+permalink: /store/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- Store Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-gray-700 pb-6">
+        <div>
+            <div class="flex items-center space-x-2 mb-2">
+                <span class="px-2 py-0.5 rounded bg-emerald-500 text-[#1f2937] text-xs font-bold font-mono uppercase">STORE_TERMINAL</span>
+                <span class="text-xs text-gray-400 font-mono">// Instant Digital Delivery</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold text-emerald-400 mb-2 leading-tight">Digital Store & Blueprints</h1>
+            <p class="text-sm md:text-base text-gray-300 leading-relaxed max-w-2xl">
+                Engineered woodworking build plans, CNC mathematical toolpath solvers, and production-tested Homelab automation manifests.
+            </p>
+        </div>
+        <div class="bg-[#1a202c] p-4 rounded-xl border border-gray-700 font-mono text-xs text-gray-400 space-y-1.5 min-w-[220px]">
+            <p class="text-emerald-400 font-bold border-b border-gray-800 pb-1 mb-1">&gt; STORE_TELEMETRY_</p>
+            <p>• payment_engine: <span class="text-[#2ecc71] font-bold">Stripe 256-Bit</span></p>
+            <p>• fulfillment: <span class="text-[#3498db]">Instant Download</span></p>
+            <p>• guarantee: <span class="text-yellow-500">100% Verified</span></p>
+        </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="flex flex-wrap gap-2 items-center text-xs font-mono bg-[#1a202c] p-4 rounded-xl border border-gray-700">
+        <span class="text-gray-400 font-bold mr-2">&gt; Filter:</span>
+        <button class="store-filter-btn active px-3.5 py-1.5 rounded-lg bg-emerald-500 text-[#1f2937] font-bold transition-all" data-cat="all">All Catalog</button>
+        <button class="store-filter-btn px-3.5 py-1.5 rounded-lg bg-[#243346] text-gray-300 font-bold hover:bg-gray-700 transition-all" data-cat="woodworking">Woodworking & Shop</button>
+        <button class="store-filter-btn px-3.5 py-1.5 rounded-lg bg-[#243346] text-gray-300 font-bold hover:bg-gray-700 transition-all" data-cat="cnc">CNC & Machining</button>
+        <button class="store-filter-btn px-3.5 py-1.5 rounded-lg bg-[#243346] text-gray-300 font-bold hover:bg-gray-700 transition-all" data-cat="devops">DevOps & Homelab</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Product 1: 2x4 Smart Shelf Builder -->
+        <div class="product-card bg-[#1a202c] border border-gray-700 rounded-2xl p-6 flex flex-col justify-between space-y-6 hover:border-emerald-400 transition-all duration-300 shadow-xl" data-category="woodworking">
+            <div class="space-y-4">
+                <div class="flex justify-between items-start gap-2">
+                    <span class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[11px] font-mono font-bold">
+                        🪵 Woodworking
+                    </span>
+                    <span class="text-2xl font-bold font-mono text-emerald-400">$9.00</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-100 font-mono mb-2">2x4 Heavy-Duty Storage Shelf Blueprint Pack</h2>
+                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                        Parametric building plans for 2x4 garage & workshop storage shelves. Includes automated bin dimensional calculator, rip cut diagrams, and screw count optimization.
+                    </p>
+                </div>
+                <div class="space-y-1.5 text-xs font-mono text-gray-400 border-t border-gray-800 pt-3">
+                    <p>✓ Scalable from 1 to 5 rows of storage totes</p>
+                    <p>✓ Printable step-by-step PDF cut list</p>
+                    <p>✓ 3D structural joinery schematics</p>
+                </div>
+            </div>
+            <button onclick="triggerCheckout('prod_shelf_2x4', '2x4 Storage Shelf Blueprint', 9.00)" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2">
+                <span>⚡ Instant Download ($9)</span>
+            </button>
+        </div>
+
+        <!-- Product 2: CNC Toolpath Solver -->
+        <div class="product-card bg-[#1a202c] border border-gray-700 rounded-2xl p-6 flex flex-col justify-between space-y-6 hover:border-emerald-400 transition-all duration-300 shadow-xl" data-category="cnc">
+            <div class="space-y-4">
+                <div class="flex justify-between items-start gap-2">
+                    <span class="px-2.5 py-1 rounded bg-blue-500/20 text-blue-400 border border-blue-500/40 text-[11px] font-mono font-bold">
+                        ⚙️ CNC & Math
+                    </span>
+                    <span class="text-2xl font-bold font-mono text-emerald-400">$14.00</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-100 font-mono mb-2">CNC Coordinate Geometry & Vector Arc Solver</h2>
+                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                        Precision toolpath compensation engine with vector bisection math. Calculates exact G2/G3 tangent arc intersections and outputs clean Fanuc/Haas G-Code.
+                    </p>
+                </div>
+                <div class="space-y-1.5 text-xs font-mono text-gray-400 border-t border-gray-800 pt-3">
+                    <p>✓ Automated G2/G3 arc center solver</p>
+                    <p>✓ Offline HTML5 standalone calculation tool</p>
+                    <p>✓ Feeds & Speeds chip load quick matrix</p>
+                </div>
+            </div>
+            <button onclick="triggerCheckout('prod_cnc_solver', 'CNC Geometry Solver Pro', 14.00)" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2">
+                <span>⚡ Instant Download ($14)</span>
+            </button>
+        </div>
+
+        <!-- Product 3: Homelab K3s Automation -->
+        <div class="product-card bg-[#1a202c] border border-gray-700 rounded-2xl p-6 flex flex-col justify-between space-y-6 hover:border-emerald-400 transition-all duration-300 shadow-xl" data-category="devops">
+            <div class="space-y-4">
+                <div class="flex justify-between items-start gap-2">
+                    <span class="px-2.5 py-1 rounded bg-purple-500/20 text-purple-400 border border-purple-500/40 text-[11px] font-mono font-bold">
+                        🏠 Homelab DevOps
+                    </span>
+                    <span class="text-2xl font-bold font-mono text-emerald-400">$19.00</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-100 font-mono mb-2">K3s Bare-Metal Homelab Manifest & Storage Pack</h2>
+                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                        Production Kubernetes manifests for multi-node laptop/desktop clusters. Includes Rook/Ceph distributed storage, Traefik Ingress SSL, and Samba Turbo NAS configuration.
+                    </p>
+                </div>
+                <div class="space-y-1.5 text-xs font-mono text-gray-400 border-t border-gray-800 pt-3">
+                    <p>✓ Multi-node Rook/Ceph replicated pool YAML</p>
+                    <p>✓ Automated Cloudflare Tunnel ingress routing</p>
+                    <p>✓ Self-healing backup cron job templates</p>
+                </div>
+            </div>
+            <button onclick="triggerCheckout('prod_k8s_pack', 'K3s Homelab Manifest Pack', 19.00)" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2">
+                <span>⚡ Instant Download ($19)</span>
+            </button>
+        </div>
+
+        <!-- Product 4: Custom Jekyll CMS Container -->
+        <div class="product-card bg-[#1a202c] border border-gray-700 rounded-2xl p-6 flex flex-col justify-between space-y-6 hover:border-emerald-400 transition-all duration-300 shadow-xl" data-category="devops">
+            <div class="space-y-4">
+                <div class="flex justify-between items-start gap-2">
+                    <span class="px-2.5 py-1 rounded bg-purple-500/20 text-purple-400 border border-purple-500/40 text-[11px] font-mono font-bold">
+                        ⚡ CMS & Node.js
+                    </span>
+                    <span class="text-2xl font-bold font-mono text-emerald-400">$12.00</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-100 font-mono mb-2">MrMahesh Custom Jekyll CMS (Docker Edition)</h2>
+                    <p class="text-xs md:text-sm text-gray-300 leading-relaxed">
+                        Lightweight markdown content management backend. Features SQLite JWT authentication, Git deploy keys for automatic push/pull, and live Marked.js preview.
+                    </p>
+                </div>
+                <div class="space-y-1.5 text-xs font-mono text-gray-400 border-t border-gray-800 pt-3">
+                    <p>✓ Docker Compose & Kubernetes ready</p>
+                    <p>✓ Automated Git SSH deploy key integration</p>
+                    <p>✓ Mobile-optimized responsive markdown editor</p>
+                </div>
+            </div>
+            <button onclick="triggerCheckout('prod_cms_docker', 'MrMahesh Custom CMS Docker', 12.00)" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2">
+                <span>⚡ Instant Download ($12)</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Stripe Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#1a202c] border-2 border-emerald-400 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 font-mono">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <span class="text-emerald-400 font-bold">&gt; STRIPE_CHECKOUT_GATEWAY</span>
+                <button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-red-400 font-bold text-lg focus:outline-none">&times;</button>
+            </div>
+            
+            <div class="space-y-2 text-xs">
+                <p class="text-gray-400">Selected Product:</p>
+                <p id="checkout-product-title" class="text-base font-bold text-gray-100"></p>
+                <p id="checkout-product-price" class="text-emerald-400 font-bold"></p>
+            </div>
+
+            <!-- Customer Info -->
+            <form onsubmit="handleProceedToStripe(event)" class="space-y-3 text-xs">
+                <div class="space-y-1">
+                    <label class="text-gray-300 font-bold">Email for Digital Delivery</label>
+                    <input type="email" id="checkout-email" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-emerald-400 focus:outline-none" placeholder="user@domain.com">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-gray-300 font-bold">Optional Contribution / Tip ($)</label>
+                    <input type="number" id="checkout-tip" min="0" step="1" value="0" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-emerald-400 focus:outline-none" placeholder="0">
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-[#1f2937] font-bold rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 mt-4">
+                    <span>🔒 Proceed to Secure Stripe Payment</span>
+                </button>
+            </form>
+            <p class="text-[10px] text-gray-500 text-center">Encrypted 256-Bit SSL Checkout // Instant PDF / ZIP Token Dispatched</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Store Engine Script -->
+<script>
+let currentProduct = null;
+
+function triggerCheckout(id, title, price) {
+    currentProduct = { id, title, price };
+    document.getElementById('checkout-product-title').textContent = title;
+    document.getElementById('checkout-product-price').textContent = `$${price.toFixed(2)} USD`;
+    
+    // Pre-fill email if logged in
+    const user = window.MrMaheshAuth ? window.MrMaheshAuth.getUser() : null;
+    if (user && user.email) {
+        document.getElementById('checkout-email').value = user.email;
+    }
+
+    document.getElementById('checkout-modal').classList.remove('hidden');
+}
+
+function closeCheckoutModal() {
+    document.getElementById('checkout-modal').classList.add('hidden');
+}
+
+function handleProceedToStripe(e) {
+    e.preventDefault();
+    const email = document.getElementById('checkout-email').value;
+    const tip = parseFloat(document.getElementById('checkout-tip').value) || 0;
+    const total = currentProduct.price + tip;
+
+    // Simulate Stripe Checkout dispatch or redirect to custom payment link
+    const deliveryUrl = `/thank-you/?item=${encodeURIComponent(currentProduct.id)}&title=${encodeURIComponent(currentProduct.title)}&amount=${total.toFixed(2)}&email=${encodeURIComponent(email)}`;
+    window.location.href = deliveryUrl;
+}
+
+// Category Filter Handling
+document.addEventListener('DOMContentLoaded', () => {
+    const filterBtns = document.querySelectorAll('.store-filter-btn');
+    const cards = document.querySelectorAll('.product-card');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => {
+                b.classList.remove('active', 'bg-emerald-500', 'text-[#1f2937]');
+                b.classList.add('bg-[#243346]', 'text-gray-300');
+            });
+            btn.classList.add('active', 'bg-emerald-500', 'text-[#1f2937]');
+            btn.classList.remove('bg-[#243346]', 'text-gray-300');
+
+            const category = btn.dataset.cat;
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    });
+});
+</script>

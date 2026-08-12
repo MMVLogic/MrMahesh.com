@@ -1,0 +1,29 @@
+name: MrMahesh Sentinel Audit
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Daily at 12:00 UTC (8:00 AM EDT)
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+  push:
+    branches: [ main ]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 🛡️ Run Sentinel 10-Point Audit
+        env:
+          TARGET_URL: "https://mrmahesh.com"
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node scripts/site-sentinel.js

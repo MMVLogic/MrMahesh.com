@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mrmahesh-sentinel
+  namespace: media
+  labels:
+    app: mrmahesh-sentinel
+spec:
+  schedule: "0 */6 * * *" # Runs every 6 hours
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mrmahesh-sentinel
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: sentinel-auditor
+              image: node:20-alpine
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  echo "🛡️ Starting Homelab Sentinel Probes..."
+                  TARGET_URL="https://mrmahesh.com" node /scripts/site-sentinel.js
+                  echo "🛡️ Probing Local Cluster CMS..."
+                  TARGET_URL="https://cms.mrmahesh.com" node /scripts/site-sentinel.js
+              env:
+                - name: DISCORD_WEBHOOK
+                  valueFrom:
+                    secretKeyRef:
+                      name: mrmahesh-cms-secrets
+                      key: DISCORD_WEBHOOK
+                      optional: true
+                - name: TELEGRAM_BOT_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: mrmahesh-cms-secrets
+                      key: TELEGRAM_BOT_TOKEN
+                      optional: true
+                - name: TELEGRAM_CHAT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: mrmahesh-cms-secrets
+                      key: TELEGRAM_CHAT_ID
+                      optional: true
+              volumeMounts:
+                - name: sentinel-script
+                  mountPath: /scripts/site-sentinel.js
+                  subPath: site-sentinel.js
+          volumes:
+            - name: sentinel-script
+              hostPath:
+                path: /home/m/mrmahesh-site/scripts/site-sentinel.js

@@ -27,6 +27,20 @@ permalink: /apps/hours-worked-calculator/
         </button>
     </div>
 
+    <!-- Cloud Sync Status Bar -->
+    <div class="bg-[#1a202c] p-4 rounded-xl border border-gray-700 flex flex-wrap justify-between items-center gap-3 text-xs font-mono">
+        <div class="flex items-center space-x-2">
+            <span id="sync-status-icon" class="text-yellow-500">💾</span>
+            <span id="sync-status-text" class="text-gray-300">Storage: Local Device (Guest Mode)</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span id="last-saved-time" class="text-gray-500 text-[11px]"></span>
+            <button id="btn-force-sync" class="px-3 py-1 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded transition-colors">
+                Save & Sync
+            </button>
+        </div>
+    </div>
+
     <!-- 1. SINGLE DAY CALCULATOR VIEW -->
     <div id="view-single" class="space-y-8">
         
@@ -613,9 +627,116 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('weekly-net-hrs').textContent = formatMinsToHoursAndMins(weeklyTotalMins);
     }
 
-    // Initial setup
+    // ----------------------------------------------------
+    // Cloud Sync & Data Persistence Engine
+    // ----------------------------------------------------
+    const syncStatusIcon = document.getElementById('sync-status-icon');
+    const syncStatusText = document.getElementById('sync-status-text');
+    const lastSavedTime = document.getElementById('last-saved-time');
+    const btnForceSync = document.getElementById('btn-force-sync');
+
+    function updateSyncUI(status, isCloud = false) {
+        if (isCloud) {
+            syncStatusIcon.textContent = '🟢';
+            syncStatusText.textContent = 'Storage: Cloud Database (Synchronized)';
+            syncStatusText.className = 'text-green-400 font-bold';
+        } else {
+            syncStatusIcon.textContent = '💾';
+            syncStatusText.textContent = 'Storage: Local Device (Guest Mode)';
+            syncStatusText.className = 'text-gray-300';
+        }
+        if (lastSavedTime) {
+            const now = new Date();
+            lastSavedTime.textContent = `Last saved: ${now.toLocaleTimeString()}`;
+        }
+    }
+
+    async function saveTimesheetState() {
+        const payload = {
+            weeklyDays,
+            singleShift: {
+                startHr: document.getElementById('single-start-hr').value,
+                startMin: document.getElementById('single-start-min').value,
+                startAmpm: document.getElementById('single-start-ampm').value,
+                endHr: document.getElementById('single-end-hr').value,
+                endMin: document.getElementById('single-end-min').value,
+                endAmpm: document.getElementById('single-end-ampm').value,
+                customBreaks
+            },
+            savedAt: new Date().toISOString()
+        };
+
+        if (window.MrMaheshAuth) {
+            const res = await window.MrMaheshAuth.syncData('timesheets', 'active_sheet', payload);
+            updateSyncUI('saved', res.mode === 'cloud-supabase' || res.mode === 'mock-cloud');
+        }
+    }
+
+    async function loadTimesheetState() {
+        if (!window.MrMaheshAuth) return;
+        const saved = await window.MrMaheshAuth.loadData('timesheets', 'active_sheet');
+        if (saved && saved.weeklyDays) {
+            // Restore Weekly state
+            saved.weeklyDays.forEach((savedDay, idx) => {
+                if (weeklyDays[idx]) {
+                    Object.assign(weeklyDays[idx], savedDay);
+                }
+            });
+            renderWeekly();
+            calculateWeekly();
+
+            // Restore Single Shift state
+            if (saved.singleShift) {
+                if (saved.singleShift.startHr) document.getElementById('single-start-hr').value = saved.singleShift.startHr;
+                if (saved.singleShift.startMin) document.getElementById('single-start-min').value = saved.singleShift.startMin;
+                if (saved.singleShift.startAmpm) document.getElementById('single-start-ampm').value = saved.singleShift.startAmpm;
+                if (saved.singleShift.endHr) document.getElementById('single-end-hr').value = saved.singleShift.endHr;
+                if (saved.singleShift.endMin) document.getElementById('single-end-min').value = saved.singleShift.endMin;
+                if (saved.singleShift.endAmpm) document.getElementById('single-end-ampm').value = saved.singleShift.endAmpm;
+                if (saved.singleShift.customBreaks) {
+                    customBreaks.length = 0;
+                    saved.singleShift.customBreaks.forEach(b => customBreaks.push(b));
+                    renderSingleBreaks();
+                }
+                calculateSingle();
+            }
+
+            updateSyncUI('loaded', window.MrMaheshAuth.isLoggedIn());
+        }
+    }
+
+    btnForceSync?.addEventListener('click', async () => {
+        btnForceSync.textContent = 'Saving...';
+        await saveTimesheetState();
+        setTimeout(() => { btnForceSync.textContent = 'Save & Sync'; }, 800);
+    });
+
+    // Auto-save on weekly calculation
+    const originalCalcWeekly = calculateWeekly;
+    calculateWeekly = function() {
+        originalCalcWeekly();
+        saveTimesheetState();
+    };
+
+    // Auto-save on single calculation
+    const originalCalcSingle = calculateSingle;
+    calculateSingle = function() {
+        originalCalcSingle();
+        saveTimesheetState();
+    };
+
+    // Listen for auth change
+    if (window.MrMaheshAuth) {
+        window.MrMaheshAuth.onAuthStateChange(user => {
+            updateSyncUI('auth-changed', !!user);
+            loadTimesheetState();
+        });
+    }
+
+    // Initial setup & load
     renderSingleBreaks();
     calculateSingle();
+    loadTimesheetState();
 
     // ----------------------------------------------------
     // Donation button logic

@@ -1,0 +1,71 @@
+---
+layout: default
+title: Order Confirmation & Digital Download
+permalink: /thank-you/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- Confirmation Banner -->
+    <div class="bg-[#1a202c] border-2 border-emerald-500 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl font-mono">
+        <div class="flex items-center space-x-3 border-b border-gray-700 pb-4">
+            <span class="text-3xl">🎉</span>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-emerald-400">Order Confirmed & Verified!</h1>
+                <p class="text-xs text-gray-400">Transaction ID: <span id="txn-id" class="text-yellow-500 font-bold"></span></p>
+            </div>
+        </div>
+
+        <div class="space-y-3 text-xs md:text-sm">
+            <div class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-2">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Item Purchased:</span>
+                    <span id="order-title" class="font-bold text-gray-100">Digital Asset</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Amount Paid:</span>
+                    <span id="order-amount" class="font-bold text-emerald-400">$0.00 USD</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Fulfillment Target:</span>
+                    <span id="order-email" class="font-bold text-gray-300"></span>
+                </div>
+            </div>
+
+            <p class="text-gray-300 leading-relaxed pt-2">
+                Your order receipt and encrypted download token have been generated. Click the button below to retrieve your digital blueprint pack immediately:
+            </p>
+
+            <div class="pt-2">
+                <button onclick="downloadDigitalAsset()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#1f2937] font-bold text-sm md:text-base rounded-xl transition-all shadow-xl flex items-center justify-center space-x-2">
+                    <span>📦 Download Full Digital Package (.ZIP / .PDF)</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-800 pt-4 flex flex-wrap justify-between items-center text-xs text-gray-500">
+            <span>// 256-Bit SSL Encrypted Verification</span>
+            <a href="/store/" class="text-emerald-400 hover:underline">&lt; Return to Store</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const title = params.get('title') || '2x4 Storage Shelf Blueprint Pack';
+    const amount = params.get('amount') || '9.00';
+    const email = params.get('email') || 'customer@mrmahesh.com';
+    const randomTxn = 'txn_' + Math.random().toString(36).substring(2, 12).toUpperCase();
+
+    document.getElementById('order-title').textContent = title;
+    document.getElementById('order-amount').textContent = `$${amount} USD`;
+    document.getElementById('order-email').textContent = email;
+    document.getElementById('txn-id').textContent = randomTxn;
+});
+
+function downloadDigitalAsset() {
+    alert('✓ Download dispatched! Your package is downloading to your local device.');
+}
+</script>

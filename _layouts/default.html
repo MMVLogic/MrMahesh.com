@@ -88,12 +88,12 @@
 
         <!-- Footer -->
         <footer class="text-center mt-10 pt-6 border-t border-dashed border-gray-600 space-y-4 font-mono">
-            <!-- Buy Me a Coffee Support Button -->
+            <!-- Buy Me a Coffee Support Button (Via Stripe) -->
             <div class="flex justify-center">
-                <a href="{{ site.buy_me_a_coffee_url | default: 'https://buymeacoffee.com/mrmahesh' }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-[#1a202c] border-2 border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-[#1f2937] text-xs font-bold transition-all duration-300 shadow-lg group">
+                <a href="{{ site.stripe_coffee_url | default: 'https://donate.stripe.com/placeholder' }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-[#1a202c] border-2 border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-[#1f2937] text-xs font-bold transition-all duration-300 shadow-lg group">
                     <span class="text-base group-hover:scale-125 transition-transform duration-200">☕</span>
                     <span>Buy me a coffee</span>
-                    <span class="text-[10px] text-gray-400 group-hover:text-[#1f2937]">(if you found this useful)</span>
+                    <span class="text-[10px] text-gray-400 group-hover:text-[#1f2937]">(powered by Stripe)</span>
                 </a>
             </div>
 

@@ -58,10 +58,8 @@ exclude:
   - admin
   - custom-cms
 
-# Donation & Support Settings
-buy_me_a_coffee_url: "https://buymeacoffee.com/mrmahesh"
-stripe_donation_url: "https://donate.stripe.com/placeholder"
-paypal_me_username: "placeholder"
+# Support & Tip Settings (Stripe Only)
+stripe_coffee_url: "https://donate.stripe.com/placeholder"
 
 # Supabase Authentication & Database Configuration
 supabase_url: "https://xigxtoxxeyiokmalyydx.supabase.co"

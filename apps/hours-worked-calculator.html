@@ -245,36 +245,6 @@ permalink: /apps/hours-worked-calculator/
 
     </div>
 
-    <!-- Support / Donation Card -->
-    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600/60 space-y-4 mt-8">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="space-y-1">
-                <p class="text-lg font-bold text-gray-200 flex items-center">
-                    <span class="mr-2 text-yellow-500 text-2xl">☕</span> SUPPORT_MY_WORK_
-                </p>
-                <p class="text-xs text-gray-400 max-w-xl leading-relaxed">
-                    If this tool saved you some math or time in the shop today, consider buying me a coffee! It keeps the site 100% ad-free and helps cover server costs.
-                </p>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 min-w-[280px]">
-                <div class="flex rounded-md shadow-sm border border-gray-700 bg-gray-800/40 p-0.5">
-                    <button class="btn-amt px-3 py-1 text-xs font-bold text-gray-400 hover:text-white rounded transition-colors focus:outline-none" data-amt="3">$3</button>
-                    <button class="btn-amt px-3 py-1 text-xs font-bold text-yellow-500 bg-gray-700 rounded transition-colors focus:outline-none" data-amt="5">$5</button>
-                    <button class="btn-amt px-3 py-1 text-xs font-bold text-gray-400 hover:text-white rounded transition-colors focus:outline-none" data-amt="10">$10</button>
-                </div>
-                <div class="flex gap-2">
-                    <a id="lnk-donate-card" href="{{ site.stripe_donation_url }}" target="_blank" class="flex-grow text-center bg-yellow-600 hover:bg-yellow-500 text-[#1f2937] font-bold py-2 px-4 rounded text-xs transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md">
-                        💳 Pay with Card
-                    </a>
-                    <a id="lnk-donate-paypal" href="https://paypal.me/{{ site.paypal_me_username }}/5" target="_blank" class="flex-grow text-center bg-[#0070ba] hover:bg-[#0079c1] text-white font-bold py-2 px-4 rounded text-xs transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md">
-                        🅿️ PayPal
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <!-- Engine & Calculation JS -->
@@ -737,28 +707,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSingleBreaks();
     calculateSingle();
     loadTimesheetState();
-
-    // ----------------------------------------------------
-    // Donation button logic
-    // ----------------------------------------------------
-    const paypalUsername = "{{ site.paypal_me_username }}";
-    const btnAmts = document.querySelectorAll('.btn-amt');
-    const lnkPaypal = document.getElementById('lnk-donate-paypal');
-
-    btnAmts.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            btnAmts.forEach(b => {
-                b.classList.remove('text-yellow-500', 'bg-gray-700');
-                b.classList.add('text-gray-400');
-            });
-            btn.classList.remove('text-gray-400');
-            btn.classList.add('text-yellow-500', 'bg-gray-700');
-
-            const amt = btn.dataset.amt;
-            if (lnkPaypal) {
-                lnkPaypal.href = `https://paypal.me/${paypalUsername}/${amt}`;
-            }
-        });
-    });
 });
 </script>

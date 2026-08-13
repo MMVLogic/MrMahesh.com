@@ -58,7 +58,8 @@ exclude:
   - admin
   - custom-cms
 
-# Donation Settings
+# Donation & Support Settings
+buy_me_a_coffee_url: "https://buymeacoffee.com/mrmahesh"
 stripe_donation_url: "https://donate.stripe.com/placeholder"
 paypal_me_username: "placeholder"
 

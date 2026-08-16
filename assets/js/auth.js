@@ -205,6 +205,109 @@ window.MrMaheshAuth = (() => {
                 const raw = localStorage.getItem(userKey);
                 return raw ? JSON.parse(raw).payload : null;
             }
+        },
+
+        // ── Timesheet Entries: append-only history log ──────────────────────
+
+        /**
+         * Save a new timesheet entry to timesheet_entries table (or localStorage fallback).
+         * @param {Object} dateContext  - { year, week, day, label, resolvedDate }
+         * @param {Array}  shiftSlots  - [{ startHr, startMin, startAmpm, endHr, endMin, endAmpm }]
+         * @param {Array}  breaks      - [{ type, name, duration }]
+         * @param {number} totalPaidMinutes - pre-computed net minutes
+         */
+        async saveTimesheetEntry(dateContext, shiftSlots, breaks, totalPaidMinutes) {
+            const entry = {
+                ctx_year:            dateContext.year  !== undefined ? dateContext.year  : null,
+                ctx_week:            dateContext.week  !== undefined ? dateContext.week  : null,
+                ctx_day:             dateContext.day   !== undefined ? dateContext.day   : null,
+                ctx_date:            dateContext.resolvedDate || null,
+                ctx_label:           dateContext.label || 'Untagged',
+                shift_slots:         shiftSlots || [],
+                breaks:              breaks     || [],
+                total_paid_minutes:  totalPaidMinutes  || 0,
+                updated_at:          new Date().toISOString()
+            };
+
+            if (supabaseClient && currentUser) {
+                const { data, error } = await supabaseClient
+                    .from('timesheet_entries')
+                    .insert({ user_id: currentUser.id, ...entry });
+                if (error) throw error;
+                return { mode: 'cloud-supabase', success: true, data };
+            } else {
+                const userId = currentUser ? currentUser.id : 'guest';
+                const key = `mrmahesh_timesheet_entries_${userId}`;
+                const all = JSON.parse(localStorage.getItem(key) || '[]');
+                const newEntry = {
+                    id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                    user_id: userId,
+                    ...entry,
+                    created_at: new Date().toISOString()
+                };
+                all.unshift(newEntry);
+                localStorage.setItem(key, JSON.stringify(all));
+                return { mode: currentUser ? 'mock-cloud' : 'guest-local', success: true, data: newEntry };
+            }
+        },
+
+        /**
+         * Query timesheet_entries matching a date context. NULL fields match stored NULL rows.
+         * @param {Object} dateContext - { year, week, day }
+         * @returns {Array} records sorted newest-first
+         */
+        async queryTimesheetEntries(dateContext) {
+            const yIsNull = dateContext.year  === null || dateContext.year  === undefined;
+            const wIsNull = dateContext.week  === null || dateContext.week  === undefined;
+            const dIsNull = dateContext.day   === null || dateContext.day   === undefined;
+
+            if (supabaseClient && currentUser) {
+                let q = supabaseClient
+                    .from('timesheet_entries')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                q = yIsNull ? q.is('ctx_year', null) : q.eq('ctx_year', dateContext.year);
+                q = wIsNull ? q.is('ctx_week', null) : q.eq('ctx_week', dateContext.week);
+                q = dIsNull ? q.is('ctx_day',  null) : q.eq('ctx_day',  dateContext.day);
+
+                const { data, error } = await q;
+                if (error) throw error;
+                return data || [];
+            } else {
+                const userId = currentUser ? currentUser.id : 'guest';
+                const key = `mrmahesh_timesheet_entries_${userId}`;
+                const all = JSON.parse(localStorage.getItem(key) || '[]');
+                return all.filter(e => {
+                    const yOk = yIsNull ? (e.ctx_year == null) : (e.ctx_year === dateContext.year);
+                    const wOk = wIsNull ? (e.ctx_week == null) : (e.ctx_week === dateContext.week);
+                    const dOk = dIsNull ? (e.ctx_day  == null) : (e.ctx_day  === dateContext.day);
+                    return yOk && wOk && dOk;
+                });
+            }
+        },
+
+        /**
+         * Delete a single timesheet entry by id.
+         * @param {string} id - UUID or local id string
+         */
+        async deleteTimesheetEntry(id) {
+            if (supabaseClient && currentUser) {
+                const { error } = await supabaseClient
+                    .from('timesheet_entries')
+                    .delete()
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id);
+                if (error) throw error;
+                return { success: true };
+            } else {
+                const userId = currentUser ? currentUser.id : 'guest';
+                const key = `mrmahesh_timesheet_entries_${userId}`;
+                const all = JSON.parse(localStorage.getItem(key) || '[]');
+                localStorage.setItem(key, JSON.stringify(all.filter(e => e.id !== id)));
+                return { success: true };
+            }
         }
     };
 })();

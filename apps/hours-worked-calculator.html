@@ -8,23 +8,9 @@ permalink: /apps/hours-worked-calculator/
 
     <!-- App Header -->
     <div>
-        <a href="/apps/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">
-            &lt; Back to Apps Dashboard
-        </a>
+        <a href="/apps/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">&lt; Back to Apps Dashboard</a>
         <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-2 leading-tight">Work Hours Calculator</h1>
-        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
-            Calculate daily and weekly hours worked, manage paid or unpaid breaks, and track your weekly timesheet with a clean mobile-friendly interface.
-        </p>
-    </div>
-
-    <!-- View Mode Switcher (Tabs) -->
-    <div class="border-b border-gray-700 flex space-x-6 text-sm font-bold">
-        <button id="tab-single" class="tab-btn pb-3 text-yellow-500 border-b-2 border-yellow-500 focus:outline-none">
-            ⏱️ Single Day Calculator
-        </button>
-        <button id="tab-weekly" class="tab-btn pb-3 text-gray-400 hover:text-gray-200 focus:outline-none">
-            📅 Weekly Timesheet
-        </button>
+        <p class="text-sm md:text-base text-gray-300 leading-relaxed">Log shift slots, track breaks, and build a searchable history of paid hours — tagged by date context.</p>
     </div>
 
     <!-- Cloud Sync Status Bar -->
@@ -35,677 +21,477 @@ permalink: /apps/hours-worked-calculator/
         </div>
         <div class="flex items-center space-x-2">
             <span id="last-saved-time" class="text-gray-500 text-[11px]"></span>
-            <button id="btn-force-sync" class="px-3 py-1 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded transition-colors">
-                Save & Sync
-            </button>
+            <button id="btn-save-entry" class="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-400 active:scale-95 text-[#1f2937] font-bold rounded transition-all duration-150">+ Save This Entry</button>
         </div>
     </div>
 
-    <!-- 1. SINGLE DAY CALCULATOR VIEW -->
-    <div id="view-single" class="space-y-8">
-        
-        <!-- Daily Settings Panel -->
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-6">
-            <p class="text-base font-bold text-gray-200 flex items-center">
-                <span class="mr-2 text-yellow-500 text-xl">🕒</span> Shift Times
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Start Time -->
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold text-gray-400">Start Time</label>
-                    <div class="flex items-center space-x-2">
-                        <select id="single-start-hr" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <span class="text-gray-500 font-bold">:</span>
-                        <select id="single-start-min" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <select id="single-start-ampm" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
-                            <option value="AM" class="bg-[#1a202c]" selected>AM</option>
-                            <option value="PM" class="bg-[#1a202c]">PM</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- End Time -->
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold text-gray-400">End Time</label>
-                    <div class="flex items-center space-x-2">
-                        <select id="single-end-hr" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <span class="text-gray-500 font-bold">:</span>
-                        <select id="single-end-min" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <select id="single-end-ampm" class="time-select bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-yellow-500 py-1 flex-grow">
-                            <option value="AM" class="bg-[#1a202c]">AM</option>
-                            <option value="PM" class="bg-[#1a202c]" selected>PM</option>
-                        </select>
-                    </div>
-                </div>
+    <!-- Date Context Block -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-5">
+        <p class="text-base font-bold text-gray-200 flex items-center"><span class="mr-2 text-yellow-500 text-xl">📆</span> Date Context</p>
+        <div class="flex flex-wrap gap-6 items-end">
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-gray-400 tracking-wide">Year</label>
+                <select id="ctx-year" class="bg-[#111827] border border-gray-700 hover:border-gray-500 text-gray-200 font-mono text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500 transition-colors cursor-pointer"></select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-gray-400 tracking-wide">ISO Week</label>
+                <select id="ctx-week" class="bg-[#111827] border border-gray-700 hover:border-gray-500 text-gray-200 font-mono text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"></select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-gray-400 tracking-wide">Day of Week</label>
+                <select id="ctx-day" class="bg-[#111827] border border-gray-700 hover:border-gray-500 text-gray-200 font-mono text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"></select>
             </div>
         </div>
-
-        <!-- Custom Breaks Panel -->
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
-            <div class="flex justify-between items-center">
-                <p class="text-base font-bold text-gray-200 flex items-center">
-                    <span class="mr-2 text-yellow-500 text-xl">☕</span> Breaks Ledger
-                </p>
-                <button id="btn-add-break" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-1 px-4 rounded text-xs transition-colors duration-200">
-                    + Add Break
-                </button>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse">
-                    <thead>
-                        <tr class="border-b border-gray-700 text-gray-400">
-                            <th class="pb-2 font-bold w-32">Break Type</th>
-                            <th class="pb-2 font-bold">Label / Name</th>
-                            <th class="pb-2 font-bold w-36 text-center">Duration (Mins)</th>
-                            <th class="pb-2 font-bold w-12 text-center">Del</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breaks-list-body">
-                        <!-- Dynamic Break Rows -->
-                    </tbody>
-                </table>
-            </div>
+        <div class="flex items-center space-x-2 pt-1 border-t border-gray-800">
+            <span class="text-yellow-500 text-xs font-mono">→</span>
+            <p id="ctx-label" class="text-sm font-mono text-yellow-400 font-bold">Calculating...</p>
         </div>
-
-        <!-- Calculated Summary Panel -->
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600">
-            <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
-                <span class="mr-2 text-yellow-500 text-2xl">📊</span> CALCULATED_SUMMARY_
-            </p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
-                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
-                    <p class="text-xs text-yellow-500 font-bold">Net Worked Hours</p>
-                    <p id="single-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0h 0m</p>
-                </div>
-                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
-                    <p class="text-xs text-gray-400 font-bold">Total Elapsed Time</p>
-                    <p id="single-gross-hrs" class="text-xl font-bold font-mono text-gray-200 mt-1">0h 0m</p>
-                </div>
-                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
-                    <p class="text-xs text-gray-400 font-bold">Total Paid Breaks</p>
-                    <p id="single-paid-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
-                </div>
-                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
-                    <p class="text-xs text-gray-400 font-bold">Total Unpaid Breaks</p>
-                    <p id="single-unpaid-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- 2. WEEKLY TIMESHEET VIEW -->
-    <div id="view-weekly" class="hidden space-y-8">
-        
-        <!-- Batch Settings Panel -->
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600 space-y-4">
-            <p class="text-base font-bold text-gray-200 flex items-center">
-                <span class="mr-2 text-yellow-500 text-xl">⚡</span> Batch Timesheet Copy Tool
-            </p>
-            <p class="text-xs text-gray-400 leading-relaxed">
-                Set a standard start time, end time, and unpaid break below, then copy it to all active work days to save time editing.
-            </p>
-            <div class="flex flex-col md:flex-row items-end gap-6 pt-2">
-                <div class="flex-grow space-y-2">
-                    <label class="block text-xs font-bold text-gray-400">Default Start Time</label>
-                    <div class="flex items-center space-x-2">
-                        <select id="batch-start-hr" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <select id="batch-start-min" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <select id="batch-start-ampm" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
-                            <option value="AM" class="bg-[#1a202c]" selected>AM</option>
-                            <option value="PM" class="bg-[#1a202c]">PM</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex-grow space-y-2">
-                    <label class="block text-xs font-bold text-gray-400">Default End Time</label>
-                    <div class="flex items-center space-x-2">
-                        <select id="batch-end-hr" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <select id="batch-end-min" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
-                            <!-- Populated dynamically -->
-                        </select>
-                        <select id="batch-end-ampm" class="bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 w-full">
-                            <option value="AM" class="bg-[#1a202c]">AM</option>
-                            <option value="PM" class="bg-[#1a202c]" selected>PM</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="w-32 space-y-2">
-                    <label class="block text-xs font-bold text-gray-400">Unpaid Break (Mins)</label>
-                    <input type="number" id="batch-unpaid-break" value="30" min="0" class="w-full bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-1 text-center">
-                </div>
-                <button id="btn-copy-batch" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 text-xs shadow-md">
-                    Apply to Active Days
-                </button>
-            </div>
-        </div>
+    <!-- Shift Times Panel -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+        <p class="text-base font-bold text-gray-200 flex items-center"><span class="mr-2 text-yellow-500 text-xl">🕒</span> Shift Times</p>
+        <div id="shift-slots-container" class="space-y-3"></div>
+        <button id="btn-add-slot" class="flex items-center gap-2 text-xs font-bold text-yellow-500 hover:text-yellow-300 border border-yellow-500/30 hover:border-yellow-400/60 px-4 py-2 rounded-lg transition-all duration-200">
+            <span class="text-base leading-none">+</span> Add Shift Slot
+        </button>
+    </div>
 
-        <!-- Weekly Log Panel -->
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
-            <p class="text-base font-bold text-gray-200 flex items-center">
-                <span class="mr-2 text-yellow-500 text-xl">📅</span> Weekly Log Sheet
-            </p>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse min-w-[700px]">
-                    <thead>
-                        <tr class="border-b border-gray-700 text-gray-400">
-                            <th class="pb-2 font-bold w-20 text-center">Work?</th>
-                            <th class="pb-2 font-bold w-28">Day</th>
-                            <th class="pb-2 font-bold w-48">Start Time</th>
-                            <th class="pb-2 font-bold w-48">End Time</th>
-                            <th class="pb-2 font-bold w-24 text-center">Break (Min)</th>
-                            <th class="pb-2 font-bold w-28 text-right">Net Hours</th>
-                        </tr>
-                    </thead>
-                    <tbody id="weekly-log-body">
-                        <!-- Monday to Sunday populated dynamically -->
-                    </tbody>
-                </table>
-            </div>
+    <!-- Breaks Ledger -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+        <div class="flex justify-between items-center">
+            <p class="text-base font-bold text-gray-200 flex items-center"><span class="mr-2 text-yellow-500 text-xl">☕</span> Breaks Ledger</p>
+            <button id="btn-add-break" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-1 px-4 rounded text-xs transition-colors duration-200">+ Add Break</button>
         </div>
-
-        <!-- Weekly Calculated Summary Panel -->
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600">
-            <p class="text-lg font-bold text-gray-200 mb-4 flex items-center">
-                <span class="mr-2 text-yellow-500 text-2xl">📊</span> WEEKLY_CALCULATED_SUMMARY_
-            </p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                <div class="bg-yellow-600/10 p-4 rounded-lg border border-yellow-600/40">
-                    <p class="text-xs text-yellow-500 font-bold">Total Weekly Net Worked Hours</p>
-                    <p id="weekly-net-hrs" class="text-3xl font-bold font-mono text-yellow-500 mt-1">0h 0m</p>
-                </div>
-                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
-                    <p class="text-xs text-gray-400 font-bold">Days Worked</p>
-                    <p id="weekly-days-count" class="text-xl font-bold font-mono text-gray-200 mt-1">0 days</p>
-                </div>
-                <div class="bg-gray-800/40 p-4 rounded-lg border border-gray-800">
-                    <p class="text-xs text-gray-400 font-bold">Total Weekly Breaks</p>
-                    <p id="weekly-total-breaks" class="text-xl font-bold font-mono text-gray-200 mt-1">0 mins</p>
-                </div>
-            </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-700 text-gray-400">
+                        <th class="pb-2 font-bold w-32">Break Type</th>
+                        <th class="pb-2 font-bold">Label / Name</th>
+                        <th class="pb-2 font-bold w-36 text-center">Duration (Mins)</th>
+                        <th class="pb-2 font-bold w-12 text-center">Del</th>
+                    </tr>
+                </thead>
+                <tbody id="breaks-list-body"></tbody>
+            </table>
         </div>
+    </div>
 
+    <!-- Total Paid Hours -->
+    <div class="bg-[#1a202c] p-8 rounded-xl border-2 border-yellow-600/60 text-center space-y-2">
+        <p class="text-xs font-bold text-yellow-500 font-mono tracking-[0.25em]">TOTAL_PAID_HOURS_</p>
+        <p id="total-paid-hrs" class="text-6xl font-bold font-mono text-yellow-400 leading-tight">0h 0m</p>
+        <p id="total-slots-info" class="text-xs text-gray-500 font-mono"></p>
+    </div>
+
+    <!-- Saved Records History Panel -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700 space-y-4">
+        <div class="flex flex-wrap justify-between items-center gap-2">
+            <p class="text-base font-bold text-gray-200 flex items-center gap-2">
+                <span class="text-yellow-500 text-xl">📋</span> Saved Records
+                <span id="history-filter-label" class="text-xs text-gray-400 font-normal font-mono ml-1"></span>
+            </p>
+            <span id="history-loading" class="text-xs text-gray-500 font-mono hidden">Loading...</span>
+        </div>
+        <div id="history-container"></div>
     </div>
 
 </div>
 
-<!-- Engine & Calculation JS -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // ----------------------------------------------------
-    // Helper: Populate Dropdown Options dynamically
-    // ----------------------------------------------------
-    function populateSelect(id, minVal, maxVal, selectedVal, pad = false) {
-        const select = document.getElementById(id);
-        if (!select) return;
-        select.innerHTML = '';
-        for (let i = minVal; i <= maxVal; i++) {
-            const val = pad ? i.toString().padStart(2, '0') : i.toString();
-            const opt = document.createElement('option');
-            opt.value = val;
-            opt.className = 'bg-[#1a202c]';
-            opt.textContent = val;
-            if (val == selectedVal) opt.selected = true;
-            select.appendChild(opt);
-        }
+
+    const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+    const MONTHS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function getISOWeekData(date) {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const day = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - day);
+        const ys = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return { week: Math.ceil((((d - ys) / 86400000) + 1) / 7), year: d.getUTCFullYear() };
     }
 
-    // Populate daily selectors
-    populateSelect('single-start-hr', 1, 12, 8);
-    populateSelect('single-start-min', 0, 59, 0, true);
-    populateSelect('single-end-hr', 1, 12, 4);
-    populateSelect('single-end-min', 0, 59, 0, true);
+    function getWeekBounds(year, week) {
+        const jan4 = new Date(Date.UTC(year, 0, 4));
+        const j4d  = jan4.getUTCDay() || 7;
+        const mon  = new Date(jan4);
+        mon.setUTCDate(jan4.getUTCDate() - j4d + 1 + (week - 1) * 7);
+        const sun = new Date(mon);
+        sun.setUTCDate(mon.getUTCDate() + 6);
+        return { monday: mon, sunday: sun };
+    }
 
-    // Populate batch selectors
-    populateSelect('batch-start-hr', 1, 12, 8);
-    populateSelect('batch-start-min', 0, 59, 0, true);
-    populateSelect('batch-end-hr', 1, 12, 4);
-    populateSelect('batch-end-min', 0, 59, 0, true);
+    function resolveDate(year, week, dayName) {
+        const { monday } = getWeekBounds(year, week);
+        const d = new Date(monday);
+        d.setUTCDate(monday.getUTCDate() + DAY_NAMES.indexOf(dayName));
+        return d;
+    }
 
-    // ----------------------------------------------------
-    // Tab Switching
-    // ----------------------------------------------------
-    const tabSingle = document.getElementById('tab-single');
-    const tabWeekly = document.getElementById('tab-weekly');
-    const viewSingle = document.getElementById('view-single');
-    const viewWeekly = document.getElementById('view-weekly');
+    function fmtFull(d)  { return `${DAY_NAMES[(d.getUTCDay()+6)%7]}, ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`; }
+    function fmtShort(d) { return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`; }
+    function fmtISO(d)   { return d.toISOString().split('T')[0]; }
 
-    tabSingle.addEventListener('click', () => {
-        tabSingle.className = 'tab-btn pb-3 text-yellow-500 border-b-2 border-yellow-500 focus:outline-none';
-        tabWeekly.className = 'tab-btn pb-3 text-gray-400 hover:text-gray-200 focus:outline-none';
-        viewSingle.classList.remove('hidden');
-        viewWeekly.classList.add('hidden');
+    function parseTimeToMins(hr, min, ampm) {
+        let h = parseInt(hr);
+        if (ampm === 'PM' && h !== 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        return h * 60 + parseInt(min);
+    }
+
+    function formatMins(t) {
+        if (t <= 0) return '0h 0m';
+        const h = Math.floor(t / 60), m = t % 60;
+        if (h === 0) return `${m}m`;
+        if (m === 0) return `${h}h`;
+        return `${h}h ${m}m`;
+    }
+
+    /* ── State ────────────────────────────────────────── */
+    const today = new Date();
+    const { week: todayWeek, year: todayISOYear } = getISOWeekData(today);
+    const todayDay = DAY_NAMES[(today.getDay() + 6) % 7];
+
+    let dateCtx    = { year: todayISOYear, week: todayWeek, day: todayDay };
+    let shiftSlots = [{ startHr:8, startMin:'00', startAmpm:'AM', endHr:4, endMin:'00', endAmpm:'PM' }];
+    let breaks     = [{ type:'unpaid', name:'Lunch', duration:30 }];
+
+    /* ── Label ────────────────────────────────────────── */
+    function buildLabel(ctx) {
+        const { year, week, day } = ctx;
+        if (year !== null && week !== null && day !== null) return fmtFull(resolveDate(year, week, day));
+        if (year !== null && week !== null) {
+            const { monday, sunday } = getWeekBounds(year, week);
+            return `Week ${week}, ${year}  (${fmtShort(monday)} – ${fmtShort(sunday)})`;
+        }
+        if (year !== null) return `All of ${year}`;
+        return 'Untagged (any date)';
+    }
+
+    function buildResolvedDate(ctx) {
+        return (ctx.year !== null && ctx.week !== null && ctx.day !== null)
+            ? fmtISO(resolveDate(ctx.year, ctx.week, ctx.day)) : null;
+    }
+
+    /* ── Dropdowns ────────────────────────────────────── */
+    function mkOpt(v, l, s) { return `<option value="${v}" class="bg-[#111827]" ${s?'selected':''}>${l}</option>`; }
+
+    function populateYearDropdown() {
+        const el = document.getElementById('ctx-year');
+        let h = mkOpt('', '— (any year)', dateCtx.year === null);
+        for (let y = today.getFullYear()+1; y >= 2020; y--) h += mkOpt(y, y, y === dateCtx.year);
+        el.innerHTML = h;
+    }
+
+    function populateWeekDropdown() {
+        const el = document.getElementById('ctx-week');
+        el.disabled = (dateCtx.year === null);
+        let h = mkOpt('', '— (any week)', dateCtx.week === null);
+        for (let w = 1; w <= 53; w++) {
+            let lbl = `W${String(w).padStart(2,'0')}`;
+            if (dateCtx.year !== null) {
+                try {
+                    const { monday, sunday } = getWeekBounds(dateCtx.year, w);
+                    if (w === 53 && monday.getUTCFullYear() !== dateCtx.year && sunday.getUTCFullYear() !== dateCtx.year) continue;
+                    lbl = `W${String(w).padStart(2,'0')}  ${fmtShort(monday)} – ${fmtShort(sunday)}`;
+                } catch(e) { continue; }
+            }
+            h += mkOpt(w, lbl, w === dateCtx.week);
+        }
+        el.innerHTML = h;
+    }
+
+    function populateDayDropdown() {
+        const el = document.getElementById('ctx-day');
+        el.disabled = (dateCtx.week === null);
+        let h = mkOpt('', '— (any day)', dateCtx.day === null);
+        DAY_NAMES.forEach(d => { h += mkOpt(d, d, d === dateCtx.day); });
+        el.innerHTML = h;
+    }
+
+    function updateContextLabel() {
+        document.getElementById('ctx-label').textContent = buildLabel(dateCtx);
+    }
+
+    document.getElementById('ctx-year').addEventListener('change', e => {
+        dateCtx.year = e.target.value === '' ? null : parseInt(e.target.value);
+        if (dateCtx.year === null) { dateCtx.week = null; dateCtx.day = null; }
+        populateWeekDropdown(); populateDayDropdown(); updateContextLabel();
+        saveSession(); renderHistory();
+    });
+    document.getElementById('ctx-week').addEventListener('change', e => {
+        dateCtx.week = e.target.value === '' ? null : parseInt(e.target.value);
+        if (dateCtx.week === null) { dateCtx.day = null; }
+        populateDayDropdown(); updateContextLabel(); saveSession(); renderHistory();
+    });
+    document.getElementById('ctx-day').addEventListener('change', e => {
+        dateCtx.day = e.target.value === '' ? null : e.target.value;
+        updateContextLabel(); saveSession(); renderHistory();
     });
 
-    tabWeekly.addEventListener('click', () => {
-        tabWeekly.className = 'tab-btn pb-3 text-yellow-500 border-b-2 border-yellow-500 focus:outline-none';
-        tabSingle.className = 'tab-btn pb-3 text-gray-400 hover:text-gray-200 focus:outline-none';
-        viewWeekly.classList.remove('hidden');
-        viewSingle.classList.add('hidden');
-        renderWeekly();
+    /* ── Shift Slots ──────────────────────────────────── */
+    function buildPickers(pfx, hr, min, ampm) {
+        const hrO  = Array.from({length:12},(_,i)=>i+1).map(h=>`<option value="${h}" class="bg-[#111827]" ${h==hr?'selected':''}>${h}</option>`).join('');
+        const minO = Array.from({length:12},(_,i)=>(i*5).toString().padStart(2,'0')).map(m=>`<option value="${m}" class="bg-[#111827]" ${m==min?'selected':''}>${m}</option>`).join('');
+        const cls  = 'bg-[#111827] border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 cursor-pointer';
+        return `<div class="flex items-center gap-1">
+            <select id="${pfx}-hr"   class="${cls} w-9">${hrO}</select>
+            <span class="text-gray-600 font-bold">:</span>
+            <select id="${pfx}-min"  class="${cls} w-12">${minO}</select>
+            <select id="${pfx}-ampm" class="${cls} w-12">
+                <option value="AM" class="bg-[#111827]" ${ampm==='AM'?'selected':''}>AM</option>
+                <option value="PM" class="bg-[#111827]" ${ampm==='PM'?'selected':''}>PM</option>
+            </select></div>`;
+    }
+
+    function renderShiftSlots() {
+        const c = document.getElementById('shift-slots-container');
+        c.innerHTML = '';
+        shiftSlots.forEach((slot, i) => {
+            const w = document.createElement('div');
+            w.className = 'flex flex-wrap items-center gap-3 p-3 bg-[#111827] rounded-lg border border-gray-800 hover:border-gray-700 transition-colors';
+            w.innerHTML = `
+                <span class="text-[10px] font-mono text-gray-500 w-10 shrink-0">Slot ${i+1}</span>
+                ${buildPickers('ss'+i+'s', slot.startHr, slot.startMin, slot.startAmpm)}
+                <span class="text-gray-500 font-bold text-sm shrink-0">→</span>
+                ${buildPickers('ss'+i+'e', slot.endHr, slot.endMin, slot.endAmpm)}
+                ${shiftSlots.length>1
+                    ? `<button class="btn-rm-slot ml-auto text-red-500/70 hover:text-red-400 font-bold text-xl leading-none px-1 transition-colors" data-i="${i}">×</button>`
+                    : `<span class="ml-auto"></span>`}`;
+            c.appendChild(w);
+
+            const wire = (sfx, fields) => fields.forEach(([part, field, isInt]) => {
+                w.querySelector('#ss'+i+sfx+'-'+part).addEventListener('change', e => {
+                    shiftSlots[i][field] = isInt ? parseInt(e.target.value) : e.target.value;
+                    calcAndRender();
+                });
+            });
+            wire('s',[['hr','startHr',true],['min','startMin',false],['ampm','startAmpm',false]]);
+            wire('e',[['hr','endHr',true],['min','endMin',false],['ampm','endAmpm',false]]);
+
+            const rm = w.querySelector('.btn-rm-slot');
+            if (rm) rm.addEventListener('click', () => { shiftSlots.splice(i,1); renderShiftSlots(); calcAndRender(); });
+        });
+    }
+
+    document.getElementById('btn-add-slot').addEventListener('click', () => {
+        shiftSlots.push({startHr:6,startMin:'00',startAmpm:'PM',endHr:9,endMin:'00',endAmpm:'PM'});
+        renderShiftSlots(); calcAndRender();
     });
 
-    // ----------------------------------------------------
-    // 1. Single Day State & Calculation
-    // ----------------------------------------------------
-    let singleBreaks = [
-        { type: 'unpaid', name: 'Lunch', duration: 30 }
-    ];
-
-    const breaksListBody = document.getElementById('breaks-list-body');
-
-    function renderSingleBreaks() {
-        breaksListBody.innerHTML = '';
-        singleBreaks.forEach((brk, index) => {
+    /* ── Breaks ───────────────────────────────────────── */
+    function renderBreaks() {
+        const tbody = document.getElementById('breaks-list-body');
+        tbody.innerHTML = '';
+        if (!breaks.length) {
+            tbody.innerHTML = `<tr><td colspan="4" class="py-3 text-center text-gray-600 text-xs font-mono">No breaks — all shift time is paid.</td></tr>`;
+        }
+        breaks.forEach((brk, i) => {
             const row = document.createElement('tr');
             row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150';
             row.innerHTML = `
-                <td class="py-1.5 pr-2">
-                    <select data-index="${index}" class="break-type-select w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs">
-                        <option value="unpaid" class="bg-[#1a202c]" ${brk.type === 'unpaid' ? 'selected' : ''}>Unpaid Break</option>
-                        <option value="paid" class="bg-[#1a202c]" ${brk.type === 'paid' ? 'selected' : ''}>Paid Break</option>
-                    </select>
-                </td>
-                <td class="py-1.5 pr-2">
-                    <input type="text" value="${brk.name}" data-index="${index}" data-field="name" class="break-name-input w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs" placeholder="e.g. Lunch">
-                </td>
-                <td class="py-1.5 text-center pr-2">
-                    <input type="number" min="0" value="${brk.duration}" data-index="${index}" data-field="duration" class="break-duration-input w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs text-center">
-                </td>
-                <td class="py-1.5 text-center">
-                    <button class="btn-del-break text-red-500 hover:text-red-400 font-bold text-sm px-2" data-index="${index}">
-                        &times;
-                    </button>
-                </td>
-            `;
-            breaksListBody.appendChild(row);
+                <td class="py-1.5 pr-2"><select data-i="${i}" class="brk-type w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs">
+                    <option value="unpaid" class="bg-[#1a202c]" ${brk.type==='unpaid'?'selected':''}>Unpaid</option>
+                    <option value="paid"   class="bg-[#1a202c]" ${brk.type==='paid'?'selected':''}>Paid</option></select></td>
+                <td class="py-1.5 pr-2"><input type="text" value="${brk.name}" data-i="${i}" class="brk-name w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs" placeholder="e.g. Lunch"></td>
+                <td class="py-1.5 text-center pr-2"><input type="number" min="0" value="${brk.duration}" data-i="${i}" class="brk-dur w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs text-center"></td>
+                <td class="py-1.5 text-center"><button class="brk-del text-red-500 hover:text-red-400 font-bold text-sm px-2" data-i="${i}">&times;</button></td>`;
+            tbody.appendChild(row);
         });
-
-        // Event Listeners for Breaks
-        document.querySelectorAll('.break-type-select').forEach(select => {
-            select.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                singleBreaks[idx].type = e.target.value;
-                calculateSingle();
-            });
-        });
-
-        document.querySelectorAll('.break-name-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                singleBreaks[idx].name = e.target.value;
-            });
-        });
-
-        document.querySelectorAll('.break-duration-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                singleBreaks[idx].duration = parseInt(e.target.value) || 0;
-                calculateSingle();
-            });
-        });
-
-        document.querySelectorAll('.btn-del-break').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                singleBreaks.splice(idx, 1);
-                renderSingleBreaks();
-                calculateSingle();
-            });
-        });
+        tbody.querySelectorAll('.brk-type').forEach(s=>s.addEventListener('change',e=>{breaks[+e.target.dataset.i].type=e.target.value;calcAndRender();}));
+        tbody.querySelectorAll('.brk-name').forEach(s=>s.addEventListener('change',e=>{breaks[+e.target.dataset.i].name=e.target.value;}));
+        tbody.querySelectorAll('.brk-dur').forEach(s=>s.addEventListener('change',e=>{breaks[+e.target.dataset.i].duration=parseInt(e.target.value)||0;calcAndRender();}));
+        tbody.querySelectorAll('.brk-del').forEach(b=>b.addEventListener('click',e=>{breaks.splice(+e.target.dataset.i,1);renderBreaks();calcAndRender();}));
     }
 
     document.getElementById('btn-add-break').addEventListener('click', () => {
-        singleBreaks.push({ type: 'unpaid', name: 'Coffee Break', duration: 15 });
-        renderSingleBreaks();
-        calculateSingle();
+        breaks.push({type:'unpaid',name:'Break',duration:15}); renderBreaks(); calcAndRender();
     });
 
-    // Parsers & Formatters
-    function parseTimeToMins(hr, min, ampm) {
-        let hour = parseInt(hr);
-        if (ampm === 'PM' && hour !== 12) hour += 12;
-        if (ampm === 'AM' && hour === 12) hour = 0;
-        return hour * 60 + parseInt(min);
+    /* ── Calculation ──────────────────────────────────── */
+    function calcTotal() {
+        let gross = 0;
+        shiftSlots.forEach(s => {
+            const st = parseTimeToMins(s.startHr, s.startMin, s.startAmpm);
+            let en = parseTimeToMins(s.endHr, s.endMin, s.endAmpm);
+            if (en < st) en += 1440;
+            gross += Math.max(0, en - st);
+        });
+        const unpaid = breaks.reduce((a,b)=>b.type==='unpaid'?a+b.duration:a, 0);
+        return Math.max(0, gross - unpaid);
     }
 
-    function formatMinsToHoursAndMins(totalMins) {
-        if (totalMins <= 0) return '0h 0m';
-        const hrs = Math.floor(totalMins / 60);
-        const mins = totalMins % 60;
-        if (hrs === 0) return `${mins}m`;
-        if (mins === 0) return `${hrs}h`;
-        return `${hrs}h ${mins}m`;
+    function calcAndRender() {
+        const net = calcTotal();
+        document.getElementById('total-paid-hrs').textContent = formatMins(net);
+        let gross = shiftSlots.reduce((a,s)=>{
+            const st=parseTimeToMins(s.startHr,s.startMin,s.startAmpm);
+            let en=parseTimeToMins(s.endHr,s.endMin,s.endAmpm);
+            if(en<st)en+=1440;
+            return a+Math.max(0,en-st);
+        },0);
+        const unpaid = breaks.reduce((a,b)=>b.type==='unpaid'?a+b.duration:a,0);
+        const parts = [
+            shiftSlots.length>1 ? `${shiftSlots.length} slots · ${formatMins(gross)} gross` : '',
+            unpaid>0 ? `${unpaid}m unpaid deducted` : ''
+        ].filter(Boolean);
+        document.getElementById('total-slots-info').textContent = parts.join(' · ');
+        saveSession();
     }
 
-    function calculateSingle() {
-        const startHr = document.getElementById('single-start-hr').value;
-        const startMin = document.getElementById('single-start-min').value;
-        const startAmpm = document.getElementById('single-start-ampm').value;
+    /* ── Session state ────────────────────────────────── */
+    function saveSession() {
+        try { localStorage.setItem('mrmahesh_wh_session', JSON.stringify({dateCtx,shiftSlots,breaks})); } catch(e) {}
+    }
+    function loadSession() {
+        try {
+            const raw = localStorage.getItem('mrmahesh_wh_session');
+            if (!raw) return;
+            const s = JSON.parse(raw);
+            if (s.dateCtx)              dateCtx    = s.dateCtx;
+            if (s.shiftSlots?.length>0) shiftSlots = s.shiftSlots;
+            if (s.breaks)               breaks     = s.breaks;
+        } catch(e) {}
+    }
 
-        const endHr = document.getElementById('single-end-hr').value;
-        const endMin = document.getElementById('single-end-min').value;
-        const endAmpm = document.getElementById('single-end-ampm').value;
+    /* ── Sync UI ──────────────────────────────────────── */
+    function updateSyncUI() {
+        const cloud = window.MrMaheshAuth?.isLoggedIn();
+        document.getElementById('sync-status-icon').textContent = cloud ? '🟢' : '💾';
+        const t = document.getElementById('sync-status-text');
+        t.textContent = cloud ? 'Storage: Cloud Database (Synchronized)' : 'Storage: Local Device (Guest Mode)';
+        t.className   = cloud ? 'text-green-400 font-bold' : 'text-gray-300';
+    }
 
-        const startMins = parseTimeToMins(startHr, startMin, startAmpm);
-        let endMins = parseTimeToMins(endHr, endMin, endAmpm);
+    /* ── History CRUD ─────────────────────────────────── */
+    function localKey() { return 'mrmahesh_timesheet_entries_'+(window.MrMaheshAuth?.getUser()?.id||'guest'); }
 
-        // If end time is before start time, assume shift crossed midnight
-        if (endMins < startMins) {
-            endMins += 24 * 60;
+    function localFilter(all, ctx) {
+        return all.filter(e => {
+            const yN=ctx.year===null, wN=ctx.week===null, dN=ctx.day===null;
+            return (yN?(e.ctx_year==null):(e.ctx_year===ctx.year))
+                && (wN?(e.ctx_week==null):(e.ctx_week===ctx.week))
+                && (dN?(e.ctx_day==null) :(e.ctx_day===ctx.day));
+        });
+    }
+
+    async function fetchRecords() {
+        if (window.MrMaheshAuth) return await window.MrMaheshAuth.queryTimesheetEntries(dateCtx);
+        return localFilter(JSON.parse(localStorage.getItem(localKey())||'[]'), dateCtx);
+    }
+
+    async function renderHistory() {
+        const container = document.getElementById('history-container');
+        const filterEl  = document.getElementById('history-filter-label');
+        const loading   = document.getElementById('history-loading');
+        filterEl.textContent = `— ${buildLabel(dateCtx)}`;
+        loading.classList.remove('hidden');
+        container.innerHTML = '';
+
+        let records = [];
+        try { records = await fetchRecords(); }
+        catch(err) {
+            loading.classList.add('hidden');
+            container.innerHTML = `<p class="text-red-400 text-xs font-mono py-4">Error: ${err.message}</p>`;
+            return;
+        }
+        loading.classList.add('hidden');
+
+        if (!records.length) {
+            container.innerHTML = `<div class="text-center py-8 space-y-2">
+                <p class="text-3xl">🕐</p>
+                <p class="text-gray-500 text-xs font-mono">No saved entries for this date context yet.</p>
+                <p class="text-gray-600 text-xs">Set your shifts above and click <strong class="text-yellow-500">+ Save This Entry</strong>.</p>
+            </div>`;
+            return;
         }
 
-        const elapsedMins = endMins - startMins;
+        const totalMins = records.reduce((s,r)=>s+(r.total_paid_minutes||0), 0);
+        const wrap = document.createElement('div');
+        wrap.className = 'space-y-2';
 
-        let totalPaidBreakMins = 0;
-        let totalUnpaidBreakMins = 0;
-        singleBreaks.forEach(b => {
-            if (b.type === 'paid') totalPaidBreakMins += b.duration;
-            else totalUnpaidBreakMins += b.duration;
-        });
+        records.forEach(r => {
+            const slotsText  = (r.shift_slots||[]).map(s=>`${s.startHr}:${s.startMin} ${s.startAmpm} → ${s.endHr}:${s.endMin} ${s.endAmpm}`).join(' + ');
+            const unpaidBrks = (r.breaks||[]).filter(b=>b.type==='unpaid');
+            const brkText    = unpaidBrks.length ? unpaidBrks.map(b=>`${b.name} ${b.duration}m`).join(', ') : 'No unpaid breaks';
+            const savedAt    = new Date(r.created_at).toLocaleString(undefined,{dateStyle:'short',timeStyle:'short'});
+            const card = document.createElement('div');
+            card.className = 'flex flex-wrap items-start gap-3 p-3 bg-[#111827] rounded-lg border border-gray-800 hover:border-gray-700 transition-colors text-xs font-mono';
+            card.innerHTML = `
+                <div class="flex-grow min-w-0 space-y-1">
+                    <p class="text-gray-200 font-bold text-sm truncate">${r.ctx_label}</p>
+                    <p class="text-gray-400 truncate">🕒 ${slotsText||'—'}</p>
+                    <p class="text-gray-500">☕ ${brkText}</p>
+                    <p class="text-gray-600 text-[10px]">Saved: ${savedAt}</p>
+                </div>
+                <div class="flex items-center gap-3 shrink-0 self-center">
+                    <span class="text-yellow-400 font-bold text-lg">${formatMins(r.total_paid_minutes||0)}</span>
+                    <button class="btn-del-rec text-gray-600 hover:text-red-400 transition-colors text-base leading-none" data-id="${r.id}" title="Delete">🗑</button>
+                </div>`;
+            wrap.appendChild(card);
 
-        const netMins = Math.max(0, elapsedMins - totalUnpaidBreakMins);
-
-        document.getElementById('single-gross-hrs').textContent = formatMinsToHoursAndMins(elapsedMins);
-        document.getElementById('single-paid-breaks').textContent = `${totalPaidBreakMins} mins`;
-        document.getElementById('single-unpaid-breaks').textContent = `${totalUnpaidBreakMins} mins`;
-        document.getElementById('single-net-hrs').textContent = formatMinsToHoursAndMins(netMins);
-    }
-
-    document.querySelectorAll('.time-select').forEach(sel => {
-        sel.addEventListener('change', calculateSingle);
-    });
-
-    // ----------------------------------------------------
-    // 2. Weekly State & Calculation
-    // ----------------------------------------------------
-    const daysName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    let weeklyDays = daysName.map(day => ({
-        day,
-        work: day !== 'Saturday' && day !== 'Sunday',
-        startHr: 8,
-        startMin: '00',
-        startAmpm: 'AM',
-        endHr: 4,
-        endMin: '30',
-        endAmpm: 'PM',
-        unpaidBreak: 30
-    }));
-
-    const weeklyLogBody = document.getElementById('weekly-log-body');
-
-    function renderWeekly() {
-        weeklyLogBody.innerHTML = '';
-        weeklyDays.forEach((day, index) => {
-            const row = document.createElement('tr');
-            row.className = `border-b border-gray-800 hover:bg-[#2d3748] transition-colors duration-150 ${!day.work ? 'opacity-40' : ''}`;
-            row.innerHTML = `
-                <td class="py-2 text-center">
-                    <input type="checkbox" data-index="${index}" class="weekly-work-chk h-4 w-4 bg-gray-700 border-gray-600 text-yellow-500 focus:ring-0 rounded" ${day.work ? 'checked' : ''}>
-                </td>
-                <td class="py-2 font-bold text-gray-300">${day.day}</td>
-                <td class="py-1 pr-2">
-                    <div class="flex items-center space-x-1">
-                        <select data-index="${index}" data-field="startHr" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
-                            ${[...Array(12).keys()].map(h => `<option value="${h+1}" class="bg-[#1a202c]" ${day.startHr === h+1 ? 'selected' : ''}>${h+1}</option>`).join('')}
-                        </select>
-                        <span class="text-gray-500">:</span>
-                        <select data-index="${index}" data-field="startMin" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
-                            <!-- 00 to 59 in 5 min steps -->
-                            ${[...Array(12).keys()].map(m => {
-                                const val = (m * 5).toString().padStart(2, '0');
-                                return `<option value="${val}" class="bg-[#1a202c]" ${day.startMin === val ? 'selected' : ''}>${val}</option>`;
-                            }).join('')}
-                        </select>
-                        <select data-index="${index}" data-field="startAmpm" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
-                            <option value="AM" class="bg-[#1a202c]" ${day.startAmpm === 'AM' ? 'selected' : ''}>AM</option>
-                            <option value="PM" class="bg-[#1a202c]" ${day.startAmpm === 'PM' ? 'selected' : ''}>PM</option>
-                        </select>
-                    </div>
-                </td>
-                <td class="py-1 pr-2">
-                    <div class="flex items-center space-x-1">
-                        <select data-index="${index}" data-field="endHr" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
-                            ${[...Array(12).keys()].map(h => `<option value="${h+1}" class="bg-[#1a202c]" ${day.endHr === h+1 ? 'selected' : ''}>${h+1}</option>`).join('')}
-                        </select>
-                        <span class="text-gray-500">:</span>
-                        <select data-index="${index}" data-field="endMin" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
-                            ${[...Array(12).keys()].map(m => {
-                                const val = (m * 5).toString().padStart(2, '0');
-                                return `<option value="${val}" class="bg-[#1a202c]" ${day.endMin === val ? 'selected' : ''}>${val}</option>`;
-                            }).join('')}
-                        </select>
-                        <select data-index="${index}" data-field="endAmpm" class="weekly-input bg-transparent border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 w-full" ${!day.work ? 'disabled' : ''}>
-                            <option value="AM" class="bg-[#1a202c]" ${day.endAmpm === 'AM' ? 'selected' : ''}>AM</option>
-                            <option value="PM" class="bg-[#1a202c]" ${day.endAmpm === 'PM' ? 'selected' : ''}>PM</option>
-                        </select>
-                    </div>
-                </td>
-                <td class="py-1 text-center pr-2">
-                    <input type="number" min="0" value="${day.unpaidBreak}" data-index="${index}" data-field="unpaidBreak" class="weekly-input w-full bg-transparent border-b border-gray-700 text-gray-200 px-1 py-0.5 focus:outline-none focus:border-yellow-500 font-mono text-xs text-center" ${!day.work ? 'disabled' : ''}>
-                </td>
-                <td class="py-2 font-mono text-right text-gray-300 font-bold weekly-day-net" data-index="${index}">
-                    0.00 hrs
-                </td>
-            `;
-            weeklyLogBody.appendChild(row);
-        });
-
-        // Event Listeners for Weekly Sheet
-        document.querySelectorAll('.weekly-work-chk').forEach(chk => {
-            chk.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                weeklyDays[idx].work = e.target.checked;
-                renderWeekly();
-                calculateWeekly();
+            card.querySelector('.btn-del-rec').addEventListener('click', async ev => {
+                const btn = ev.currentTarget;
+                const id  = btn.dataset.id;
+                if (!confirm('Delete this saved entry? This cannot be undone.')) return;
+                btn.textContent = '...'; btn.disabled = true;
+                try {
+                    if (window.MrMaheshAuth) {
+                        await window.MrMaheshAuth.deleteTimesheetEntry(id);
+                    } else {
+                        const all = JSON.parse(localStorage.getItem(localKey())||'[]');
+                        localStorage.setItem(localKey(), JSON.stringify(all.filter(e=>e.id!==id)));
+                    }
+                    await renderHistory();
+                } catch(e) { alert('Delete failed: ' + e.message); }
             });
         });
 
-        document.querySelectorAll('.weekly-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                const field = e.target.dataset.field;
-                let val = e.target.value;
-                if (field === 'startHr' || field === 'endHr' || field === 'unpaidBreak') {
-                    val = parseInt(val) || 0;
-                }
-                weeklyDays[idx][field] = val;
-                calculateWeekly();
-            });
-        });
-
-        calculateWeekly();
+        const footer = document.createElement('div');
+        footer.className = 'flex justify-between items-center border-t border-gray-700 pt-3 mt-2';
+        footer.innerHTML = `
+            <span class="text-xs text-gray-400 font-mono">${records.length} entr${records.length===1?'y':'ies'} · this filter</span>
+            <div class="text-right">
+                <span class="text-[10px] text-gray-500 font-mono block">Total Paid Hours</span>
+                <span class="text-yellow-400 font-bold font-mono text-xl">${formatMins(totalMins)}</span>
+            </div>`;
+        wrap.appendChild(footer);
+        container.appendChild(wrap);
     }
 
-    // Copy batch daily settings
-    document.getElementById('btn-copy-batch').addEventListener('click', () => {
-        const startHr = parseInt(document.getElementById('batch-start-hr').value);
-        const startMin = document.getElementById('batch-start-min').value;
-        const startAmpm = document.getElementById('batch-start-ampm').value;
-
-        const endHr = parseInt(document.getElementById('batch-end-hr').value);
-        const endMin = document.getElementById('batch-end-min').value;
-        const endAmpm = document.getElementById('batch-end-ampm').value;
-
-        const unpaidBreak = parseInt(document.getElementById('batch-unpaid-break').value) || 0;
-
-        weeklyDays.forEach(day => {
-            if (day.work) {
-                day.startHr = startHr;
-                day.startMin = startMin;
-                day.startAmpm = startAmpm;
-                day.endHr = endHr;
-                day.endMin = endMin;
-                day.endAmpm = endAmpm;
-                day.unpaidBreak = unpaidBreak;
+    document.getElementById('btn-save-entry').addEventListener('click', async () => {
+        const btn = document.getElementById('btn-save-entry');
+        const net = calcTotal();
+        btn.textContent = 'Saving...'; btn.disabled = true;
+        const ctx = { ...dateCtx, label: buildLabel(dateCtx), resolvedDate: buildResolvedDate(dateCtx) };
+        try {
+            if (window.MrMaheshAuth) {
+                await window.MrMaheshAuth.saveTimesheetEntry(ctx, shiftSlots, breaks, net);
+            } else {
+                const entry = {
+                    id:'local_'+Date.now(), ctx_year:dateCtx.year, ctx_week:dateCtx.week, ctx_day:dateCtx.day,
+                    ctx_date:ctx.resolvedDate, ctx_label:ctx.label, shift_slots:shiftSlots, breaks,
+                    total_paid_minutes:net, created_at:new Date().toISOString(), updated_at:new Date().toISOString()
+                };
+                const all = JSON.parse(localStorage.getItem(localKey())||'[]');
+                all.unshift(entry); localStorage.setItem(localKey(), JSON.stringify(all));
             }
-        });
-
-        renderWeekly();
-        calculateWeekly();
+            const ts = document.getElementById('last-saved-time');
+            if (ts) ts.textContent = `Saved: ${new Date().toLocaleTimeString()}`;
+            await renderHistory();
+        } catch(err) { alert('Error saving: ' + err.message); }
+        finally { btn.textContent = '+ Save This Entry'; btn.disabled = false; }
     });
 
-    function calculateWeekly() {
-        let weeklyTotalMins = 0;
-        let weeklyTotalBreaks = 0;
-        let activeDays = 0;
+    /* ── Init ─────────────────────────────────────────── */
+    loadSession();
+    populateYearDropdown(); populateWeekDropdown(); populateDayDropdown(); updateContextLabel();
+    renderShiftSlots(); renderBreaks(); calcAndRender(); renderHistory(); updateSyncUI();
 
-        weeklyDays.forEach((day, index) => {
-            const netCell = document.querySelector(`.weekly-day-net[data-index="${index}"]`);
-            if (!day.work) {
-                if (netCell) netCell.textContent = 'Day Off';
-                return;
-            }
-
-            activeDays++;
-            const startMins = parseTimeToMins(day.startHr, day.startMin, day.startAmpm);
-            let endMins = parseTimeToMins(day.endHr, day.endMin, day.endAmpm);
-
-            if (endMins < startMins) {
-                endMins += 24 * 60;
-            }
-
-            const elapsedMins = endMins - startMins;
-            const netMins = Math.max(0, elapsedMins - day.unpaidBreak);
-
-            weeklyTotalMins += netMins;
-            weeklyTotalBreaks += day.unpaidBreak;
-
-            if (netCell) netCell.textContent = formatMinsToHoursAndMins(netMins);
-        });
-
-        document.getElementById('weekly-days-count').textContent = `${activeDays} days`;
-        document.getElementById('weekly-total-breaks').textContent = `${weeklyTotalBreaks} mins`;
-        document.getElementById('weekly-net-hrs').textContent = formatMinsToHoursAndMins(weeklyTotalMins);
-    }
-
-    // ----------------------------------------------------
-    // Cloud Sync & Data Persistence Engine
-    // ----------------------------------------------------
-    const syncStatusIcon = document.getElementById('sync-status-icon');
-    const syncStatusText = document.getElementById('sync-status-text');
-    const lastSavedTime = document.getElementById('last-saved-time');
-    const btnForceSync = document.getElementById('btn-force-sync');
-
-    function updateSyncUI(status, isCloud = false) {
-        if (isCloud) {
-            syncStatusIcon.textContent = '🟢';
-            syncStatusText.textContent = 'Storage: Cloud Database (Synchronized)';
-            syncStatusText.className = 'text-green-400 font-bold';
-        } else {
-            syncStatusIcon.textContent = '💾';
-            syncStatusText.textContent = 'Storage: Local Device (Guest Mode)';
-            syncStatusText.className = 'text-gray-300';
-        }
-        if (lastSavedTime) {
-            const now = new Date();
-            lastSavedTime.textContent = `Last saved: ${now.toLocaleTimeString()}`;
-        }
-    }
-
-    async function saveTimesheetState() {
-        const payload = {
-            weeklyDays,
-            singleShift: {
-                startHr: document.getElementById('single-start-hr').value,
-                startMin: document.getElementById('single-start-min').value,
-                startAmpm: document.getElementById('single-start-ampm').value,
-                endHr: document.getElementById('single-end-hr').value,
-                endMin: document.getElementById('single-end-min').value,
-                endAmpm: document.getElementById('single-end-ampm').value,
-                customBreaks
-            },
-            savedAt: new Date().toISOString()
-        };
-
-        if (window.MrMaheshAuth) {
-            const res = await window.MrMaheshAuth.syncData('timesheets', 'active_sheet', payload);
-            updateSyncUI('saved', res.mode === 'cloud-supabase' || res.mode === 'mock-cloud');
-        }
-    }
-
-    async function loadTimesheetState() {
-        if (!window.MrMaheshAuth) return;
-        const saved = await window.MrMaheshAuth.loadData('timesheets', 'active_sheet');
-        if (saved && saved.weeklyDays) {
-            // Restore Weekly state
-            saved.weeklyDays.forEach((savedDay, idx) => {
-                if (weeklyDays[idx]) {
-                    Object.assign(weeklyDays[idx], savedDay);
-                }
-            });
-            renderWeekly();
-            calculateWeekly();
-
-            // Restore Single Shift state
-            if (saved.singleShift) {
-                if (saved.singleShift.startHr) document.getElementById('single-start-hr').value = saved.singleShift.startHr;
-                if (saved.singleShift.startMin) document.getElementById('single-start-min').value = saved.singleShift.startMin;
-                if (saved.singleShift.startAmpm) document.getElementById('single-start-ampm').value = saved.singleShift.startAmpm;
-                if (saved.singleShift.endHr) document.getElementById('single-end-hr').value = saved.singleShift.endHr;
-                if (saved.singleShift.endMin) document.getElementById('single-end-min').value = saved.singleShift.endMin;
-                if (saved.singleShift.endAmpm) document.getElementById('single-end-ampm').value = saved.singleShift.endAmpm;
-                if (saved.singleShift.customBreaks) {
-                    customBreaks.length = 0;
-                    saved.singleShift.customBreaks.forEach(b => customBreaks.push(b));
-                    renderSingleBreaks();
-                }
-                calculateSingle();
-            }
-
-            updateSyncUI('loaded', window.MrMaheshAuth.isLoggedIn());
-        }
-    }
-
-    btnForceSync?.addEventListener('click', async () => {
-        btnForceSync.textContent = 'Saving...';
-        await saveTimesheetState();
-        setTimeout(() => { btnForceSync.textContent = 'Save & Sync'; }, 800);
-    });
-
-    // Auto-save on weekly calculation
-    const originalCalcWeekly = calculateWeekly;
-    calculateWeekly = function() {
-        originalCalcWeekly();
-        saveTimesheetState();
-    };
-
-    // Auto-save on single calculation
-    const originalCalcSingle = calculateSingle;
-    calculateSingle = function() {
-        originalCalcSingle();
-        saveTimesheetState();
-    };
-
-    // Listen for auth change
     if (window.MrMaheshAuth) {
-        window.MrMaheshAuth.onAuthStateChange(user => {
-            updateSyncUI('auth-changed', !!user);
-            loadTimesheetState();
-        });
+        window.MrMaheshAuth.onAuthStateChange(() => { updateSyncUI(); renderHistory(); });
     }
-
-    // Initial setup & load
-    renderSingleBreaks();
-    calculateSingle();
-    loadTimesheetState();
 });
 </script>

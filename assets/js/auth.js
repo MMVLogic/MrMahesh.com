@@ -43,19 +43,32 @@ window.MrMaheshAuth = (() => {
         }
     }
 
+    let authReady = false;
+
     // Initialize auth state
     async function init() {
+        if (authReady) return;
         if (supabaseClient) {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            currentUser = session ? session.user : null;
             supabaseClient.auth.onAuthStateChange((event, session) => {
+                const prevId = currentUser?.id;
                 currentUser = session ? session.user : null;
-                notifyListeners();
                 updateNavUI();
+                // Only notify if user state actually changed after initial load
+                if (authReady && prevId !== currentUser?.id) {
+                    notifyListeners();
+                }
             });
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                currentUser = session ? session.user : null;
+            } catch (e) {
+                console.warn('Failed to retrieve Supabase session:', e);
+                currentUser = null;
+            }
         } else {
             currentUser = getLocalSession();
         }
+        authReady = true;
         notifyListeners();
         updateNavUI();
     }
@@ -89,10 +102,13 @@ window.MrMaheshAuth = (() => {
         init,
         getUser: () => currentUser,
         isLoggedIn: () => !!currentUser,
+        isReady: () => authReady,
 
         onAuthStateChange: (callback) => {
             authListeners.push(callback);
-            callback(currentUser);
+            if (authReady) {
+                try { callback(currentUser); } catch(e) {}
+            }
         },
 
         async signUp(email, password, fullName) {

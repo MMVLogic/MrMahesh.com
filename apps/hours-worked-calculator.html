@@ -215,20 +215,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ctx-label').textContent = buildLabel(dateCtx);
     }
 
+    /* ── Debounce Helper ─────────────────────────────── */
+    function debounce(fn, delay = 150) {
+        let timer = null;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+    const debouncedRenderHistory = debounce(() => renderHistory(), 150);
+
     document.getElementById('ctx-year').addEventListener('change', e => {
         dateCtx.year = e.target.value === '' ? null : parseInt(e.target.value);
         if (dateCtx.year === null) { dateCtx.week = null; dateCtx.day = null; }
         populateWeekDropdown(); populateDayDropdown(); updateContextLabel();
-        saveSession(); renderHistory();
+        saveSession(); debouncedRenderHistory();
     });
     document.getElementById('ctx-week').addEventListener('change', e => {
         dateCtx.week = e.target.value === '' ? null : parseInt(e.target.value);
         if (dateCtx.week === null) { dateCtx.day = null; }
-        populateDayDropdown(); updateContextLabel(); saveSession(); renderHistory();
+        populateDayDropdown(); updateContextLabel(); saveSession(); debouncedRenderHistory();
     });
     document.getElementById('ctx-day').addEventListener('change', e => {
         dateCtx.day = e.target.value === '' ? null : e.target.value;
-        updateContextLabel(); saveSession(); renderHistory();
+        updateContextLabel(); saveSession(); debouncedRenderHistory();
     });
 
     /* ── Shift Slots ──────────────────────────────────── */
@@ -490,10 +500,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ── Init ─────────────────────────────────────────── */
     loadSession();
     populateYearDropdown(); populateWeekDropdown(); populateDayDropdown(); updateContextLabel();
-    renderShiftSlots(); renderBreaks(); calcAndRender(); renderHistory(); updateSyncUI();
+    renderShiftSlots(); renderBreaks(); calcAndRender(); updateSyncUI(); debouncedRenderHistory();
 
     if (window.MrMaheshAuth) {
-        window.MrMaheshAuth.onAuthStateChange(() => { updateSyncUI(); renderHistory(); });
+        window.MrMaheshAuth.onAuthStateChange(() => { updateSyncUI(); debouncedRenderHistory(); });
     }
 });
 </script>

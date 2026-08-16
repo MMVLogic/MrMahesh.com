@@ -378,7 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchRecords() {
-        if (window.MrMaheshAuth) return await window.MrMaheshAuth.queryTimesheetEntries(dateCtx);
+        if (typeof window.MrMaheshAuth?.queryTimesheetEntries === 'function')
+            return await window.MrMaheshAuth.queryTimesheetEntries(dateCtx);
         return localFilter(JSON.parse(localStorage.getItem(localKey())||'[]'), dateCtx);
     }
 
@@ -438,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!confirm('Delete this saved entry? This cannot be undone.')) return;
                 btn.textContent = '...'; btn.disabled = true;
                 try {
-                    if (window.MrMaheshAuth) {
+                    if (typeof window.MrMaheshAuth?.deleteTimesheetEntry === 'function') {
                         await window.MrMaheshAuth.deleteTimesheetEntry(id);
                     } else {
                         const all = JSON.parse(localStorage.getItem(localKey())||'[]');
@@ -467,9 +468,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Saving...'; btn.disabled = true;
         const ctx = { ...dateCtx, label: buildLabel(dateCtx), resolvedDate: buildResolvedDate(dateCtx) };
         try {
-            if (window.MrMaheshAuth) {
+            if (typeof window.MrMaheshAuth?.saveTimesheetEntry === 'function') {
                 await window.MrMaheshAuth.saveTimesheetEntry(ctx, shiftSlots, breaks, net);
             } else {
+                // Fallback: save to localStorage (old auth.js cached, or guest mode)
                 const entry = {
                     id:'local_'+Date.now(), ctx_year:dateCtx.year, ctx_week:dateCtx.week, ctx_day:dateCtx.day,
                     ctx_date:ctx.resolvedDate, ctx_label:ctx.label, shift_slots:shiftSlots, breaks,

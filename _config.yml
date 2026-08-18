@@ -59,7 +59,7 @@ exclude:
   - custom-cms
 
 # Support & Tip Settings (Stripe Only)
-stripe_coffee_url: "https://donate.stripe.com/placeholder"
+stripe_coffee_url: "https://buy.stripe.com/9B64gzf1k9Jv4iGg7q4Ni00"
 
 # Supabase Authentication & Database Configuration
 supabase_url: "https://xigxtoxxeyiokmalyydx.supabase.co"

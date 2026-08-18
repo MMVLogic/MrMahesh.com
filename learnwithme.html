@@ -116,19 +116,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 </span>
             `).join('');
 
-            let conceptText = '';
-            let reasoningText = '';
-            let howText = '';
+            let conceptText = lesson.concept || '';
+            let reasoningText = lesson.reasoning || '';
+            let howText = lesson.how || '';
 
-            if (lesson.content) {
-                const whyMatch = lesson.content.match(/###\s*(?:💡\s*)?WHY[^\n]*\n([\s\S]*?)(?=###|$)/i);
-                const decisionMatch = lesson.content.match(/###\s*(?:⚖️\s*)?THE LOGICAL DECISION[^\n]*\n([\s\S]*?)(?=###|$)/i);
-                const howMatch = lesson.content.match(/###\s*(?:⚙️\s*)?HOW[^\n]*\n([\s\S]*?)(?=###|$)/i);
+            if ((!conceptText || !reasoningText || !howText) && lesson.content) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = lesson.content;
+                
+                const sections = { why: [], reasoning: [], how: [], general: [] };
+                let currentKey = 'general';
+                
+                Array.from(tempDiv.childNodes).forEach(node => {
+                    if (node.nodeType === 1 && node.tagName.toLowerCase() === 'h3') {
+                        const text = node.textContent.toLowerCase();
+                        if (text.includes('why') || text.includes('concept')) {
+                            currentKey = 'why';
+                        } else if (text.includes('decision') || text.includes('reasoning') || text.includes('logical')) {
+                            currentKey = 'reasoning';
+                        } else if (text.includes('how') || text.includes('implementation')) {
+                            currentKey = 'how';
+                        } else {
+                            currentKey = text;
+                        }
+                    } else {
+                        sections[currentKey].push(node.cloneNode(true));
+                    }
+                });
 
-                if (whyMatch) conceptText = whyMatch[1].trim();
-                if (decisionMatch) reasoningText = decisionMatch[1].trim();
-                if (howMatch) howText = howMatch[1].trim();
+                const getHtml = (nodes) => {
+                    if (!nodes || nodes.length === 0) return '';
+                    const wrapper = document.createElement('div');
+                    nodes.forEach(n => wrapper.appendChild(n));
+                    return wrapper.innerHTML.trim();
+                };
 
+                if (sections['why'].length > 0) conceptText = getHtml(sections['why']);
+                if (sections['reasoning'].length > 0) reasoningText = getHtml(sections['reasoning']);
+                if (sections['how'].length > 0) howText = getHtml(sections['how']);
+                
                 if (!conceptText && !reasoningText && !howText) {
                     conceptText = lesson.content;
                 }
@@ -137,6 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Clean string formatting helper for HTML presentation
             const formatMarkdown = (text) => {
                 if (!text) return '';
+                // If it already contains HTML tags (parsed from content), return it directly
+                if (/<[a-z][\s\S]*>/i.test(text)) {
+                    return text;
+                }
                 return text
                     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>')

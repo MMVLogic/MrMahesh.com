@@ -351,17 +351,21 @@ function switchAuthTab(tab) {
     if (authFeedback) authFeedback.classList.add('hidden');
 
     if (tab === 'signin') {
-        tabSignIn?.classList.add('border-yellow-500', 'text-yellow-500');
-        tabSignIn?.classList.remove('text-gray-400');
-        tabSignUp?.classList.remove('border-yellow-500', 'text-yellow-500');
-        tabSignUp?.classList.add('text-gray-400');
+        if (tabSignIn) {
+            tabSignIn.className = 'flex-1 pb-2 border-b-2 border-yellow-500 text-yellow-500 font-bold focus:outline-none text-center transition-all';
+        }
+        if (tabSignUp) {
+            tabSignUp.className = 'flex-1 pb-2 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold focus:outline-none text-center transition-all';
+        }
         formSignIn?.classList.remove('hidden');
         formSignUp?.classList.add('hidden');
     } else {
-        tabSignUp?.classList.add('border-yellow-500', 'text-yellow-500');
-        tabSignUp?.classList.remove('text-gray-400');
-        tabSignIn?.classList.remove('border-yellow-500', 'text-yellow-500');
-        tabSignIn?.classList.add('text-gray-400');
+        if (tabSignUp) {
+            tabSignUp.className = 'flex-1 pb-2 border-b-2 border-yellow-500 text-yellow-500 font-bold focus:outline-none text-center transition-all';
+        }
+        if (tabSignIn) {
+            tabSignIn.className = 'flex-1 pb-2 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold focus:outline-none text-center transition-all';
+        }
         formSignUp?.classList.remove('hidden');
         formSignIn?.classList.add('hidden');
     }

@@ -114,67 +114,76 @@
 
     <!-- Terminal Cyberpunk Auth Modal -->
     <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#1a202c] border-2 border-yellow-500 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 font-mono relative">
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
-                <div class="flex items-center space-x-2">
-                    <span class="text-yellow-500 font-bold">&gt; AUTH_TERMINAL_</span>
+        <div class="bg-[#1a202c] border-2 border-yellow-500 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 font-mono relative min-h-[460px] flex flex-col justify-between">
+            
+            <div class="space-y-4">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-yellow-500 font-bold">&gt; AUTH_TERMINAL_</span>
+                    </div>
+                    <button onclick="closeAuthModal()" class="text-gray-400 hover:text-red-400 font-bold text-lg focus:outline-none">&times;</button>
                 </div>
-                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-red-400 font-bold text-lg focus:outline-none">&times;</button>
-            </div>
 
-            <!-- Tabs: Sign In / Sign Up -->
-            <div class="flex border-b border-gray-700 text-xs font-bold">
-                <button id="auth-tab-signin" onclick="switchAuthTab('signin')" class="flex-1 pb-2 border-b-2 border-yellow-500 text-yellow-500 focus:outline-none text-center">
-                    Sign In
-                </button>
-                <button id="auth-tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-2 text-gray-400 hover:text-gray-200 focus:outline-none text-center">
-                    Create Account
-                </button>
-            </div>
+                <!-- Tabs: Sign In / Sign Up -->
+                <div class="flex border-b border-gray-700 text-xs font-bold">
+                    <button id="auth-tab-signin" onclick="switchAuthTab('signin')" class="flex-1 pb-2 border-b-2 border-yellow-500 text-yellow-500 font-bold focus:outline-none text-center transition-all">
+                        Sign In
+                    </button>
+                    <button id="auth-tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-2 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold focus:outline-none text-center transition-all">
+                        Create Account
+                    </button>
+                </div>
 
-            <!-- Feedback message -->
-            <div id="auth-feedback" class="hidden p-3 rounded-lg text-xs"></div>
+                <!-- Feedback message -->
+                <div id="auth-feedback" class="hidden p-3 rounded-lg text-xs"></div>
+            </div>
 
             <!-- Form: Sign In -->
-            <form id="auth-form-signin" onsubmit="handleSignIn(event)" class="space-y-4 text-xs">
-                <div class="space-y-1">
-                    <label class="text-gray-300 font-bold">Email Address</label>
-                    <input type="email" id="signin-email" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="user@mrmahesh.com">
+            <form id="auth-form-signin" onsubmit="handleSignIn(event)" class="text-xs flex-grow flex flex-col justify-between pt-1">
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-gray-300 font-bold">Email Address</label>
+                        <input type="email" id="signin-email" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="user@mrmahesh.com">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-gray-300 font-bold">Password</label>
+                        <input type="password" id="signin-password" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="••••••••">
+                    </div>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-gray-300 font-bold">Password</label>
-                    <input type="password" id="signin-password" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="••••••••">
-                </div>
-                <button type="submit" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg transition-colors">
-                    $ Authenticate Session
+                <button type="submit" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg transition-colors mt-6">
+                    Authenticate Session
                 </button>
             </form>
 
             <!-- Form: Sign Up -->
-            <form id="auth-form-signup" onsubmit="handleSignUp(event)" class="space-y-4 text-xs hidden">
-                <div class="space-y-1">
-                    <label class="text-gray-300 font-bold">Full Name</label>
-                    <input type="text" id="signup-name" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="Mahesh Builder">
+            <form id="auth-form-signup" onsubmit="handleSignUp(event)" class="text-xs flex-grow flex flex-col justify-between pt-1 hidden">
+                <div class="space-y-3">
+                    <div class="space-y-1">
+                        <label class="text-gray-300 font-bold">Full Name</label>
+                        <input type="text" id="signup-name" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="Mahesh Builder">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-gray-300 font-bold">Email Address</label>
+                        <input type="email" id="signup-email" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="user@mrmahesh.com">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-gray-300 font-bold">Password</label>
+                        <input type="password" id="signup-password" required minlength="6" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="••••••••">
+                    </div>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-gray-300 font-bold">Email Address</label>
-                    <input type="email" id="signup-email" required class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="user@mrmahesh.com">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-gray-300 font-bold">Password</label>
-                    <input type="password" id="signup-password" required minlength="6" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2.5 text-gray-200 focus:border-yellow-500 focus:outline-none" placeholder="••••••••">
-                </div>
-                <button type="submit" class="w-full py-2.5 bg-green-500 hover:bg-green-400 text-[#1f2937] font-bold rounded-lg transition-colors">
-                    $ Register Account
+                <button type="submit" class="w-full py-2.5 bg-green-500 hover:bg-green-400 text-[#1f2937] font-bold rounded-lg transition-colors mt-6">
+                    Register Account
                 </button>
             </form>
 
             <!-- Active User Panel (When Logged In) -->
-            <div id="auth-user-panel" class="hidden space-y-3 text-xs">
-                <p class="text-green-400 font-bold">Session Active: <span id="auth-active-user-name"></span></p>
-                <p class="text-gray-400 text-[11px]">Your cloud sync is active across all apps and timesheet calculators.</p>
-                <button onclick="handleSignOut()" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors">
+            <div id="auth-user-panel" class="hidden space-y-3 text-xs flex-grow flex flex-col justify-between pt-1">
+                <div class="space-y-2">
+                    <p class="text-green-400 font-bold">Session Active: <span id="auth-active-user-name"></span></p>
+                    <p class="text-gray-400 text-[11px]">Your cloud sync is active across all apps and timesheet calculators.</p>
+                </div>
+                <button onclick="handleSignOut()" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors mt-6">
                     Disconnect Session
                 </button>
             </div>
@@ -189,7 +198,7 @@
             anonKey: "{{ site.supabase_anon_key | default: 'sb_publishable_bDz4w-zYq29J7tXaX3T0IA_DASPlkTr' }}"
         };
     </script>
-    <script src="/assets/js/auth.js?v=2.1.1"></script>
+    <script src="/assets/js/auth.js?v=2.1.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script>
     <script>
         // Modal Handlers

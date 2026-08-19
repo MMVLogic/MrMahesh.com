@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build_and_deploy:
@@ -15,8 +16,8 @@ jobs:
       - name: Set up Ruby and install dependencies
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' # Match your local Ruby version
-          bundler-cache: true # Caches gems for faster builds
+          ruby-version: '3.2'
+          bundler-cache: true
 
       - name: Build the site
         run: bundle exec jekyll build
@@ -33,6 +34,9 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          timeout: 60000
           local-dir: ./_site/
           server-dir: domains/mrmahesh.com/public_html/
           dangerous-clean-slate: true

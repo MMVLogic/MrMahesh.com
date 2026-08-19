@@ -1,0 +1,837 @@
+---
+layout: default
+title: OpenFit Protocol
+permalink: /apps/openfit-protocol/
+---
+
+<div class="flex flex-col space-y-8">
+
+    <!-- App Header & Breadcrumbs -->
+    <div>
+        <a href="/apps/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">
+            &lt; Back to Apps Dashboard
+        </a>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-1 leading-tight flex items-center gap-3">
+                    🏋️‍♂️ OpenFit Protocol
+                </h1>
+                <p class="text-xs md:text-sm text-gray-300 font-mono">
+                    Sustainable 14–18 Month Joint-Safe Weight Reduction Blueprint & Daily Engine
+                </p>
+            </div>
+            <!-- Global Unit Switcher -->
+            <div class="flex items-center bg-[#111827] p-1 rounded-lg border border-gray-700 text-xs font-mono">
+                <button id="btn-unit-kg" class="px-3 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all">KG</button>
+                <button id="btn-unit-lbs" class="px-3 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all">LBS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- 1. PRIVATE BETA ACCESS GATE (LOCKED VIEW)                           -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="access-gate-locked" class="space-y-6">
+        <div class="bg-[#1a202c] p-8 md:p-12 rounded-2xl border-2 border-dashed border-yellow-500/60 text-center space-y-6 shadow-2xl relative overflow-hidden">
+            <div class="inline-flex p-4 bg-yellow-500/10 rounded-full border border-yellow-500/30 text-4xl mb-2">
+                🚧
+            </div>
+            
+            <div class="space-y-2 max-w-xl mx-auto">
+                <p class="text-xs font-bold text-yellow-400 font-mono tracking-[0.2em] uppercase">
+                    PROTOCOL_STATUS: UNDER_CALIBRATION_
+                </p>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-100">
+                    OpenFit Protocol is in Private Beta
+                </h2>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Baseline biometrics and apartment-gym joint-safety calibration are currently underway. Full protocol access is temporarily restricted to verified protocol leads.
+                </p>
+            </div>
+
+            <!-- Current User State Indicator -->
+            <div class="bg-[#111827] p-4 rounded-xl border border-gray-800 max-w-md mx-auto space-y-3 font-mono text-xs text-left">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                    <span class="text-gray-500">Access Policy:</span>
+                    <span class="text-yellow-400 font-bold">Authorized Lead Only</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500">Active Identity:</span>
+                    <span id="gate-user-email" class="text-gray-300">Guest (Not Signed In)</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center items-center gap-4 pt-2">
+                <button onclick="openAuthModal('signin')" class="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95 text-sm">
+                    👤 Login as Protocol Lead
+                </button>
+                <a href="/apps/" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-200 font-mono rounded-xl transition-all text-sm border border-gray-700">
+                    Return to Apps
+                </a>
+            </div>
+
+            <p class="text-[11px] text-gray-500 font-mono">
+                Access Tier: <span class="text-gray-400 font-bold">Verified Protocol Lead</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- 2. FULL PROTOCOL APP (UNLOCKED VIEW)                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="access-gate-unlocked" class="hidden space-y-8">
+
+        <!-- Status Banner -->
+        <div class="bg-[#111827] p-3 rounded-xl border border-green-500/40 flex flex-wrap justify-between items-center gap-3 text-xs font-mono">
+            <div class="flex items-center space-x-2">
+                <span class="text-green-400 text-sm">🟢</span>
+                <span class="text-green-300 font-bold">Protocol Lead Access:</span>
+                <span class="text-green-400 font-bold">Verified & Authenticated</span>
+            </div>
+            <button id="btn-open-custom-modal" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
+                <span>⚡ Custom Plan & Referral Specs</span> &rarr;
+            </button>
+        </div>
+
+        <!-- 1. Blueprint Target & Timeline Cards -->
+        <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-gray-700 space-y-6">
+            <div class="flex flex-wrap justify-between items-center gap-2">
+                <p class="text-base font-bold text-gray-200 flex items-center gap-2">
+                    <span class="text-yellow-500 text-xl">📊</span>
+                    <span>14–18 Month Sustainable Blueprint</span>
+                </p>
+                <button id="btn-edit-baseline" class="text-xs text-yellow-500 hover:underline font-mono">
+                    ✏️ Adjust Starting Weight
+                </button>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="bg-[#111827] p-4 rounded-xl border border-gray-800">
+                    <span class="text-[11px] text-gray-400 font-mono uppercase block">Starting Baseline</span>
+                    <span id="metric-start-weight" class="text-2xl md:text-3xl font-bold font-mono text-gray-100 mt-1 block">135.0 kg</span>
+                    <span class="text-[10px] text-gray-500 font-mono">BMI ~42.6</span>
+                </div>
+                <div class="bg-[#111827] p-4 rounded-xl border border-gray-800">
+                    <span class="text-[11px] text-gray-400 font-mono uppercase block">Healthy Target</span>
+                    <span id="metric-target-weight" class="text-2xl md:text-3xl font-bold font-mono text-green-400 mt-1 block">70 – 82 kg</span>
+                    <span class="text-[10px] text-gray-500 font-mono">Ideal Range</span>
+                </div>
+                <div class="bg-[#111827] p-4 rounded-xl border border-gray-800">
+                    <span class="text-[11px] text-gray-400 font-mono uppercase block">Total Reduction</span>
+                    <span id="metric-total-loss" class="text-2xl md:text-3xl font-bold font-mono text-yellow-400 mt-1 block">~53 – 65 kg</span>
+                    <span class="text-[10px] text-gray-500 font-mono">Sustainable Deficit</span>
+                </div>
+                <div class="bg-[#111827] p-4 rounded-xl border border-gray-800">
+                    <span class="text-[11px] text-gray-400 font-mono uppercase block">Est. Duration</span>
+                    <span class="text-2xl md:text-3xl font-bold font-mono text-blue-400 mt-1 block">14–18 Mos</span>
+                    <span class="text-[10px] text-gray-500 font-mono">Zero Rebound Pace</span>
+                </div>
+            </div>
+
+            <!-- 3-Phase Progression Roadmap -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 font-mono text-xs">
+                <div class="p-3 bg-[#111827]/60 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center text-yellow-500 font-bold mb-1">
+                        <span>Phase 1 (Months 1–3)</span>
+                        <span>1.0 kg/wk</span>
+                    </div>
+                    <p class="text-gray-400 text-[11px]">Habit formation, baseline deficit calibration & initial drop.</p>
+                </div>
+                <div class="p-3 bg-[#111827]/60 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center text-blue-400 font-bold mb-1">
+                        <span>Phase 2 (Months 4–9)</span>
+                        <span>0.75–1.0 kg/wk</span>
+                    </div>
+                    <p class="text-gray-400 text-[11px]">Progressive strength retention & steady fat reduction.</p>
+                </div>
+                <div class="p-3 bg-[#111827]/60 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center text-green-400 font-bold mb-1">
+                        <span>Phase 3 (Months 10–18)</span>
+                        <span>0.5–0.75 kg/wk</span>
+                    </div>
+                    <p class="text-gray-400 text-[11px]">Metabolic stabilization & lifetime maintenance target.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Core Safety & Joint Protection Rules -->
+        <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-red-500/40 space-y-4">
+            <p class="text-base font-bold text-gray-200 flex items-center gap-2">
+                <span class="text-red-400 text-xl">🛡️</span>
+                <span>Core Safety & Joint Protection Rules (Crucial for 130kg+)</span>
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="p-3 bg-[#111827] rounded-lg border border-gray-800 space-y-1">
+                    <p class="font-bold text-red-400 font-mono">1. Protect Knee & Ankle Joints</p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Avoid high-impact exercises (no running, jumping jacks, or plyo). Stick strictly to incline walking, stationary bike, and elliptical.
+                    </p>
+                </div>
+                <div class="p-3 bg-[#111827] rounded-lg border border-gray-800 space-y-1">
+                    <p class="font-bold text-yellow-400 font-mono">2. Nutrition First (80 / 20)</p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Weight loss is driven ~80% by sustained caloric deficit. Maintain high protein (1.6–2.0g/kg target weight) to preserve lean muscle.
+                    </p>
+                </div>
+                <div class="p-3 bg-[#111827] rounded-lg border border-gray-800 space-y-1">
+                    <p class="font-bold text-green-400 font-mono">3. Progressive Form Overload</p>
+                    <p class="text-gray-300 leading-relaxed">
+                        Use bench box squats to protect knee cartilage. Increase weights gradually and never sacrifice form for heavier load.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Interactive 5-Day Apartment Gym Routine Engine -->
+        <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-gray-700 space-y-6">
+            
+            <div class="flex flex-wrap justify-between items-center gap-3">
+                <div>
+                    <p class="text-base font-bold text-gray-200 flex items-center gap-2">
+                        <span class="text-yellow-500 text-xl">🕒</span>
+                        <span>Apartment Gym Routine Engine</span>
+                    </p>
+                    <p class="text-xs text-gray-400 font-mono mt-0.5">
+                        Equipment: Dumbbells, Cable Machine, Incline Bench, Treadmill, Elliptical, Bike, Mat
+                    </p>
+                </div>
+                <!-- Rest Stopwatch Timer -->
+                <div class="flex items-center gap-2 bg-[#111827] px-3 py-1.5 rounded-lg border border-gray-700 font-mono text-xs">
+                    <span class="text-gray-400">⏱️ Rest Timer:</span>
+                    <button class="btn-timer px-2 py-0.5 bg-gray-800 hover:bg-gray-700 rounded text-yellow-400 font-bold" data-sec="30">30s</button>
+                    <button class="btn-timer px-2 py-0.5 bg-gray-800 hover:bg-gray-700 rounded text-yellow-400 font-bold" data-sec="60">60s</button>
+                    <button class="btn-timer px-2 py-0.5 bg-gray-800 hover:bg-gray-700 rounded text-yellow-400 font-bold" data-sec="90">90s</button>
+                    <span id="timer-display" class="text-green-400 font-bold ml-1 min-w-[32px] text-right">00s</span>
+                </div>
+            </div>
+
+            <!-- Day Selector Tabs -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 text-xs font-mono font-bold">
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937] transition-all" data-day="1">
+                    Day 1 (Mon)<br><span class="text-[10px] font-normal">Upper + Cardio</span>
+                </button>
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all" data-day="2">
+                    Day 2 (Tue)<br><span class="text-[10px] font-normal">Lower & Core</span>
+                </button>
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all" data-day="3">
+                    Day 3 (Wed)<br><span class="text-[10px] font-normal">Active Recovery</span>
+                </button>
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all" data-day="4">
+                    Day 4 (Thu)<br><span class="text-[10px] font-normal">Push / Pull</span>
+                </button>
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all" data-day="5">
+                    Day 5 (Fri)<br><span class="text-[10px] font-normal">Lower & Cardio</span>
+                </button>
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all" data-day="6">
+                    Day 6 (Sat)<br><span class="text-[10px] font-normal">Light Walk</span>
+                </button>
+                <button class="day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all" data-day="7">
+                    Day 7 (Sun)<br><span class="text-[10px] font-normal">Rest & Prep</span>
+                </button>
+            </div>
+
+            <!-- Workout Progress Bar -->
+            <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-mono">
+                    <span id="workout-progress-label" class="text-gray-400">Day 1 Routine Progress</span>
+                    <span id="workout-progress-percent" class="text-yellow-400 font-bold">0% Completed (0/6)</span>
+                </div>
+                <div class="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                    <div id="workout-progress-bar" class="bg-yellow-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Exercise Routine Container -->
+            <div id="workout-exercises-container" class="space-y-3">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- 4. Daily Habit & Biometrics Tracker -->
+        <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-gray-700 space-y-6">
+            <p class="text-base font-bold text-gray-200 flex items-center gap-2">
+                <span class="text-yellow-500 text-xl">📝</span>
+                <span>Daily Biometrics & Habit Log</span>
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Date -->
+                <div class="space-y-1.5 font-mono text-xs">
+                    <label class="block text-gray-400 font-bold">Log Date</label>
+                    <input type="date" id="log-date" class="w-full bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500">
+                </div>
+                <!-- Weight -->
+                <div class="space-y-1.5 font-mono text-xs">
+                    <label class="block text-gray-400 font-bold">Morning Weight (<span class="unit-label">kg</span>)</label>
+                    <input type="number" step="0.1" id="log-weight" placeholder="e.g. 134.5" class="w-full bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500">
+                </div>
+                <!-- Water -->
+                <div class="space-y-1.5 font-mono text-xs">
+                    <div class="flex justify-between">
+                        <label class="text-gray-400 font-bold">Water Intake</label>
+                        <span id="water-display" class="text-blue-400 font-bold">0.0 / 3.5 L</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="btn-add-water" class="flex-grow py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-bold rounded-lg border border-blue-500/40 transition-colors">
+                            + 250 ml 💧
+                        </button>
+                        <button id="btn-reset-water" class="px-2.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg border border-gray-700">
+                            ↺
+                        </button>
+                    </div>
+                </div>
+                <!-- Steps -->
+                <div class="space-y-1.5 font-mono text-xs">
+                    <label class="block text-gray-400 font-bold">Daily Steps (Goal: 7k–10k)</label>
+                    <input type="number" step="100" id="log-steps" placeholder="e.g. 8500" class="w-full bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500">
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-gray-800">
+                <div class="flex items-center gap-4 text-xs font-mono">
+                    <label class="flex items-center gap-2 cursor-pointer text-gray-300">
+                        <input type="checkbox" id="log-workout-done" class="rounded bg-gray-800 border-gray-700 text-yellow-500 focus:ring-0">
+                        <span>Workout Completed Today</span>
+                    </label>
+                </div>
+                <button id="btn-save-log" class="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-lg transition-all shadow-md active:scale-95">
+                    + Save Daily Log
+                </button>
+            </div>
+
+            <!-- Historical Log Table -->
+            <div class="space-y-3 pt-2">
+                <p class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider">
+                    📋 Recent Weigh-In & Trend History
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="pb-2">Date</th>
+                                <th class="pb-2">Weight</th>
+                                <th class="pb-2">Delta (Start)</th>
+                                <th class="pb-2">Water</th>
+                                <th class="pb-2">Steps</th>
+                                <th class="pb-2 text-center">Workout</th>
+                                <th class="pb-2 text-center">Del</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- 3. CUSTOM PLAN & REFERRAL SPECS MODAL                               -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="custom-plan-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#1a202c] border-2 border-yellow-500/80 rounded-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative">
+        <button id="btn-close-custom-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-2xl font-bold font-mono">
+            &times;
+        </button>
+
+        <div class="space-y-2">
+            <span class="text-xs font-bold text-yellow-500 font-mono tracking-widest uppercase">COMMUNITY_AFFILIATE_ARCHITECTURE_</span>
+            <h3 class="text-2xl font-bold text-gray-100">Custom Plan & Referral Flywheel</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+                How custom equipment tailoring and the 1% member discount referral loop operates across OpenFit Protocol.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-4 bg-[#111827] rounded-xl border border-gray-800 space-y-2">
+                <p class="font-bold text-yellow-400 text-sm">1. Creator Custom Plan ($X)</p>
+                <p class="text-gray-300 leading-relaxed">
+                    Members upload photos/tags of their home equipment (e.g. 10kg dumbbells, doorway bar). The engine builds an individualized routine matching their biomechanics.
+                </p>
+            </div>
+            <div class="p-4 bg-[#111827] rounded-xl border border-gray-800 space-y-2">
+                <p class="font-bold text-green-400 text-sm">2. Follower Tier ($Y &lt; $X)</p>
+                <p class="text-gray-300 leading-relaxed">
+                    Other community members with matching equipment follow that creator's plan at a lower price point.
+                </p>
+            </div>
+        </div>
+
+        <div class="p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/30 text-xs font-mono space-y-2">
+            <p class="font-bold text-yellow-400 flex items-center gap-2">
+                <span>🔄</span> 1% Recurring Membership Discount per Follower
+            </p>
+            <p class="text-gray-300 leading-relaxed">
+                For every active follower on a creator's plan, the original creator receives a 1% discount applied directly to their monthly membership (10 followers = 10% off, 100 followers = 100% free!).
+            </p>
+        </div>
+
+        <div class="text-center pt-2">
+            <button id="btn-modal-dismiss" class="px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-xl transition-all">
+                Close Specifications
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- 4. JAVASCRIPT ENGINE & LOGIC                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // SHA-256 cryptographic hash of authorized owner email
+    const AUTHORIZED_LEAD_HASH = 'f5e6ee2dc8ab06440666b705ad3d7a414a21eb60b683c33e818370d9e1b770d8';
+
+    async function sha256(str) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ── Exercise Database for 5-Day Apartment Gym Split ─────────
+    const WORKOUT_SPLIT = {
+        1: {
+            title: "Day 1: Upper Body Strength & Low-Impact Cardio (Monday)",
+            warmup: "5–8 mins on Elliptical or Stationary Bike (Light Pace)",
+            exercises: [
+                { name: "Dumbbell / Cable Chest Press", sets: "3 sets × 10–12 reps", cue: "Keep shoulders retracted and stable against bench." },
+                { name: "Lat Pulldown or Cable Seated Row", sets: "3 sets × 12 reps", cue: "Pull with your back muscles, squeeze shoulder blades together." },
+                { name: "Dumbbell Overhead / Incline Press", sets: "3 sets × 10–12 reps", cue: "Controlled tempo, engage core to prevent hyperextension." },
+                { name: "Dumbbell Bicep Curls (Superset)", sets: "3 sets × 12–15 reps", cue: "Full range of motion, strictly no swinging." },
+                { name: "Tricep Rope Pushdowns (Superset)", sets: "3 sets × 12–15 reps", cue: "Flare rope outward at bottom contraction." },
+                { name: "Incline Treadmill Walk (Cardio Finisher)", sets: "15–20 mins @ 3.5–4.5 km/h (Incline: 3–6%)", cue: "Low joint impact, maintain steady breathing rate." }
+            ]
+        },
+        2: {
+            title: "Day 2: Lower Body & Core Focus (Tuesday)",
+            warmup: "5 mins on Stationary / Recumbent Bike (Light)",
+            exercises: [
+                { name: "Goblet Squats (or Box Squats to Bench)", sets: "3 sets × 10–12 reps", cue: "Squatting to a bench protects knee joints and maintains depth." },
+                { name: "Dumbbell Romanian Deadlifts (RDLs)", sets: "3 sets × 10–12 reps", cue: "Hinge at hips, keep spine neutral to load hamstrings/glutes." },
+                { name: "Seated or Standing Calf Raises", sets: "3 sets × 15 reps", cue: "Full stretch at bottom, 1-sec hold at peak." },
+                { name: "Leg Extensions or Machine Leg Curls", sets: "3 sets × 12 reps", cue: "Controlled eccentric lowering." },
+                { name: "Plank Holds (or Standing Cable Pallof Press)", sets: "3 sets × 20–40s (or 12 reps/side)", cue: "Brace abdominal wall tightly." },
+                { name: "Stationary / Recumbent Bike (Cardio Finisher)", sets: "15 mins @ Moderate Pace", cue: "Keep cadence smooth and consistent." }
+            ]
+        },
+        3: {
+            title: "Day 3: Active Recovery & Joint Mobility (Wednesday)",
+            warmup: "Dynamic Arm Circles & Hip Openers",
+            exercises: [
+                { name: "Outdoor Brisk Walk or Light Elliptical", sets: "30–45 mins continuous", cue: "Gentle aerobic blood flow without joint strain." },
+                { name: "Cat-Cow & Thoracic Spine Rotations", sets: "3 sets × 10 cycles", cue: "Sync movement with deep diaphragm breathing." },
+                { name: "Standing Hamstring & Quad Doorway Stretch", sets: "3 sets × 30s per leg", cue: "Gentle static stretch, do not bounce." }
+            ]
+        },
+        4: {
+            title: "Day 4: Full Body Push / Pull Strength (Thursday)",
+            warmup: "5 mins on Elliptical",
+            exercises: [
+                { name: "Cable Standing Rows", sets: "3 sets × 12 reps", cue: "Stand athletic, pull elbows straight back." },
+                { name: "Dumbbell Incline Bench Press", sets: "3 sets × 10–12 reps", cue: "30-degree bench angle targets upper pectorals." },
+                { name: "Dumbbell Lateral Raises (Shoulders)", sets: "3 sets × 15 reps", cue: "Lead with elbows, light controlled weight." },
+                { name: "Dumbbell Hammer Curls", sets: "3 sets × 12 reps", cue: "Neutral grip builds forearm and bicep stability." },
+                { name: "Overhead Dumbbell Tricep Extension", sets: "3 sets × 12 reps", cue: "Keep elbows tucked in close." },
+                { name: "Elliptical Steady Cardio Finisher", sets: "20 mins @ Moderate Resistance", cue: "Zero-impact cardiovascular conditioning." }
+            ]
+        },
+        5: {
+            title: "Day 5: Lower Body & Cardio Focus (Friday)",
+            warmup: "5 mins Flat Treadmill Walk",
+            exercises: [
+                { name: "Dumbbell Step-Ups (Low Step Height)", sets: "3 sets × 10 reps / leg", cue: "Drive through whole foot on low stable bench." },
+                { name: "Glute Bridges (Bodyweight or Weighted)", sets: "3 sets × 15 reps", cue: "Squeeze glutes hard at the top on exercise mat." },
+                { name: "Dumbbell Lying / Standing Hamstring Curl", sets: "3 sets × 12 reps", cue: "Controlled tempo." },
+                { name: "Incline Treadmill Walk (Cardio)", sets: "25–30 mins @ 3.8–4.5 km/h (Incline: 4–7%)", cue: "Excellent fat-burning without knee pounding." }
+            ]
+        },
+        6: {
+            title: "Day 6: Light Walk & Active Recovery (Saturday)",
+            warmup: "Joint Mobilizations",
+            exercises: [
+                { name: "Leisure Outdoor Walk / Park Stroll", sets: "30–40 mins", cue: "Hit daily 7,000–10,000 step milestone." },
+                { name: "Full Body Mobility & Stretching", sets: "15 mins on mat", cue: "Focus on tight hip flexors and lower back." }
+            ]
+        },
+        7: {
+            title: "Day 7: Complete Rest & Weekly Meal Prep (Sunday)",
+            warmup: "Hydration Focus",
+            exercises: [
+                { name: "Full Physical Rest & Recovery", sets: "All Day", cue: "Allow muscular and connective tissues to adapt and rebuild." },
+                { name: "Hydration Target (3.0 – 4.0 Liters)", sets: "Throughout day", cue: "Clean water, electrolyte balance." },
+                { name: "High-Protein Meal Prep for Week", sets: "1–2 Hours", cue: "Prep lean proteins to ensure 1.6–2.0g/kg target." }
+            ]
+        }
+    };
+
+    // ── App State ──────────────────────────────────────────────
+    let isLbs = false;
+    let baselineStartWeight = 135.0; // kg
+    let activeDay = 1;
+    let todayWater = 0; // in ml
+    let restTimerInterval = null;
+    let checkedExercises = {}; // key: "day_index" => boolean
+
+    // ── State Persistence Helpers ──────────────────────────────
+    function loadAppState() {
+        try {
+            const raw = localStorage.getItem('mrmahesh_openfit_state');
+            if (raw) {
+                const s = JSON.parse(raw);
+                if (s.isLbs !== undefined) isLbs = s.isLbs;
+                if (s.baselineStartWeight) baselineStartWeight = s.baselineStartWeight;
+                if (s.checkedExercises) checkedExercises = s.checkedExercises;
+                if (s.todayWater !== undefined) todayWater = s.todayWater;
+            }
+        } catch (e) {}
+    }
+
+    function saveAppState() {
+        try {
+            localStorage.setItem('mrmahesh_openfit_state', JSON.stringify({
+                isLbs,
+                baselineStartWeight,
+                checkedExercises,
+                todayWater
+            }));
+        } catch (e) {}
+    }
+
+    function getLogs() {
+        try {
+            return JSON.parse(localStorage.getItem('mrmahesh_openfit_logs') || '[]');
+        } catch (e) { return []; }
+    }
+
+    function saveLogs(logs) {
+        try {
+            localStorage.setItem('mrmahesh_openfit_logs', JSON.stringify(logs));
+        } catch (e) {}
+    }
+
+    // ── Unit Formatting Helpers ────────────────────────────────
+    function formatWeight(kg) {
+        if (kg === null || kg === undefined || isNaN(kg)) return '—';
+        if (isLbs) {
+            return (kg * 2.20462).toFixed(1) + ' lbs';
+        }
+        return Number(kg).toFixed(1) + ' kg';
+    }
+
+    function updateUnitUI() {
+        const btnKg = document.getElementById('btn-unit-kg');
+        const btnLbs = document.getElementById('btn-unit-lbs');
+        if (isLbs) {
+            btnLbs.className = 'px-3 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all';
+            btnKg.className = 'px-3 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all';
+        } else {
+            btnKg.className = 'px-3 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all';
+            btnLbs.className = 'px-3 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all';
+        }
+        document.querySelectorAll('.unit-label').forEach(el => el.textContent = isLbs ? 'lbs' : 'kg');
+
+        renderBaselineMetrics();
+        renderLogsTable();
+    }
+
+    // ── Access Gate Verification ───────────────────────────────
+    async function checkAccessGate() {
+        const user = window.MrMaheshAuth?.getUser();
+        const gateLocked = document.getElementById('access-gate-locked');
+        const gateUnlocked = document.getElementById('access-gate-unlocked');
+        const gateEmailLabel = document.getElementById('gate-user-email');
+
+        const userEmail = (user?.email || '').trim().toLowerCase();
+        let isAuthorized = false;
+        if (userEmail) {
+            try {
+                const hash = await sha256(userEmail);
+                isAuthorized = (hash === AUTHORIZED_LEAD_HASH);
+            } catch (e) {
+                console.error('Hash verification error:', e);
+            }
+        }
+
+        if (isAuthorized) {
+            gateLocked.classList.add('hidden');
+            gateUnlocked.classList.remove('hidden');
+        } else {
+            gateUnlocked.classList.add('hidden');
+            gateLocked.classList.remove('hidden');
+            if (gateEmailLabel) {
+                gateEmailLabel.textContent = user ? 'Account Signed In (Private Beta Access Required)' : 'Guest (Not Signed In)';
+                gateEmailLabel.className = user ? 'text-yellow-400 font-bold' : 'text-gray-400';
+            }
+        }
+    }
+
+    // ── Baseline Metrics Render ────────────────────────────────
+    function renderBaselineMetrics() {
+        const startEl = document.getElementById('metric-start-weight');
+        const targetEl = document.getElementById('metric-target-weight');
+        const lossEl = document.getElementById('metric-total-loss');
+
+        if (startEl) startEl.textContent = formatWeight(baselineStartWeight);
+        if (targetEl) {
+            targetEl.textContent = isLbs
+                ? `${(70 * 2.20462).toFixed(0)} – ${(82 * 2.20462).toFixed(0)} lbs`
+                : '70 – 82 kg';
+        }
+        if (lossEl) {
+            const minLoss = baselineStartWeight - 82;
+            const maxLoss = baselineStartWeight - 70;
+            lossEl.textContent = isLbs
+                ? `~${(minLoss * 2.20462).toFixed(0)} – ${(maxLoss * 2.20462).toFixed(0)} lbs`
+                : `~${minLoss.toFixed(0)} – ${maxLoss.toFixed(0)} kg`;
+        }
+    }
+
+    document.getElementById('btn-edit-baseline')?.addEventListener('click', () => {
+        const currentPromptVal = isLbs ? (baselineStartWeight * 2.20462).toFixed(1) : baselineStartWeight.toFixed(1);
+        const input = prompt(`Enter starting baseline weight in ${isLbs ? 'lbs' : 'kg'}:`, currentPromptVal);
+        if (input !== null && !isNaN(parseFloat(input)) && parseFloat(input) > 30) {
+            baselineStartWeight = isLbs ? parseFloat(input) / 2.20462 : parseFloat(input);
+            saveAppState();
+            renderBaselineMetrics();
+            renderLogsTable();
+        }
+    });
+
+    // ── Workout Routine Engine Render ──────────────────────────
+    function renderWorkoutRoutine() {
+        const container = document.getElementById('workout-exercises-container');
+        const dayData = WORKOUT_SPLIT[activeDay];
+        if (!container || !dayData) return;
+
+        container.innerHTML = `
+            <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 font-mono text-xs text-yellow-400">
+                <span class="font-bold">Warm-up Protocol:</span> ${dayData.warmup}
+            </div>
+        `;
+
+        let completedCount = 0;
+        dayData.exercises.forEach((ex, idx) => {
+            const key = `d${activeDay}_e${idx}`;
+            const isDone = !!checkedExercises[key];
+            if (isDone) completedCount++;
+
+            const row = document.createElement('div');
+            row.className = `flex items-start gap-3 p-3.5 rounded-xl border transition-all ${isDone ? 'bg-yellow-500/5 border-yellow-500/40' : 'bg-[#111827] border-gray-800 hover:border-gray-700'}`;
+            row.innerHTML = `
+                <input type="checkbox" id="${key}" class="ex-chk mt-1 h-4 w-4 bg-gray-800 border-gray-700 rounded text-yellow-500 focus:ring-0 cursor-pointer" ${isDone ? 'checked' : ''}>
+                <div class="flex-grow space-y-1">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <label for="${key}" class="font-bold text-sm cursor-pointer ${isDone ? 'text-yellow-400 line-through' : 'text-gray-200'}">
+                            ${ex.name}
+                        </label>
+                        <span class="text-xs font-mono font-bold text-yellow-500/90 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">
+                            ${ex.sets}
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed font-mono">
+                        💡 <span class="text-gray-300">Cue:</span> ${ex.cue}
+                    </p>
+                </div>
+            `;
+            container.appendChild(row);
+
+            row.querySelector('.ex-chk').addEventListener('change', (e) => {
+                checkedExercises[key] = e.target.checked;
+                saveAppState();
+                renderWorkoutRoutine();
+            });
+        });
+
+        // Update progress bar
+        const total = dayData.exercises.length;
+        const pct = Math.round((completedCount / total) * 100);
+        document.getElementById('workout-progress-label').textContent = `Day ${activeDay} Progress (${completedCount}/${total} Completed)`;
+        document.getElementById('workout-progress-percent').textContent = `${pct}%`;
+        document.getElementById('workout-progress-bar').style.width = `${pct}%`;
+    }
+
+    // Day Tab Switchers
+    document.querySelectorAll('.day-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            activeDay = parseInt(e.currentTarget.dataset.day);
+            document.querySelectorAll('.day-tab').forEach(t => {
+                const isCurrent = parseInt(t.dataset.day) === activeDay;
+                t.className = isCurrent
+                    ? 'day-tab px-3 py-2.5 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937] transition-all'
+                    : 'day-tab px-3 py-2.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-500 transition-all';
+            });
+            renderWorkoutRoutine();
+        });
+    });
+
+    // ── Rest Stopwatch Timer ───────────────────────────────────
+    document.querySelectorAll('.btn-timer').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const sec = parseInt(e.target.dataset.sec);
+            startRestTimer(sec);
+        });
+    });
+
+    function startRestTimer(seconds) {
+        clearInterval(restTimerInterval);
+        let rem = seconds;
+        const display = document.getElementById('timer-display');
+        display.textContent = `${rem}s`;
+        display.className = 'text-yellow-400 font-bold ml-1 min-w-[32px] text-right animate-pulse';
+
+        restTimerInterval = setInterval(() => {
+            rem--;
+            if (rem <= 0) {
+                clearInterval(restTimerInterval);
+                display.textContent = 'DONE!';
+                display.className = 'text-green-400 font-bold ml-1 min-w-[32px] text-right';
+            } else {
+                display.textContent = `${rem}s`;
+            }
+        }, 1000);
+    }
+
+    // ── Water Tracker ──────────────────────────────────────────
+    function updateWaterDisplay() {
+        const el = document.getElementById('water-display');
+        if (el) el.textContent = `${(todayWater / 1000).toFixed(1)} / 3.5 L`;
+    }
+
+    document.getElementById('btn-add-water')?.addEventListener('click', () => {
+        todayWater = Math.min(6000, todayWater + 250);
+        updateWaterDisplay();
+        saveAppState();
+    });
+
+    document.getElementById('btn-reset-water')?.addEventListener('click', () => {
+        todayWater = 0;
+        updateWaterDisplay();
+        saveAppState();
+    });
+
+    // ── Daily Biometrics Logger & History ──────────────────────
+    const logDateInput = document.getElementById('log-date');
+    if (logDateInput) logDateInput.value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('btn-save-log')?.addEventListener('click', () => {
+        const date = document.getElementById('log-date').value || new Date().toISOString().split('T')[0];
+        let weight = parseFloat(document.getElementById('log-weight').value);
+        if (isNaN(weight) || weight <= 0) {
+            alert('Please enter a valid weight.');
+            return;
+        }
+
+        // Convert to standard KG if logged in lbs
+        const weightInKg = isLbs ? (weight / 2.20462) : weight;
+        const steps = parseInt(document.getElementById('log-steps').value) || 0;
+        const workoutDone = document.getElementById('log-workout-done').checked;
+
+        const logs = getLogs();
+        logs.unshift({
+            id: 'log_' + Date.now(),
+            date,
+            weightKg: weightInKg,
+            waterMl: todayWater,
+            steps,
+            workoutDone,
+            createdAt: new Date().toISOString()
+        });
+
+        saveLogs(logs);
+        document.getElementById('log-weight').value = '';
+        renderLogsTable();
+    });
+
+    function renderLogsTable() {
+        const tbody = document.getElementById('logs-table-body');
+        if (!tbody) return;
+        const logs = getLogs();
+        tbody.innerHTML = '';
+
+        if (!logs.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="py-6 text-center text-gray-500 font-mono text-xs">
+                        No weigh-in logs recorded yet. Log your morning weight above!
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        logs.forEach((item, i) => {
+            const deltaKg = item.weightKg - baselineStartWeight;
+            const deltaFormatted = isLbs
+                ? (deltaKg >= 0 ? `+${(deltaKg * 2.20462).toFixed(1)}` : `${(deltaKg * 2.20462).toFixed(1)}`) + ' lbs'
+                : (deltaKg >= 0 ? `+${deltaKg.toFixed(1)}` : `${deltaKg.toFixed(1)}`) + ' kg';
+
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors';
+            row.innerHTML = `
+                <td class="py-2 pr-2 text-gray-300">${item.date}</td>
+                <td class="py-2 pr-2 font-bold text-gray-100">${formatWeight(item.weightKg)}</td>
+                <td class="py-2 pr-2 font-bold ${deltaKg <= 0 ? 'text-green-400' : 'text-red-400'}">${deltaFormatted}</td>
+                <td class="py-2 pr-2 text-blue-300">${(item.waterMl / 1000).toFixed(1)} L</td>
+                <td class="py-2 pr-2 text-gray-300">${item.steps.toLocaleString()}</td>
+                <td class="py-2 text-center">${item.workoutDone ? '✅' : '—'}</td>
+                <td class="py-2 text-center">
+                    <button class="btn-del-log text-gray-600 hover:text-red-400 font-bold" data-id="${item.id}">&times;</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+
+            row.querySelector('.btn-del-log').addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                const updated = getLogs().filter(l => l.id !== id);
+                saveLogs(updated);
+                renderLogsTable();
+            });
+        });
+    }
+
+    // ── Unit Switcher Listeners ────────────────────────────────
+    document.getElementById('btn-unit-kg')?.addEventListener('click', () => {
+        isLbs = false;
+        saveAppState();
+        updateUnitUI();
+    });
+
+    document.getElementById('btn-unit-lbs')?.addEventListener('click', () => {
+        isLbs = true;
+        saveAppState();
+        updateUnitUI();
+    });
+
+    // ── Custom Plan Modal Handlers ─────────────────────────────
+    const customModal = document.getElementById('custom-plan-modal');
+    document.getElementById('btn-open-custom-modal')?.addEventListener('click', () => {
+        customModal?.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-custom-modal')?.addEventListener('click', () => {
+        customModal?.classList.add('hidden');
+    });
+    document.getElementById('btn-modal-dismiss')?.addEventListener('click', () => {
+        customModal?.classList.add('hidden');
+    });
+
+    // ── Initialization ─────────────────────────────────────────
+    loadAppState();
+    updateUnitUI();
+    updateWaterDisplay();
+    renderWorkoutRoutine();
+    renderLogsTable();
+
+    // Check Access Gate immediately and listen for auth changes
+    checkAccessGate();
+    if (window.MrMaheshAuth) {
+        window.MrMaheshAuth.onAuthStateChange(() => {
+            checkAccessGate();
+        });
+    }
+});
+</script>

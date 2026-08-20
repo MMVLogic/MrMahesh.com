@@ -5,7 +5,7 @@ permalink: /apps/openfit-protocol/
 ---
 
 <style>
-/* ── Option 1: 2-Pose Technical Blueprint Animation Keyframes ── */
+/* ── Retro Pencil-Drawn Sketch & Blueprint Styles ────────── */
 @keyframes phase-crossfade-a {
     0%, 45% { opacity: 1; visibility: visible; }
     50%, 95% { opacity: 0; visibility: hidden; }
@@ -23,6 +23,37 @@ permalink: /apps/openfit-protocol/
 .pose-layer-a { animation: phase-crossfade-a 3.2s infinite ease-in-out; }
 .pose-layer-b { animation: phase-crossfade-b 3.2s infinite ease-in-out; }
 .motion-arrow { animation: arrow-pulse 1.6s infinite ease-in-out; }
+
+/* Pencil Sketch Texture & Glow */
+.sketch-line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 0.5, 0.5;
+}
+.sketch-muscle {
+    fill: #1e293b;
+    fill-opacity: 0.6;
+    stroke: #38bdf8;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.sketch-muscle-active {
+    fill: #064e3b;
+    fill-opacity: 0.7;
+    stroke: #2ecc71;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 3px #2ecc71);
+}
+.sketch-equipment {
+    fill: #27272a;
+    stroke: #eab308;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 </style>
 
 <div class="flex flex-col space-y-4 max-w-2xl mx-auto pb-12">
@@ -102,7 +133,7 @@ permalink: /apps/openfit-protocol/
             </button>
             <button id="tab-btn-log" class="tab-nav-btn py-2 rounded-lg text-gray-400 hover:text-gray-200 transition-all flex flex-col items-center justify-center gap-0.5">
                 <span class="text-base">📈</span>
-                <span class="text-[10px]">Progress</span>
+                <span class="text-[10px]">Trends</span>
             </button>
             <button id="tab-btn-guide" class="tab-nav-btn py-2 rounded-lg text-gray-400 hover:text-gray-200 transition-all flex flex-col items-center justify-center gap-0.5">
                 <span class="text-base">🛡️</span>
@@ -111,7 +142,7 @@ permalink: /apps/openfit-protocol/
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 1: ACTIVE WORKOUT INTERFACE (FOCUSED MOBILE VIEW)           -->
+        <!-- TAB 1: ACTIVE WORKOUT INTERFACE (PENCIL SKETCH 2-POSE)          -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <div id="tab-panel-workout" class="space-y-4">
             
@@ -137,17 +168,19 @@ permalink: /apps/openfit-protocol/
                     </div>
                 </div>
 
-                <!-- Option 1: 2-Pose Technical Blueprint Visual Display -->
+                <!-- Pencil-Drawn Retro Sketch 2-Pose Blueprint Canvas -->
                 <div class="bg-[#111827] rounded-xl p-3 border border-gray-800 relative overflow-hidden flex flex-col items-center">
                     
                     <div class="w-full flex justify-between items-center text-[10px] font-mono text-gray-400 mb-1">
-                        <span class="text-cyan-400 font-bold">2-POSE TECHNICAL BLUEPRINT</span>
-                        <span class="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20" id="pose-indicator">PHASE: [SETUP ⟷ SAFE DEPTH]</span>
+                        <span class="text-cyan-400 font-bold flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> RETRO PENCIL SKETCH BLUEPRINT
+                        </span>
+                        <span class="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20" id="pose-indicator">PHASE: [SETUP ⟷ PEAK]</span>
                     </div>
 
-                    <!-- SVG 2-Pose Blueprint Container -->
-                    <div id="technical-blueprint-canvas" class="w-full h-44 flex items-center justify-center relative">
-                        <!-- Populated dynamically with 2-pose SVG -->
+                    <!-- SVG Pencil Sketch Container -->
+                    <div id="technical-blueprint-canvas" class="w-full h-48 flex items-center justify-center relative">
+                        <!-- Populated dynamically with detailed anatomically contoured sketch SVGs -->
                     </div>
 
                     <!-- 1-Line Bite-Sized Form Cue -->
@@ -244,59 +277,94 @@ permalink: /apps/openfit-protocol/
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 3: PROGRESS & HABIT LOGGER (COMPACT MOBILE VIEW)            -->
+        <!-- TAB 3: UNIFIED MULTI-METRIC TREND GRAPH & HABIT LOGGER          -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <div id="tab-panel-log" class="hidden space-y-4">
+        <div id="tab-panel-log" class="space-y-4">
             
-            <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-4">
+            <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-5">
                 
-                <p class="text-sm font-bold text-gray-200 font-mono flex items-center gap-2">
-                    <span>📝</span> Daily Log Entry
-                </p>
-
-                <div class="grid grid-cols-2 gap-3 font-mono text-xs">
-                    <!-- Weight Input -->
-                    <div class="space-y-1">
-                        <label class="block text-gray-400 font-bold">Morning Weight (<span class="unit-label">kg</span>)</label>
-                        <input type="number" step="0.1" id="log-weight" placeholder="e.g. 134.2" class="w-full h-10 bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 focus:border-yellow-500 focus:outline-none">
+                <!-- Section Header & Graph Legend -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-100 font-mono flex items-center gap-2">
+                            <span>📈</span> Multi-Metric Trend Telemetry
+                        </span>
+                        <span class="text-[10px] font-mono text-gray-500">Live Render</span>
                     </div>
-                    <!-- Steps Input -->
-                    <div class="space-y-1">
-                        <label class="block text-gray-400 font-bold">Steps (Goal: 8k)</label>
-                        <input type="number" step="100" id="log-steps" placeholder="e.g. 8500" class="w-full h-10 bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 focus:border-yellow-500 focus:outline-none">
+                    
+                    <!-- Unified Line Graph Legend -->
+                    <div class="flex flex-wrap items-center gap-3 text-[11px] font-mono pt-1">
+                        <span class="flex items-center gap-1.5 font-bold text-yellow-400">
+                            <span class="w-3 h-1 bg-yellow-400 rounded-full"></span> Weight (<span class="unit-label">kg</span>)
+                        </span>
+                        <span class="flex items-center gap-1.5 font-bold text-blue-400">
+                            <span class="w-3 h-1 bg-blue-400 rounded-full"></span> Water (L)
+                        </span>
+                        <span class="flex items-center gap-1.5 font-bold text-green-400">
+                            <span class="w-3 h-1 bg-green-400 rounded-full"></span> Steps (k)
+                        </span>
+                        <span class="flex items-center gap-1.5 font-bold text-green-300">
+                            <span class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_4px_#2ecc71]"></span> Workout Done
+                        </span>
                     </div>
                 </div>
 
-                <!-- Water Intake Tracker -->
-                <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 flex items-center justify-between font-mono text-xs">
-                    <div>
-                        <span class="text-gray-400 text-[10px] block">Water Intake</span>
-                        <span id="water-display" class="text-blue-400 font-bold text-sm">0.0 / 3.5 L</span>
+                <!-- Unified Interactive Line Graph Canvas -->
+                <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 relative">
+                    <div id="graph-container" class="w-full h-56 flex items-center justify-center relative overflow-hidden">
+                        <!-- Populated by Canvas / SVG Render -->
+                        <canvas id="multi-metric-canvas" class="w-full h-full"></canvas>
                     </div>
-                    <div class="flex items-center gap-1.5">
-                        <button id="btn-add-water" class="h-9 px-3 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-bold rounded-lg border border-blue-500/40 text-xs">
-                            + 250ml 💧
+                </div>
+
+                <!-- Fast Habit Logger Inputs -->
+                <div class="pt-2 border-t border-gray-800 space-y-3 font-mono text-xs">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                        Quick Metric Entry (Today)
+                    </span>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="block text-gray-400 font-bold">Morning Weight (<span class="unit-label">kg</span>)</label>
+                            <input type="number" step="0.1" id="log-weight" placeholder="e.g. 134.2" class="w-full h-10 bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 focus:border-yellow-500 focus:outline-none">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-gray-400 font-bold">Steps (Goal: 8,000)</label>
+                            <input type="number" step="100" id="log-steps" placeholder="e.g. 8500" class="w-full h-10 bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 focus:border-yellow-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Water Tracker -->
+                    <div class="p-2.5 bg-[#111827] rounded-xl border border-gray-800 flex items-center justify-between">
+                        <div>
+                            <span class="text-gray-400 text-[10px] block">Water Intake</span>
+                            <span id="water-display" class="text-blue-400 font-bold text-sm">0.0 / 3.5 L</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button id="btn-add-water" class="h-9 px-3 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-bold rounded-lg border border-blue-500/40 text-xs active:scale-95">
+                                + 250ml 💧
+                            </button>
+                            <button id="btn-reset-water" class="h-9 px-2.5 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg border border-gray-700 text-xs">
+                                ↺
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="log-workout-done" class="rounded bg-gray-800 border-gray-700 text-yellow-500">
+                            <span>Workout Done Today</span>
+                        </label>
+                        <button id="btn-save-log" class="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg transition-all shadow-md active:scale-95 text-xs">
+                            + Save & Plot
                         </button>
-                        <button id="btn-reset-water" class="h-9 px-2.5 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg border border-gray-700 text-xs">
-                            ↺
-                        </button>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-800 font-mono text-xs">
-                    <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
-                        <input type="checkbox" id="log-workout-done" class="rounded bg-gray-800 border-gray-700 text-yellow-500">
-                        <span>Workout Done</span>
-                    </label>
-                    <button id="btn-save-log" class="px-5 py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg transition-all shadow-md active:scale-95">
-                        + Save Log
-                    </button>
-                </div>
-
-                <!-- Recent Weigh-In Log Table -->
-                <div class="space-y-2 pt-2">
+                <!-- Recent Table Fallback / Delete -->
+                <div class="space-y-2 pt-2 border-t border-gray-800">
                     <span class="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-wider block">
-                        Recent Weigh-In Records
+                        Recent Log Records
                     </span>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs font-mono border-collapse">
@@ -304,7 +372,9 @@ permalink: /apps/openfit-protocol/
                                 <tr class="border-b border-gray-700 text-gray-400 text-[11px]">
                                     <th class="pb-1.5">Date</th>
                                     <th class="pb-1.5">Weight</th>
-                                    <th class="pb-1.5">Delta</th>
+                                    <th class="pb-1.5">Water</th>
+                                    <th class="pb-1.5">Steps</th>
+                                    <th class="pb-1.5 text-center">Workout</th>
                                     <th class="pb-1.5 text-center">Del</th>
                                 </tr>
                             </thead>
@@ -351,7 +421,7 @@ permalink: /apps/openfit-protocol/
                 </p>
                 <div class="space-y-1.5 text-gray-300 text-[11px] leading-relaxed">
                     <p>• <strong class="text-gray-100">Zero High Impact:</strong> No jumping or running. Stick to incline walking (3–6%) or stationary bike.</p>
-                    <p>• <strong class="text-gray-100">Box Squats to Bench:</strong> Knee cartilage protection and glute focus.</p>
+                    <p>• <strong class="text-gray-100">Box Squats to Bench:</strong> Knee cartilage protection and glute drive.</p>
                     <p>• <strong class="text-gray-100">80/20 Deficit:</strong> 80% nutrition focus. 1.6–2.0g protein/kg target weight.</p>
                 </div>
             </div>
@@ -407,170 +477,189 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // ── Option 1: 2-Pose Technical Blueprint SVG Models ─────────
-    const BLUEPRINT_SVGS = {
+    // ── Anatomically Contoured Retro Pencil Sketch SVG Models ────
+    const PENCIL_SKETCH_SVGS = {
         squat: `
-            <svg viewBox="0 0 240 140" class="w-full h-full">
-                <!-- Floor and Box Bench -->
-                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
-                <rect x="55" y="85" width="40" height="45" fill="#1e293b" stroke="#64748b" stroke-width="1.5" rx="2" stroke-dasharray="3,3"/>
-                <text x="75" y="110" fill="#64748b" font-size="7" font-family="monospace" text-anchor="middle">BOX BENCH</text>
+            <svg viewBox="0 0 240 150" class="w-full h-full">
+                <!-- Ground Floor & Textured Hatching -->
+                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+                <path d="M 20 142 L 30 148 M 50 142 L 60 148 M 80 142 L 90 148 M 110 142 L 120 148 M 140 142 L 150 148 M 170 142 L 180 148 M 200 142 L 210 148" stroke="#334155" stroke-width="1.5"/>
                 
-                <!-- POSE A: Setup (Standing) -->
+                <!-- Apartment Gym Box Bench (Crosshatched Pencil Outline) -->
+                <rect x="48" y="90" width="45" height="48" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,2" rx="3"/>
+                <line x1="52" y1="110" x2="89" y2="110" stroke="#475569" stroke-width="1" stroke-dasharray="2,2"/>
+                <text x="70" y="118" fill="#94a3b8" font-size="7" font-family="monospace" text-anchor="middle">BOX BENCH</text>
+
+                <!-- POSE A: Setup (Standing Tall With Dumbbell at Chest) -->
                 <g class="pose-layer-a">
-                    <circle cx="120" cy="30" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <line x1="120" y1="38" x2="120" y2="78" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <line x1="120" y1="78" x2="120" y2="128" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                    <circle cx="120" cy="78" r="3" fill="#2ecc71"/>
-                    <rect x="126" y="48" width="14" height="12" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
-                    <text x="175" y="45" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. SETUP</text>
-                    <path d="M 160 55 L 160 75 M 156 70 L 160 76 L 164 70" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
+                    <!-- Head & Neck -->
+                    <circle cx="120" cy="28" r="9" class="sketch-muscle"/>
+                    <!-- Contoured Muscular Torso & Chest -->
+                    <path d="M 112 36 Q 110 55 113 74 Q 120 76 127 74 Q 130 55 128 36 Z" class="sketch-muscle"/>
+                    <!-- Arms Holding Heavy Dumbbell -->
+                    <path d="M 113 42 Q 124 50 120 62" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Contoured Dumbbell (Amber Pencil Hatch) -->
+                    <rect x="120" y="44" width="16" height="15" class="sketch-equipment" rx="2"/>
+                    <line x1="128" y1="44" x2="128" y2="59" stroke="#facc15" stroke-width="2"/>
+                    <!-- Contoured Thighs & Calves -->
+                    <path d="M 114 74 Q 112 100 115 112 L 115 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 126 74 Q 128 100 125 112 L 125 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="120" cy="74" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+                    <text x="175" y="42" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. SETUP</text>
+                    <path d="M 165 52 L 165 72 M 161 67 L 165 73 L 169 67" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
                 </g>
 
-                <!-- POSE B: Peak Contraction (Safe Box Bench Depth) -->
+                <!-- POSE B: Safe Box Squat Depth (Joint Protected) -->
                 <g class="pose-layer-b">
-                    <circle cx="105" cy="52" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <line x1="105" y1="60" x2="100" y2="92" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <line x1="100" y1="92" x2="122" y2="108" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                    <line x1="122" y1="108" x2="118" y2="128" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                    <!-- Joint Protection Alignment Node (Knee) -->
-                    <circle cx="100" cy="92" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
-                    <circle cx="122" cy="108" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
-                    <rect x="108" y="68" width="14" height="12" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <text x="160" y="95" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SAFE DEPTH</text>
+                    <!-- Head & Forward Gaze -->
+                    <circle cx="102" cy="46" r="9" class="sketch-muscle-active"/>
+                    <!-- Contoured Inclined Torso with Tight Core Brace -->
+                    <path d="M 94 54 Q 90 70 94 88 Q 106 90 114 86 Q 118 70 110 54 Z" class="sketch-muscle-active"/>
+                    <!-- Arms Holding DB -->
+                    <rect x="108" y="58" width="16" height="15" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <!-- Contoured Thigh Hinged to Bench Depth -->
+                    <path d="M 94 88 Q 115 96 128 104 L 122 138" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Protected Knee Pivot Node -->
+                    <circle cx="128" cy="104" r="4" fill="#2ecc71" filter="drop-shadow(0 0 5px #2ecc71)"/>
+                    <circle cx="94" cy="88" r="4" fill="#2ecc71" filter="drop-shadow(0 0 5px #2ecc71)"/>
+                    <text x="155" y="96" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SAFE DEPTH</text>
                 </g>
             </svg>
         `,
         press: `
-            <svg viewBox="0 0 240 140" class="w-full h-full">
-                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
-                <line x1="45" y1="115" x2="145" y2="70" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
-                <line x1="75" y1="102" x2="75" y2="130" stroke="#475569" stroke-width="2"/>
-                <line x1="125" y1="78" x2="125" y2="130" stroke="#475569" stroke-width="2"/>
+            <svg viewBox="0 0 240 150" class="w-full h-full">
+                <!-- Ground Floor -->
+                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+                <!-- Incline Bench (30° Angle) -->
+                <path d="M 40 125 L 145 75 L 150 82 L 45 132 Z" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+                <line x1="75" y1="110" x2="75" y2="138" stroke="#475569" stroke-width="3"/>
+                <line x1="135" y1="80" x2="135" y2="138" stroke="#475569" stroke-width="3"/>
                 
                 <!-- Torso on Bench -->
-                <line x1="65" y1="108" x2="130" y2="78" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                <circle cx="138" cy="74" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                <path d="M 60 115 Q 95 95 130 80" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+                <circle cx="138" cy="74" r="8" class="sketch-muscle"/>
 
-                <!-- POSE A: Extended Press -->
+                <!-- POSE A: Full Press Lockout -->
                 <g class="pose-layer-a">
-                    <line x1="105" y1="88" x2="98" y2="48" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="105" cy="88" r="3" fill="#2ecc71"/>
-                    <rect x="86" y="40" width="24" height="9" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <text x="155" y="45" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. EXTENDED</text>
-                    <path d="M 145 52 L 145 68 M 141 64 L 145 70 L 149 64" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
+                    <!-- Contoured Upper Arm & Forearm -->
+                    <path d="M 105 92 Q 100 68 96 46" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="105" cy="92" r="3.5" fill="#2ecc71"/>
+                    <!-- Dumbbell Pair (Amber Sketch) -->
+                    <rect x="84" y="36" width="24" height="11" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <text x="155" y="42" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. EXTENDED</text>
+                    <path d="M 145 50 L 145 68 M 141 63 L 145 69 L 149 63" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
                 </g>
 
-                <!-- POSE B: Lowered Eccentric -->
+                <!-- POSE B: Lowered Chest Stretch -->
                 <g class="pose-layer-b">
-                    <line x1="105" y1="88" x2="98" y2="74" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="105" cy="88" r="3" fill="#2ecc71"/>
-                    <rect x="86" y="68" width="24" height="9" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
+                    <path d="M 105 92 Q 95 85 92 74" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round"/>
+                    <circle cx="105" cy="92" r="3.5" fill="#2ecc71"/>
+                    <rect x="82" y="68" width="24" height="11" class="sketch-equipment" rx="2"/>
                     <text x="155" y="78" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. CHEST STRETCH</text>
                 </g>
             </svg>
         `,
         pull: `
-            <svg viewBox="0 0 240 140" class="w-full h-full">
-                <!-- Cable Column -->
-                <line x1="155" y1="15" x2="155" y2="130" stroke="#64748b" stroke-width="3"/>
-                <line x1="115" y1="15" x2="155" y2="15" stroke="#64748b" stroke-width="3"/>
-                <circle cx="115" cy="15" r="3.5" fill="#eab308"/>
-                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+            <svg viewBox="0 0 240 150" class="w-full h-full">
+                <!-- Lat Cable Tower -->
+                <line x1="160" y1="12" x2="160" y2="138" stroke="#64748b" stroke-width="3"/>
+                <line x1="115" y1="12" x2="160" y2="12" stroke="#64748b" stroke-width="3"/>
+                <circle cx="115" cy="12" r="4" fill="#eab308"/>
+                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2"/>
                 
-                <!-- Athlete Seated -->
-                <rect x="70" y="90" width="26" height="20" fill="#1e293b" stroke="#475569" rx="2"/>
-                <circle cx="85" cy="48" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <line x1="85" y1="55" x2="85" y2="95" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                <!-- Seated Athlete Contour -->
+                <rect x="68" y="94" width="30" height="24" fill="#1e293b" stroke="#475569" rx="2"/>
+                <circle cx="85" cy="48" r="8" class="sketch-muscle"/>
+                <path d="M 85 56 Q 88 78 84 100" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
 
-                <!-- POSE A: Extended Arms (Setup) -->
+                <!-- POSE A: Overhead Reach -->
                 <g class="pose-layer-a">
-                    <line x1="115" y1="15" x2="102" y2="45" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
-                    <line x1="88" y1="20" x2="120" y2="20" stroke="#eab308" stroke-width="3" stroke-linecap="round"/>
-                    <line x1="85" y1="62" x2="104" y2="22" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <text x="145" y="45" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. REACH</text>
+                    <line x1="115" y1="12" x2="100" y2="24" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
+                    <line x1="80" y1="24" x2="120" y2="24" class="sketch-equipment" stroke-width="3"/>
+                    <path d="M 85 64 L 100 25" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                    <text x="145" y="44" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. FULL REACH</text>
                 </g>
 
-                <!-- POSE B: Pulled Down (Back Contraction) -->
+                <!-- POSE B: Lat Contraction -->
                 <g class="pose-layer-b">
-                    <line x1="115" y1="15" x2="98" y2="58" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
-                    <line x1="80" y1="58" x2="118" y2="58" stroke="#eab308" stroke-width="3" stroke-linecap="round" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <line x1="85" y1="65" x2="98" y2="60" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="98" cy="60" r="3" fill="#2ecc71"/>
-                    <text x="145" y="70" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SQUEEZE BACK</text>
+                    <line x1="115" y1="12" x2="96" y2="60" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
+                    <line x1="75" y1="60" x2="120" y2="60" class="sketch-equipment" stroke-width="3.5" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <path d="M 85 68 Q 96 64 96 60" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round"/>
+                    <circle cx="96" cy="60" r="3.5" fill="#2ecc71"/>
+                    <text x="145" y="72" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SQUEEZE LATS</text>
                 </g>
             </svg>
         `,
         walk: `
-            <svg viewBox="0 0 240 140" class="w-full h-full">
+            <svg viewBox="0 0 240 150" class="w-full h-full">
                 <!-- Incline Treadmill Deck (5% Incline) -->
-                <line x1="35" y1="126" x2="155" y2="110" stroke="#eab308" stroke-width="3.5" stroke-linecap="round" filter="drop-shadow(0 0 3px #eab308)"/>
-                <line x1="45" y1="125" x2="45" y2="130" stroke="#64748b" stroke-width="2.5"/>
-                <line x1="145" y1="112" x2="145" y2="130" stroke="#64748b" stroke-width="2.5"/>
-                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
-                <path d="M 135 110 L 135 70 L 110 70" fill="none" stroke="#64748b" stroke-width="2"/>
+                <path d="M 30 134 L 160 115 L 162 122 L 32 140 Z" fill="#1e293b" stroke="#eab308" stroke-width="2.5" filter="drop-shadow(0 0 3px #eab308)"/>
+                <line x1="45" y1="135" x2="45" y2="142" stroke="#64748b" stroke-width="3"/>
+                <line x1="150" y1="118" x2="150" y2="142" stroke="#64748b" stroke-width="3"/>
+                <line x1="15" y1="142" x2="225" y2="142" stroke="#475569" stroke-width="2"/>
+                <path d="M 140 115 L 140 72 L 110 72" fill="none" stroke="#64748b" stroke-width="2.5"/>
                 
-                <circle cx="95" cy="42" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <line x1="95" y1="49" x2="96" y2="85" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                
-                <!-- Striding Motion -->
+                <!-- Walking Human Contour -->
+                <circle cx="95" cy="40" r="8" class="sketch-muscle"/>
+                <path d="M 95 48 Q 96 68 96 90" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+
                 <g class="pose-layer-a">
-                    <line x1="96" y1="85" x2="80" y2="120" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <line x1="96" y1="85" x2="115" y2="115" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <text x="155" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
-                    <text x="155" y="70" fill="#38bdf8" font-size="8" font-family="monospace">ZERO IMPACT</text>
+                    <path d="M 96 90 L 78 126" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 96 90 L 118 120" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <text x="160" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
+                    <text x="160" y="70" fill="#38bdf8" font-size="8" font-family="monospace">ZERO IMPACT</text>
                 </g>
                 <g class="pose-layer-b">
-                    <line x1="96" y1="85" x2="115" y2="115" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <line x1="96" y1="85" x2="80" y2="120" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <text x="155" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
-                    <text x="155" y="70" fill="#eab308" font-size="8" font-family="monospace">FAT DEFICIT</text>
+                    <path d="M 96 90 L 118 120" fill="none" stroke="#2ecc71" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 96 90 L 78 126" fill="none" stroke="#2ecc71" stroke-width="4" stroke-linecap="round"/>
+                    <text x="160" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
+                    <text x="160" y="70" fill="#eab308" font-size="8" font-family="monospace">FAT DEFICIT</text>
                 </g>
             </svg>
         `,
         curl: `
-            <svg viewBox="0 0 240 140" class="w-full h-full">
-                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
-                <circle cx="100" cy="35" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <line x1="100" y1="42" x2="100" y2="85" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                <line x1="100" y1="85" x2="100" y2="128" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+            <svg viewBox="0 0 240 150" class="w-full h-full">
+                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2"/>
+                <circle cx="100" cy="34" r="8" class="sketch-muscle"/>
+                <path d="M 100 42 Q 100 68 100 90" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                <path d="M 100 90 L 100 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
 
-                <!-- POSE A: Lowered Dumbbell -->
+                <!-- POSE A: Lowered Position -->
                 <g class="pose-layer-a">
-                    <line x1="100" y1="55" x2="105" y2="92" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <rect x="100" y="90" width="12" height="14" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
-                    <text x="135" y="55" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. BOTTOM</text>
+                    <path d="M 100 55 Q 105 78 105 100" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                    <rect x="100" y="98" width="14" height="15" class="sketch-equipment" rx="2"/>
+                    <text x="140" y="55" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. STRETCH</text>
                 </g>
 
                 <!-- POSE B: Curled Peak -->
                 <g class="pose-layer-b">
-                    <line x1="100" y1="55" x2="118" y2="60" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="105" cy="78" r="3" fill="#2ecc71"/>
-                    <rect x="114" y="52" width="12" height="14" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <text x="135" y="65" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. PEAK BICEP</text>
+                    <path d="M 100 55 Q 110 75 120 62" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round"/>
+                    <circle cx="106" cy="80" r="3.5" fill="#2ecc71"/>
+                    <rect x="115" y="54" width="14" height="15" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <text x="140" y="65" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. PEAK BICEP</text>
                 </g>
             </svg>
         `,
         rdl: `
-            <svg viewBox="0 0 240 140" class="w-full h-full">
-                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
-                <line x1="105" y1="88" x2="105" y2="128" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                <circle cx="105" cy="88" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+            <svg viewBox="0 0 240 150" class="w-full h-full">
+                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2"/>
+                <path d="M 108 92 L 108 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="108" cy="92" r="4" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
 
                 <!-- POSE A: Standing Setup -->
                 <g class="pose-layer-a">
-                    <circle cx="105" cy="40" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <line x1="105" y1="47" x2="105" y2="88" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <rect x="112" y="75" width="14" height="10" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
-                    <text x="145" y="50" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. STAND TALL</text>
+                    <circle cx="108" cy="36" r="8" class="sketch-muscle"/>
+                    <path d="M 108 44 L 108 92" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                    <rect x="114" y="78" width="16" height="12" class="sketch-equipment" rx="2"/>
+                    <text x="150" y="48" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. NEUTRAL SPINE</text>
                 </g>
 
-                <!-- POSE B: Hinged RDL (Hamstring Stretch) -->
+                <!-- POSE B: Hinged RDL (Hamstring Load) -->
                 <g class="pose-layer-b">
-                    <circle cx="75" cy="55" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <line x1="75" y1="60" x2="105" y2="88" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <line x1="88" y1="72" x2="88" y2="105" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <rect x="80" y="102" width="16" height="10" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <circle cx="75" cy="54" r="8" class="sketch-muscle-active"/>
+                    <path d="M 75 60 L 108 92" fill="none" stroke="#2ecc71" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M 88 74 L 88 112" fill="none" stroke="#2ecc71" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="80" y="108" width="16" height="12" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
                     <text x="145" y="85" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. HINGE HIPS</text>
                 </g>
             </svg>
@@ -667,7 +756,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Persistence ─────────────────────────────────────────────
     function loadAppState() {
         try {
-            const raw = localStorage.getItem('mrmahesh_openfit_v3');
+            const raw = localStorage.getItem('mrmahesh_openfit_v4');
             if (raw) {
                 const s = JSON.parse(raw);
                 if (s.isLbs !== undefined) isLbs = s.isLbs;
@@ -680,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveAppState() {
         try {
-            localStorage.setItem('mrmahesh_openfit_v3', JSON.stringify({
+            localStorage.setItem('mrmahesh_openfit_v4', JSON.stringify({
                 isLbs,
                 baselineStartWeight,
                 completedSets,
@@ -719,6 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderBaselineMetrics();
         renderLogsTable();
+        renderMultiMetricGraph();
     }
 
     // ── Access Gate Verification ───────────────────────────────
@@ -773,6 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveAppState();
             renderBaselineMetrics();
             renderLogsTable();
+            renderMultiMetricGraph();
         }
     });
 
@@ -803,7 +894,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (tabKey === 'workout') renderActiveExercise();
         if (tabKey === 'plan') renderDotMatrixCalendar();
-        if (tabKey === 'log') renderLogsTable();
+        if (tabKey === 'log') {
+            renderLogsTable();
+            renderMultiMetricGraph();
+        }
         if (tabKey === 'guide') renderBaselineMetrics();
     }
 
@@ -812,7 +906,7 @@ document.addEventListener('DOMContentLoaded', () => {
     TAB_BUTTONS.log?.addEventListener('click', () => switchMobileTab('log'));
     TAB_BUTTONS.guide?.addEventListener('click', () => switchMobileTab('guide'));
 
-    // ── Active Workout Screen (Option 1: 2-Pose Blueprint) ──────
+    // ── Active Workout Screen (Pencil Sketch 2-Pose) ────────────
     function renderActiveExercise() {
         const dayData = WORKOUT_SPLIT[activeDay];
         if (!dayData) return;
@@ -825,9 +919,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('active-ex-volume').textContent = ex.sets;
         document.getElementById('active-ex-cue-text').textContent = ex.cue;
 
-        // Render Option 1: 2-Pose Blueprint SVG
+        // Render Retro Pencil Sketch SVG
         const canvas = document.getElementById('technical-blueprint-canvas');
-        canvas.innerHTML = BLUEPRINT_SVGS[ex.model] || BLUEPRINT_SVGS.squat;
+        canvas.innerHTML = PENCIL_SKETCH_SVGS[ex.model] || PENCIL_SKETCH_SVGS.squat;
 
         // Render Set Tracking Pills (44px+ touch targets)
         const pillsContainer = document.getElementById('set-pills-container');
@@ -1016,6 +1110,127 @@ document.addEventListener('DOMContentLoaded', () => {
         switchMobileTab('workout');
     });
 
+    // ── Unified Multi-Metric Line Graph Canvas (Tab 3) ─────────
+    function renderMultiMetricGraph() {
+        const canvas = document.getElementById('multi-metric-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const logs = getLogs();
+
+        // High DPI Canvas Setup
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = (rect.width || 320) * dpr;
+        canvas.height = (rect.height || 220) * dpr;
+        ctx.scale(dpr, dpr);
+
+        const w = rect.width || 320;
+        const h = rect.height || 220;
+        ctx.clearRect(0, 0, w, h);
+
+        // Prepare at least 5 data points (generate baseline if few logs)
+        let chartData = logs.slice(0, 7).reverse();
+        if (chartData.length < 5) {
+            const seed = [
+                { date: '14 Aug', weightKg: baselineStartWeight, waterMl: 2500, steps: 6800, workoutDone: true },
+                { date: '15 Aug', weightKg: baselineStartWeight - 0.2, waterMl: 3000, steps: 7900, workoutDone: false },
+                { date: '16 Aug', weightKg: baselineStartWeight - 0.4, waterMl: 3500, steps: 9100, workoutDone: true },
+                { date: '17 Aug', weightKg: baselineStartWeight - 0.6, waterMl: 3250, steps: 8400, workoutDone: true },
+                { date: 'Today',  weightKg: baselineStartWeight - 0.8, waterMl: todayWater || 3000, steps: 8500, workoutDone: true }
+            ];
+            chartData = seed;
+        }
+
+        const padding = { top: 25, right: 25, bottom: 35, left: 35 };
+        const innerW = w - padding.left - padding.right;
+        const innerH = h - padding.top - padding.bottom;
+
+        // Draw Retro Grid Lines
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+            const y = padding.top + (innerH / 4) * i;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(w - padding.right, y);
+            ctx.stroke();
+        }
+
+        const n = chartData.length;
+        const getX = (i) => padding.left + (innerW / (n - 1)) * i;
+
+        // 1. Plot Blue Line: Water Intake (0 to 4.0 L)
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        chartData.forEach((d, i) => {
+            const liters = (d.waterMl || 0) / 1000;
+            const y = padding.top + innerH - (Math.min(4, liters) / 4) * innerH;
+            if (i === 0) ctx.moveTo(getX(i), y);
+            else ctx.lineTo(getX(i), y);
+        });
+        ctx.stroke();
+
+        // 2. Plot Green Line: Steps (0 to 12,000 steps)
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        chartData.forEach((d, i) => {
+            const steps = d.steps || 0;
+            const y = padding.top + innerH - (Math.min(12000, steps) / 12000) * innerH;
+            if (i === 0) ctx.moveTo(getX(i), y);
+            else ctx.lineTo(getX(i), y);
+        });
+        ctx.stroke();
+
+        // 3. Plot Yellow Line: Weight Trend (Normalized ±3kg around baseline)
+        const minW = baselineStartWeight - 5;
+        const maxW = baselineStartWeight + 2;
+        ctx.strokeStyle = '#eab308';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        chartData.forEach((d, i) => {
+            const wt = d.weightKg || baselineStartWeight;
+            const norm = (wt - minW) / (maxW - minW);
+            const y = padding.top + innerH - Math.max(0, Math.min(1, norm)) * innerH;
+            if (i === 0) ctx.moveTo(getX(i), y);
+            else ctx.lineTo(getX(i), y);
+        });
+        ctx.stroke();
+
+        // 4. Plot Points, Dates, and Green Glowing "Workout Done" Dots
+        chartData.forEach((d, i) => {
+            const x = getX(i);
+
+            // Date Labels on X Axis
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            const shortDate = d.date.length > 5 ? d.date.slice(5) : d.date;
+            ctx.fillText(shortDate, x, h - 12);
+
+            // Yellow Weight Dot
+            const wt = d.weightKg || baselineStartWeight;
+            const norm = (wt - minW) / (maxW - minW);
+            const yW = padding.top + innerH - Math.max(0, Math.min(1, norm)) * innerH;
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.arc(x, yW, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // GREEN GLOWING "WORKOUT DONE" DOT ON X-AXIS / BOTTOM
+            if (d.workoutDone) {
+                ctx.fillStyle = '#2ecc71';
+                ctx.shadowColor = '#2ecc71';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(x, h - 25, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0; // reset
+            }
+        });
+    }
+
     // ── Daily Biometrics & Habit Logger (Tab 3) ────────────────
     function updateWaterDisplay() {
         const el = document.getElementById('water-display');
@@ -1026,12 +1241,14 @@ document.addEventListener('DOMContentLoaded', () => {
         todayWater = Math.min(6000, todayWater + 250);
         updateWaterDisplay();
         saveAppState();
+        renderMultiMetricGraph();
     });
 
     document.getElementById('btn-reset-water')?.addEventListener('click', () => {
         todayWater = 0;
         updateWaterDisplay();
         saveAppState();
+        renderMultiMetricGraph();
     });
 
     document.getElementById('btn-save-log')?.addEventListener('click', () => {
@@ -1060,7 +1277,8 @@ document.addEventListener('DOMContentLoaded', () => {
         saveLogs(logs);
         document.getElementById('log-weight').value = '';
         renderLogsTable();
-        alert('✓ Log saved successfully!');
+        renderMultiMetricGraph();
+        alert('✓ Log recorded and plotted to graph!');
     });
 
     function renderLogsTable() {
@@ -1072,7 +1290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!logs.length) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="4" class="py-4 text-center text-gray-500 font-mono text-xs">
+                    <td colspan="6" class="py-4 text-center text-gray-500 font-mono text-xs">
                         No weigh-in logs yet. Enter your morning weight above!
                     </td>
                 </tr>
@@ -1081,17 +1299,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         logs.slice(0, 5).forEach((item) => {
-            const deltaKg = item.weightKg - baselineStartWeight;
-            const deltaFormatted = isLbs
-                ? (deltaKg >= 0 ? `+${(deltaKg * 2.20462).toFixed(1)}` : `${(deltaKg * 2.20462).toFixed(1)}`) + ' lbs'
-                : (deltaKg >= 0 ? `+${deltaKg.toFixed(1)}` : `${deltaKg.toFixed(1)}`) + ' kg';
-
             const row = document.createElement('tr');
             row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors';
             row.innerHTML = `
                 <td class="py-2 text-gray-300">${item.date}</td>
-                <td class="py-2 font-bold text-gray-100">${formatWeight(item.weightKg)}</td>
-                <td class="py-2 font-bold ${deltaKg <= 0 ? 'text-green-400' : 'text-red-400'}">${deltaFormatted}</td>
+                <td class="py-2 font-bold text-yellow-400">${formatWeight(item.weightKg)}</td>
+                <td class="py-2 font-bold text-blue-400">${(item.waterMl / 1000).toFixed(1)} L</td>
+                <td class="py-2 font-bold text-green-400">${item.steps.toLocaleString()}</td>
+                <td class="py-2 text-center">${item.workoutDone ? '🟢' : '—'}</td>
                 <td class="py-2 text-center">
                     <button class="btn-del-log text-gray-600 hover:text-red-400 font-bold" data-id="${item.id}">&times;</button>
                 </td>
@@ -1102,6 +1317,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const id = e.currentTarget.dataset.id;
                 saveLogs(getLogs().filter(l => l.id !== id));
                 renderLogsTable();
+                renderMultiMetricGraph();
             });
         });
     }
@@ -1130,6 +1346,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUnitUI();
     updateWaterDisplay();
     renderActiveExercise();
+
+    window.addEventListener('resize', () => {
+        if (!document.getElementById('tab-panel-log').classList.contains('hidden')) {
+            renderMultiMetricGraph();
+        }
+    });
 
     checkAccessGate();
     if (window.MrMaheshAuth) {

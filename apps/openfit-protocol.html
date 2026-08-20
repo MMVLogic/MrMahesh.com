@@ -5,329 +5,307 @@ permalink: /apps/openfit-protocol/
 ---
 
 <style>
-/* ── Biomechanical Wireframe Animation Keyframes ────────── */
-@keyframes anim-squat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(22px); }
+/* ── Option 1: 2-Pose Technical Blueprint Animation Keyframes ── */
+@keyframes phase-crossfade-a {
+    0%, 45% { opacity: 1; visibility: visible; }
+    50%, 95% { opacity: 0; visibility: hidden; }
+    100% { opacity: 1; visibility: visible; }
 }
-@keyframes anim-squat-thigh {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(42deg); }
+@keyframes phase-crossfade-b {
+    0%, 45% { opacity: 0; visibility: hidden; }
+    50%, 95% { opacity: 1; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; }
 }
-@keyframes anim-squat-calf {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-38deg); }
+@keyframes arrow-pulse {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(4px); opacity: 1; filter: drop-shadow(0 0 4px #eab308); }
 }
-@keyframes anim-chest-press {
-    0%, 100% { transform: translateY(0px) scaleY(1); }
-    50% { transform: translateY(20px) scaleY(0.7); }
-}
-@keyframes anim-lat-pull {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(24px); }
-}
-@keyframes anim-ohp {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-24px); }
-}
-@keyframes anim-rdl {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(45deg); }
-}
-@keyframes anim-curl {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-95deg); }
-}
-@keyframes anim-walk-leg-a {
-    0%, 100% { transform: rotate(-22deg); }
-    50% { transform: rotate(22deg); }
-}
-@keyframes anim-walk-leg-b {
-    0%, 100% { transform: rotate(22deg); }
-    50% { transform: rotate(-22deg); }
-}
-@keyframes anim-pulse-glow {
-    0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 2px #2ecc71); }
-    50% { opacity: 1; filter: drop-shadow(0 0 8px #2ecc71); }
-}
-.vector-animate-squat { animation: anim-squat 2.4s ease-in-out infinite; }
-.vector-animate-press { animation: anim-chest-press 2.2s ease-in-out infinite; }
-.vector-animate-pull { animation: anim-lat-pull 2.4s ease-in-out infinite; }
-.vector-animate-ohp { animation: anim-ohp 2.2s ease-in-out infinite; }
-.vector-animate-rdl { animation: anim-rdl 2.8s ease-in-out infinite; transform-origin: 100px 110px; }
-.vector-animate-curl { animation: anim-curl 2.0s ease-in-out infinite; transform-origin: 100px 105px; }
-.vector-animate-walk-a { animation: anim-walk-leg-a 1.2s ease-in-out infinite; transform-origin: 100px 110px; }
-.vector-animate-walk-b { animation: anim-walk-leg-b 1.2s ease-in-out infinite; transform-origin: 100px 110px; }
-.led-glow-active { animation: anim-pulse-glow 2s infinite; }
+.pose-layer-a { animation: phase-crossfade-a 3.2s infinite ease-in-out; }
+.pose-layer-b { animation: phase-crossfade-b 3.2s infinite ease-in-out; }
+.motion-arrow { animation: arrow-pulse 1.6s infinite ease-in-out; }
 </style>
 
-<div class="flex flex-col space-y-8">
+<div class="flex flex-col space-y-4 max-w-2xl mx-auto pb-12">
 
-    <!-- App Header & Breadcrumbs -->
-    <div>
-        <a href="/apps/" class="text-xs font-bold text-yellow-500 hover:underline flex items-center mb-2">
-            &lt; Back to Apps Dashboard
-        </a>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <div>
-                <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-1 leading-tight flex items-center gap-3">
-                    🏋️‍♂️ OpenFit Protocol
-                </h1>
-                <p class="text-xs md:text-sm text-gray-300 font-mono">
-                    14–18 Month Joint-Safe Weight Reduction Engine • Interactive Workout Terminal
-                </p>
-            </div>
-            <!-- Global Mode & Unit Switcher -->
-            <div class="flex items-center gap-3 font-mono text-xs">
-                <div class="flex items-center bg-[#111827] p-1 rounded-lg border border-gray-700">
-                    <button id="btn-view-calendar" class="px-3 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all">📅 Overview</button>
-                    <button id="btn-view-active-workout" class="px-3 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all">⚡ Active Session</button>
-                </div>
-                <div class="flex items-center bg-[#111827] p-1 rounded-lg border border-gray-700">
-                    <button id="btn-unit-kg" class="px-2.5 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all">KG</button>
-                    <button id="btn-unit-lbs" class="px-2.5 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all">LBS</button>
-                </div>
-            </div>
+    <!-- Header & Unit Toggle -->
+    <div class="flex items-center justify-between gap-2 border-b border-gray-800 pb-3">
+        <div>
+            <a href="/apps/" class="text-[11px] font-bold text-yellow-500 hover:underline flex items-center mb-0.5">
+                &lt; Apps Dashboard
+            </a>
+            <h1 class="text-xl md:text-2xl font-bold text-yellow-500 leading-tight flex items-center gap-2">
+                🏋️‍♂️ OpenFit Protocol
+            </h1>
+        </div>
+        <!-- Global Unit Switcher -->
+        <div class="flex items-center bg-[#111827] p-1 rounded-lg border border-gray-700 text-xs font-mono">
+            <button id="btn-unit-kg" class="px-2.5 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all">KG</button>
+            <button id="btn-unit-lbs" class="px-2.5 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all">LBS</button>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- 1. PRIVATE BETA ACCESS GATE (LOCKED VIEW)                           -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="access-gate-locked" class="space-y-6">
-        <div class="bg-[#1a202c] p-8 md:p-12 rounded-2xl border-2 border-dashed border-yellow-500/60 text-center space-y-6 shadow-2xl relative overflow-hidden">
-            <div class="inline-flex p-4 bg-yellow-500/10 rounded-full border border-yellow-500/30 text-4xl mb-2">
+    <div id="access-gate-locked" class="space-y-4">
+        <div class="bg-[#1a202c] p-6 md:p-8 rounded-2xl border-2 border-dashed border-yellow-500/60 text-center space-y-4 shadow-xl">
+            <div class="inline-flex p-3 bg-yellow-500/10 rounded-full border border-yellow-500/30 text-3xl">
                 🚧
             </div>
             
-            <div class="space-y-2 max-w-xl mx-auto">
-                <p class="text-xs font-bold text-yellow-400 font-mono tracking-[0.2em] uppercase">
+            <div class="space-y-1">
+                <p class="text-[10px] font-bold text-yellow-400 font-mono tracking-widest uppercase">
                     PROTOCOL_STATUS: UNDER_CALIBRATION_
                 </p>
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-100">
+                <h2 class="text-lg md:text-xl font-bold text-gray-100">
                     OpenFit Protocol is in Private Beta
                 </h2>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                    Baseline biometrics and apartment-gym joint-safety calibration are currently underway. Full protocol access is temporarily restricted to verified protocol leads.
+                <p class="text-xs text-gray-300 leading-relaxed max-w-md mx-auto">
+                    Baseline biometrics calibration in progress. Access restricted to verified protocol leads.
                 </p>
             </div>
 
             <!-- Current User State Indicator -->
-            <div class="bg-[#111827] p-4 rounded-xl border border-gray-800 max-w-md mx-auto space-y-3 font-mono text-xs text-left">
-                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-                    <span class="text-gray-500">Access Policy:</span>
-                    <span class="text-yellow-400 font-bold">Authorized Lead Only</span>
+            <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 max-w-sm mx-auto font-mono text-xs text-left space-y-1">
+                <div class="flex justify-between items-center text-gray-400 text-[11px]">
+                    <span>Access Tier:</span>
+                    <span class="text-yellow-400 font-bold">Verified Lead Only</span>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-500">Active Identity:</span>
+                <div class="flex justify-between items-center text-gray-400 text-[11px]">
+                    <span>Status:</span>
                     <span id="gate-user-email" class="text-gray-300">Guest (Not Signed In)</span>
                 </div>
             </div>
 
-            <div class="flex flex-wrap justify-center items-center gap-4 pt-2">
-                <button onclick="openAuthModal('signin')" class="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95 text-sm">
+            <div class="pt-2">
+                <button onclick="openAuthModal('signin')" class="w-full sm:w-auto px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-md active:scale-95 text-xs">
                     👤 Login as Protocol Lead
                 </button>
-                <a href="/apps/" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-200 font-mono rounded-xl transition-all text-sm border border-gray-700">
-                    Return to Apps
-                </a>
             </div>
-
-            <p class="text-[11px] text-gray-500 font-mono">
-                Access Tier: <span class="text-gray-400 font-bold">Verified Protocol Lead</span>
-            </p>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <!-- 2. FULL PROTOCOL APP (UNLOCKED VIEW)                               -->
+    <!-- 2. FULL MOBILE-FIRST APP (UNLOCKED VIEW)                            -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="access-gate-unlocked" class="hidden space-y-8">
+    <div id="access-gate-unlocked" class="hidden space-y-4">
 
-        <!-- Status Banner -->
-        <div class="bg-[#111827] p-3 rounded-xl border border-green-500/40 flex flex-wrap justify-between items-center gap-3 text-xs font-mono">
-            <div class="flex items-center space-x-2">
-                <span class="text-green-400 text-sm">🟢</span>
-                <span class="text-green-300 font-bold">Protocol Lead Access:</span>
-                <span class="text-green-400 font-bold">Verified & Authenticated</span>
-            </div>
-            <button id="btn-open-custom-modal" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
-                <span>⚡ Custom Plan & Referral Specs</span> &rarr;
+        <!-- Mobile-First Segmented Top Tab Bar (4 Focus Modes) -->
+        <div class="grid grid-cols-4 gap-1.5 p-1 bg-[#111827] rounded-xl border border-gray-700 text-xs font-mono font-bold text-center">
+            <button id="tab-btn-workout" class="tab-nav-btn py-2 rounded-lg bg-yellow-500 text-[#1f2937] transition-all flex flex-col items-center justify-center gap-0.5">
+                <span class="text-base">⚡</span>
+                <span class="text-[10px]">Workout</span>
+            </button>
+            <button id="tab-btn-plan" class="tab-nav-btn py-2 rounded-lg text-gray-400 hover:text-gray-200 transition-all flex flex-col items-center justify-center gap-0.5">
+                <span class="text-base">📅</span>
+                <span class="text-[10px]">Calendar</span>
+            </button>
+            <button id="tab-btn-log" class="tab-nav-btn py-2 rounded-lg text-gray-400 hover:text-gray-200 transition-all flex flex-col items-center justify-center gap-0.5">
+                <span class="text-base">📈</span>
+                <span class="text-[10px]">Progress</span>
+            </button>
+            <button id="tab-btn-guide" class="tab-nav-btn py-2 rounded-lg text-gray-400 hover:text-gray-200 transition-all flex flex-col items-center justify-center gap-0.5">
+                <span class="text-base">🛡️</span>
+                <span class="text-[10px]">Blueprint</span>
             </button>
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- VIEW A: 7x5 RETRO DOT-MATRIX CALENDAR & DASHBOARD (SCREEN 1)    -->
+        <!-- TAB 1: ACTIVE WORKOUT INTERFACE (FOCUSED MOBILE VIEW)           -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <div id="view-section-overview" class="space-y-6">
-
-            <!-- Top Grid: 7x5 Dot Matrix & Target Blueprint -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- 7x5 Dot-Matrix Month Calendar (Screen 1) -->
-                <div class="lg:col-span-6 bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-gray-700 space-y-5">
-                    <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <div id="tab-panel-workout" class="space-y-4">
+            
+            <div class="bg-[#1a202c] p-4 sm:p-5 rounded-2xl border-2 border-yellow-500/80 shadow-xl space-y-4">
+                
+                <!-- Active Day & Exercise Header -->
+                <div class="flex justify-between items-start gap-2 border-b border-gray-800 pb-3">
+                    <div class="space-y-0.5">
                         <div class="flex items-center gap-2">
-                            <span class="text-yellow-500 text-lg">📅</span>
-                            <span id="cal-month-title" class="font-bold text-gray-200 font-mono text-sm">August 2026</span>
+                            <span id="active-day-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 uppercase">Day 1</span>
+                            <span id="active-ex-stepper" class="text-xs text-gray-400 font-mono">Exercise 1 of 6</span>
                         </div>
-                        <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
-                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-400 shadow-[0_0_6px_#2ecc71]"></span>
-                            <span>Completed</span>
-                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-400 border border-yellow-400 ml-2"></span>
-                            <span>Today</span>
-                        </div>
+                        <h2 id="active-ex-title" class="text-lg font-bold text-gray-100 font-mono">
+                            Dumbbell Box Squat
+                        </h2>
                     </div>
-
-                    <!-- 7-Column Dot Matrix -->
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-7 text-center font-mono text-[11px] font-bold text-gray-500">
-                            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                        </div>
-                        <div id="dot-matrix-grid" class="grid grid-cols-7 gap-y-3 gap-x-2 place-items-center">
-                            <!-- Populated dynamically by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Selected Day Bottom Drawer Card -->
-                    <div id="calendar-drawer-card" class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-3 font-mono text-xs">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span id="drawer-day-tag" class="text-yellow-400 font-bold uppercase tracking-wider block text-[10px]">MONDAY • DAY 1</span>
-                                <h3 id="drawer-day-title" class="text-sm font-bold text-gray-100 mt-0.5">Upper Body Strength + Low-Impact Cardio</h3>
-                            </div>
-                            <span id="drawer-workout-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-800 text-gray-400 border border-gray-700">Scheduled</span>
-                        </div>
-                        <div class="flex items-center gap-4 text-gray-400 text-[11px] border-t border-gray-800/80 pt-2">
-                            <span>🏋️‍♂️ <strong class="text-gray-200" id="drawer-ex-count">6 Exercises</strong></span>
-                            <span>⏱️ <strong class="text-gray-200">~45 Mins</strong></span>
-                            <span>🛡️ <strong class="text-green-400">Zero-Impact</strong></span>
-                        </div>
-                        <button id="btn-launch-active-session" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 active:scale-95 text-[#1f2937] font-bold font-mono rounded-lg transition-all shadow-md flex items-center justify-center gap-2">
-                            <span>⚡ Execute Workout Session</span> &rarr;
-                        </button>
+                    <!-- Rest Timer Pill -->
+                    <div class="flex items-center gap-1.5 bg-[#111827] px-2.5 py-1.5 rounded-xl border border-gray-700 font-mono text-xs">
+                        <span class="text-gray-400 text-[10px]">⏱️</span>
+                        <span id="rest-timer-display" class="text-sm font-bold text-green-400 min-w-[42px] text-right">01:30</span>
+                        <button id="btn-timer-toggle" class="ml-1 px-2 py-0.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 text-[10px] font-bold rounded">Start</button>
+                        <button id="btn-timer-reset" class="px-1.5 py-0.5 bg-gray-800 hover:bg-gray-700 text-gray-400 text-[10px] rounded">↺</button>
                     </div>
                 </div>
 
-                <!-- Right Side: Baseline Target & Joint Safety Stats -->
-                <div class="lg:col-span-6 space-y-6">
+                <!-- Option 1: 2-Pose Technical Blueprint Visual Display -->
+                <div class="bg-[#111827] rounded-xl p-3 border border-gray-800 relative overflow-hidden flex flex-col items-center">
                     
-                    <!-- Metrics Summary -->
-                    <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-gray-700 space-y-5">
-                        <div class="flex justify-between items-center">
-                            <p class="text-sm font-bold text-gray-200 font-mono flex items-center gap-2">
-                                <span class="text-yellow-500">📊</span>
-                                <span>14–18 Month Sustainable Blueprint</span>
-                            </p>
-                            <button id="btn-edit-baseline" class="text-xs text-yellow-500 hover:underline font-mono">
-                                ✏️ Edit Starting Weight
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 text-center">
-                            <div class="bg-[#111827] p-3.5 rounded-xl border border-gray-800">
-                                <span class="text-[10px] text-gray-400 font-mono uppercase block">Starting Baseline</span>
-                                <span id="metric-start-weight" class="text-xl md:text-2xl font-bold font-mono text-gray-100 mt-1 block">135.0 kg</span>
-                                <span class="text-[10px] text-gray-500 font-mono">BMI ~42.6</span>
-                            </div>
-                            <div class="bg-[#111827] p-3.5 rounded-xl border border-gray-800">
-                                <span class="text-[10px] text-gray-400 font-mono uppercase block">Healthy Target</span>
-                                <span id="metric-target-weight" class="text-xl md:text-2xl font-bold font-mono text-green-400 mt-1 block">70 – 82 kg</span>
-                                <span class="text-[10px] text-gray-500 font-mono">Ideal Range</span>
-                            </div>
-                            <div class="bg-[#111827] p-3.5 rounded-xl border border-gray-800">
-                                <span class="text-[10px] text-gray-400 font-mono uppercase block">Total Reduction</span>
-                                <span id="metric-total-loss" class="text-xl md:text-2xl font-bold font-mono text-yellow-400 mt-1 block">~53 – 65 kg</span>
-                                <span class="text-[10px] text-gray-500 font-mono">Fat Loss Goal</span>
-                            </div>
-                            <div class="bg-[#111827] p-3.5 rounded-xl border border-gray-800">
-                                <span class="text-[10px] text-gray-400 font-mono uppercase block">Timeline Pace</span>
-                                <span class="text-xl md:text-2xl font-bold font-mono text-blue-400 mt-1 block">14–18 Mos</span>
-                                <span class="text-[10px] text-gray-500 font-mono">1.0kg &rarr; 0.5kg/wk</span>
-                            </div>
-                        </div>
+                    <div class="w-full flex justify-between items-center text-[10px] font-mono text-gray-400 mb-1">
+                        <span class="text-cyan-400 font-bold">2-POSE TECHNICAL BLUEPRINT</span>
+                        <span class="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20" id="pose-indicator">PHASE: [SETUP ⟷ SAFE DEPTH]</span>
                     </div>
 
-                    <!-- Joint Protection Rules -->
-                    <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-red-500/40 space-y-3 font-mono text-xs">
-                        <p class="font-bold text-red-400 flex items-center gap-2">
-                            <span>🛡️</span> Joint Protection Protocol (Crucial for 130kg+)
-                        </p>
-                        <div class="space-y-2 text-gray-300 text-[11px] leading-relaxed">
-                            <p>• <strong class="text-gray-100">Zero High-Impact:</strong> No jumping, running, or burpees. Use incline walking (3–6%) or stationary bike.</p>
-                            <p>• <strong class="text-gray-100">Box Squats to Bench:</strong> Ensures knee angle protection and builds glute drive without tendon stress.</p>
-                            <p>• <strong class="text-gray-100">80/20 Rule:</strong> 80% weight reduction is nutrition deficit. 1.6–2.0g protein/kg target weight to retain lean muscle.</p>
-                        </div>
+                    <!-- SVG 2-Pose Blueprint Container -->
+                    <div id="technical-blueprint-canvas" class="w-full h-44 flex items-center justify-center relative">
+                        <!-- Populated dynamically with 2-pose SVG -->
                     </div>
+
+                    <!-- 1-Line Bite-Sized Form Cue -->
+                    <div class="w-full mt-2 pt-2 border-t border-gray-800 text-[11px] font-mono text-gray-300 flex items-center gap-1.5">
+                        <span class="text-yellow-400 font-bold">💡 Cue:</span>
+                        <span id="active-ex-cue-text">Squat to bench depth to protect knee cartilage and drive hips back.</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Set Tracking Pills (44px+ Touch Targets) -->
+                <div class="space-y-2 font-mono">
+                    <div class="flex justify-between text-xs font-bold text-gray-300">
+                        <span>Interactive Sets</span>
+                        <span id="active-ex-volume" class="text-yellow-400 text-[11px]">3 sets × 10–12 reps</span>
+                    </div>
+                    <div id="set-pills-container" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                        <!-- Populated dynamically with large clickable pills -->
+                    </div>
+                </div>
+
+                <!-- Thumb-Friendly Navigation Action Bar -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button id="btn-prev-ex" class="h-11 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold font-mono text-xs rounded-xl transition-all border border-gray-700 active:scale-95 flex items-center justify-center gap-1">
+                        &larr; Prev
+                    </button>
+                    <button id="btn-next-ex" class="h-11 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1">
+                        Next Exercise &rarr;
+                    </button>
                 </div>
 
             </div>
 
-            <!-- Daily Habit & Biometrics Tracker -->
-            <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-dashed border-gray-700 space-y-6">
-                <p class="text-base font-bold text-gray-200 flex items-center gap-2">
-                    <span class="text-yellow-500 text-xl">📝</span>
-                    <span>Daily Biometrics & Habit Log</span>
-                </p>
+        </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- Date -->
-                    <div class="space-y-1.5 font-mono text-xs">
-                        <label class="block text-gray-400 font-bold">Log Date</label>
-                        <input type="date" id="log-date" class="w-full bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500">
-                    </div>
-                    <!-- Weight -->
-                    <div class="space-y-1.5 font-mono text-xs">
-                        <label class="block text-gray-400 font-bold">Morning Weight (<span class="unit-label">kg</span>)</label>
-                        <input type="number" step="0.1" id="log-weight" placeholder="e.g. 134.5" class="w-full bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500">
-                    </div>
-                    <!-- Water -->
-                    <div class="space-y-1.5 font-mono text-xs">
-                        <div class="flex justify-between">
-                            <label class="text-gray-400 font-bold">Water Intake</label>
-                            <span id="water-display" class="text-blue-400 font-bold">0.0 / 3.5 L</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button id="btn-add-water" class="flex-grow py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-bold rounded-lg border border-blue-500/40 transition-colors">
-                                + 250 ml 💧
-                            </button>
-                            <button id="btn-reset-water" class="px-2.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg border border-gray-700">
-                                ↺
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Steps -->
-                    <div class="space-y-1.5 font-mono text-xs">
-                        <label class="block text-gray-400 font-bold">Daily Steps (Goal: 7k–10k)</label>
-                        <input type="number" step="100" id="log-steps" placeholder="e.g. 8500" class="w-full bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-yellow-500">
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 2: CALENDAR & 5-DAY SCHEDULE SELECTOR                       -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="tab-panel-plan" class="hidden space-y-4">
+            
+            <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-4">
+                
+                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                    <span class="font-bold text-gray-200 font-mono text-sm flex items-center gap-1.5">
+                        <span>📅</span> August 2026 Activity Matrix
+                    </span>
+                    <div class="flex items-center gap-2 text-[10px] font-mono text-gray-400">
+                        <span class="inline-block w-2 h-2 rounded-full bg-green-400 shadow-[0_0_4px_#2ecc71]"></span>
+                        <span>Logged</span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 ml-1"></span>
+                        <span>Today</span>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-gray-800">
-                    <label class="flex items-center gap-2 cursor-pointer text-gray-300 text-xs font-mono">
-                        <input type="checkbox" id="log-workout-done" class="rounded bg-gray-800 border-gray-700 text-yellow-500 focus:ring-0">
-                        <span>Mark Full Workout Completed Today</span>
-                    </label>
-                    <button id="btn-save-log" class="px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-lg transition-all shadow-md active:scale-95">
-                        + Save Daily Log
+                <!-- 7x5 Dot Matrix Grid -->
+                <div class="space-y-2">
+                    <div class="grid grid-cols-7 text-center font-mono text-[10px] font-bold text-gray-500">
+                        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                    </div>
+                    <div id="dot-matrix-grid" class="grid grid-cols-7 gap-y-2 gap-x-1.5 place-items-center">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Day Selector Carousel -->
+                <div class="space-y-2 pt-2 border-t border-gray-800">
+                    <span class="text-[10px] font-mono text-gray-400 font-bold uppercase tracking-wider block">
+                        Select Split Day:
+                    </span>
+                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 text-[11px] font-mono font-bold">
+                        <button class="day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]" data-day="1">Mon<br><span class="text-[9px] font-normal">Upper</span></button>
+                        <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="2">Tue<br><span class="text-[9px] font-normal">Lower</span></button>
+                        <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="3">Wed<br><span class="text-[9px] font-normal">Walk</span></button>
+                        <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="4">Thu<br><span class="text-[9px] font-normal">Push/Pull</span></button>
+                        <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="5">Fri<br><span class="text-[9px] font-normal">Legs</span></button>
+                        <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="6">Sat<br><span class="text-[9px] font-normal">Mobility</span></button>
+                        <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="7">Sun<br><span class="text-[9px] font-normal">Rest</span></button>
+                    </div>
+                </div>
+
+                <!-- Selected Day Quick Overview Card -->
+                <div class="p-3.5 bg-[#111827] rounded-xl border border-gray-800 space-y-2 font-mono text-xs">
+                    <div class="flex justify-between items-center">
+                        <span id="plan-day-tag" class="text-yellow-400 font-bold uppercase text-[10px]">Day 1 • Upper + Cardio</span>
+                        <span id="plan-day-ex-count" class="text-gray-400 text-[10px]">6 Exercises</span>
+                    </div>
+                    <p id="plan-day-title" class="text-sm font-bold text-gray-100">Upper Body Strength + Incline Cardio Finisher</p>
+                    <button id="btn-start-selected-workout" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-lg transition-all text-xs active:scale-95 shadow-md">
+                        Start This Workout &rarr;
                     </button>
                 </div>
 
-                <!-- Historical Log Table -->
-                <div class="space-y-3 pt-2">
-                    <p class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider">
-                        📋 Weigh-In & Trend History
-                    </p>
+            </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 3: PROGRESS & HABIT LOGGER (COMPACT MOBILE VIEW)            -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="tab-panel-log" class="hidden space-y-4">
+            
+            <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-4">
+                
+                <p class="text-sm font-bold text-gray-200 font-mono flex items-center gap-2">
+                    <span>📝</span> Daily Log Entry
+                </p>
+
+                <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                    <!-- Weight Input -->
+                    <div class="space-y-1">
+                        <label class="block text-gray-400 font-bold">Morning Weight (<span class="unit-label">kg</span>)</label>
+                        <input type="number" step="0.1" id="log-weight" placeholder="e.g. 134.2" class="w-full h-10 bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 focus:border-yellow-500 focus:outline-none">
+                    </div>
+                    <!-- Steps Input -->
+                    <div class="space-y-1">
+                        <label class="block text-gray-400 font-bold">Steps (Goal: 8k)</label>
+                        <input type="number" step="100" id="log-steps" placeholder="e.g. 8500" class="w-full h-10 bg-[#111827] border border-gray-700 text-gray-200 rounded-lg px-3 focus:border-yellow-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Water Intake Tracker -->
+                <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 flex items-center justify-between font-mono text-xs">
+                    <div>
+                        <span class="text-gray-400 text-[10px] block">Water Intake</span>
+                        <span id="water-display" class="text-blue-400 font-bold text-sm">0.0 / 3.5 L</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button id="btn-add-water" class="h-9 px-3 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-bold rounded-lg border border-blue-500/40 text-xs">
+                            + 250ml 💧
+                        </button>
+                        <button id="btn-reset-water" class="h-9 px-2.5 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg border border-gray-700 text-xs">
+                            ↺
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-800 font-mono text-xs">
+                    <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
+                        <input type="checkbox" id="log-workout-done" class="rounded bg-gray-800 border-gray-700 text-yellow-500">
+                        <span>Workout Done</span>
+                    </label>
+                    <button id="btn-save-log" class="px-5 py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg transition-all shadow-md active:scale-95">
+                        + Save Log
+                    </button>
+                </div>
+
+                <!-- Recent Weigh-In Log Table -->
+                <div class="space-y-2 pt-2">
+                    <span class="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-wider block">
+                        Recent Weigh-In Records
+                    </span>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs font-mono border-collapse">
                             <thead>
-                                <tr class="border-b border-gray-700 text-gray-400">
-                                    <th class="pb-2">Date</th>
-                                    <th class="pb-2">Weight</th>
-                                    <th class="pb-2">Delta (Start)</th>
-                                    <th class="pb-2">Water</th>
-                                    <th class="pb-2">Steps</th>
-                                    <th class="pb-2 text-center">Workout</th>
-                                    <th class="pb-2 text-center">Del</th>
+                                <tr class="border-b border-gray-700 text-gray-400 text-[11px]">
+                                    <th class="pb-1.5">Date</th>
+                                    <th class="pb-1.5">Weight</th>
+                                    <th class="pb-1.5">Delta</th>
+                                    <th class="pb-1.5 text-center">Del</th>
                                 </tr>
                             </thead>
                             <tbody id="logs-table-body">
@@ -336,106 +314,46 @@ permalink: /apps/openfit-protocol/
                         </table>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- VIEW B: ACTIVE WORKOUT INTERFACE WITH WIREFRAME ANIMATIONS     -->
+        <!-- TAB 4: SUSTAINABLE BLUEPRINT & JOINT SAFETY RULES               -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <div id="view-section-workout" class="hidden space-y-6">
-
-            <!-- Workout Session Header -->
-            <div class="bg-[#1a202c] p-6 rounded-2xl border-2 border-yellow-500/80 shadow-2xl space-y-6">
-                
-                <!-- Session Nav & Progress -->
-                <div class="flex flex-wrap justify-between items-center gap-3 border-b border-gray-800 pb-4">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 uppercase" id="active-session-day-badge">Day 1</span>
-                            <span class="text-xs text-gray-400 font-mono" id="active-session-ex-index">Exercise 1 of 6</span>
-                        </div>
-                        <h2 class="text-xl md:text-2xl font-bold text-gray-100 font-mono mt-1" id="active-session-ex-name">
-                            Dumbbell / Cable Chest Press
-                        </h2>
+        <div id="tab-panel-guide" class="hidden space-y-4">
+            
+            <!-- Baseline Card -->
+            <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-3 font-mono">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-200">14–18 Month Target Blueprint</span>
+                    <button id="btn-edit-baseline" class="text-[11px] text-yellow-500 hover:underline">
+                        ✏️ Edit Baseline
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                    <div class="bg-[#111827] p-2.5 rounded-lg border border-gray-800">
+                        <span class="text-[9px] text-gray-400 uppercase block">Starting Weight</span>
+                        <span id="metric-start-weight" class="text-base font-bold text-gray-100 mt-0.5 block">135.0 kg</span>
                     </div>
-                    <!-- Silent Rest Countdown Timer -->
-                    <div class="flex items-center gap-3 bg-[#111827] px-4 py-2 rounded-xl border border-gray-700 font-mono">
-                        <span class="text-xs text-gray-400">⏱️ Rest Countdown:</span>
-                        <span id="active-rest-display" class="text-xl font-bold text-green-400 min-w-[55px] text-right">01:30</span>
-                        <div class="flex items-center gap-1 ml-1">
-                            <button id="btn-timer-toggle" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-yellow-400 text-xs font-bold rounded">Start</button>
-                            <button id="btn-timer-reset" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 text-xs rounded">↺</button>
-                        </div>
+                    <div class="bg-[#111827] p-2.5 rounded-lg border border-gray-800">
+                        <span class="text-[9px] text-gray-400 uppercase block">Target Range</span>
+                        <span id="metric-target-weight" class="text-base font-bold text-green-400 mt-0.5 block">70 – 82 kg</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Main Active Exercise Layout (Animation + Interactive Set Tracker) -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    
-                    <!-- Left Column: Biomechanical Wireframe Animation Canvas (Screen 2) -->
-                    <div class="lg:col-span-6 bg-[#111827] rounded-xl p-5 border border-gray-800 flex flex-col items-center justify-between space-y-4">
-                        <div class="w-full flex justify-between items-center text-[10px] font-mono text-gray-500">
-                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> KINEMATIC_VECTOR_LOOP</span>
-                            <span id="anim-speed-label">Speed: 1.0x</span>
-                        </div>
-
-                        <!-- SVG Animation Container -->
-                        <div id="vector-animation-canvas" class="w-full h-56 flex items-center justify-center relative overflow-hidden py-2">
-                            <!-- Procedural SVG inserted by JS -->
-                        </div>
-
-                        <!-- Animation Controls -->
-                        <div class="w-full flex justify-between items-center pt-2 border-t border-gray-800/80 text-xs font-mono">
-                            <button id="btn-anim-pause" class="text-gray-400 hover:text-yellow-400 flex items-center gap-1">
-                                <span>⏸️</span> <span>Pause Form</span>
-                            </button>
-                            <div class="flex items-center gap-1">
-                                <button class="btn-speed-toggle px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px]" data-speed="0.5">0.5x</button>
-                                <button class="btn-speed-toggle px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-bold text-[10px]" data-speed="1.0">1.0x</button>
-                                <button class="btn-speed-toggle px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px]" data-speed="1.5">1.5x</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Exercise Notes & Interactive Set Tracking Pills (Screen 2) -->
-                    <div class="lg:col-span-6 space-y-5 font-mono">
-                        
-                        <!-- Form Cues & Joint Protection -->
-                        <div class="p-4 bg-[#111827] rounded-xl border border-gray-800 space-y-2 text-xs">
-                            <div class="flex justify-between items-center text-yellow-400 font-bold">
-                                <span>📋 Target Volume</span>
-                                <span id="active-ex-volume">3 sets × 10–12 reps</span>
-                            </div>
-                            <p class="text-gray-300 text-[11px] leading-relaxed" id="active-ex-cue">
-                                Keep shoulders retracted and stable against bench. Controlled eccentric tempo.
-                            </p>
-                        </div>
-
-                        <!-- Interactive Set Tracking Pills (Screen 2 Pill Tracker) -->
-                        <div class="space-y-3">
-                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider block">
-                                Interactive Set Tracking (Tap to Complete)
-                            </label>
-                            <div id="active-set-pills-container" class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                                <!-- Populated dynamically with pills [Set 1 ✓] [Set 2 ✓] -->
-                            </div>
-                        </div>
-
-                        <!-- Navigation Buttons -->
-                        <div class="flex items-center justify-between gap-3 pt-4 border-t border-gray-800">
-                            <button id="btn-prev-ex" class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-xs rounded-lg transition-all border border-gray-700">
-                                &larr; Prev Exercise
-                            </button>
-                            <button id="btn-next-ex" class="px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold text-xs rounded-lg transition-all shadow-md active:scale-95">
-                                Next Exercise &rarr;
-                            </button>
-                        </div>
-
-                    </div>
-
+            <!-- Joint Safety Protocol -->
+            <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-red-500/40 space-y-2.5 font-mono text-xs">
+                <p class="font-bold text-red-400 flex items-center gap-1.5">
+                    <span>🛡️</span> Joint Protection Rules (130kg+)
+                </p>
+                <div class="space-y-1.5 text-gray-300 text-[11px] leading-relaxed">
+                    <p>• <strong class="text-gray-100">Zero High Impact:</strong> No jumping or running. Stick to incline walking (3–6%) or stationary bike.</p>
+                    <p>• <strong class="text-gray-100">Box Squats to Bench:</strong> Knee cartilage protection and glute focus.</p>
+                    <p>• <strong class="text-gray-100">80/20 Deficit:</strong> 80% nutrition focus. 1.6–2.0g protein/kg target weight.</p>
                 </div>
-
             </div>
 
         </div>
@@ -448,48 +366,30 @@ permalink: /apps/openfit-protocol/
 <!-- 3. CUSTOM PLAN & REFERRAL SPECS MODAL                               -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div id="custom-plan-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-[#1a202c] border-2 border-yellow-500/80 rounded-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative">
-        <button id="btn-close-custom-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-2xl font-bold font-mono">
+    <div class="bg-[#1a202c] border-2 border-yellow-500/80 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl relative font-mono text-xs">
+        <button id="btn-close-custom-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl font-bold">
             &times;
         </button>
 
-        <div class="space-y-2">
-            <span class="text-xs font-bold text-yellow-500 font-mono tracking-widest uppercase">COMMUNITY_AFFILIATE_ARCHITECTURE_</span>
-            <h3 class="text-2xl font-bold text-gray-100">Custom Plan & Referral Flywheel</h3>
-            <p class="text-xs text-gray-300 leading-relaxed">
-                How custom equipment tailoring and the 1% member discount referral loop operates across OpenFit Protocol.
-            </p>
+        <div class="space-y-1">
+            <span class="text-[10px] font-bold text-yellow-500 uppercase">AFFILIATE_ARCHITECTURE_</span>
+            <h3 class="text-lg font-bold text-gray-100">Custom Plan & Referral Model</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-            <div class="p-4 bg-[#111827] rounded-xl border border-gray-800 space-y-2">
-                <p class="font-bold text-yellow-400 text-sm">1. Creator Custom Plan ($X)</p>
-                <p class="text-gray-300 leading-relaxed">
-                    Members upload photos/tags of their home equipment (e.g. 10kg dumbbells, doorway bar). The engine builds an individualized routine matching their biomechanics.
-                </p>
+        <div class="space-y-2 text-[11px] text-gray-300 leading-relaxed">
+            <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 space-y-1">
+                <p class="font-bold text-yellow-400">1. Custom Plan Builder ($X)</p>
+                <p>Individualized routine tailored to home equipment photos & biometrics.</p>
             </div>
-            <div class="p-4 bg-[#111827] rounded-xl border border-gray-800 space-y-2">
-                <p class="font-bold text-green-400 text-sm">2. Follower Tier ($Y &lt; $X)</p>
-                <p class="text-gray-300 leading-relaxed">
-                    Other community members with matching equipment follow that creator's plan at a lower price point.
-                </p>
+            <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 space-y-1">
+                <p class="font-bold text-green-400">2. 1% Discount per Follower</p>
+                <p>For every active member following your public routine, earn 1% off monthly membership (100 followers = 100% free!).</p>
             </div>
         </div>
 
-        <div class="p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/30 text-xs font-mono space-y-2">
-            <p class="font-bold text-yellow-400 flex items-center gap-2">
-                <span>🔄</span> 1% Recurring Membership Discount per Follower
-            </p>
-            <p class="text-gray-300 leading-relaxed">
-                For every active follower on a creator's plan, the original creator receives a 1% discount applied directly to their monthly membership (10 followers = 10% off, 100 followers = 100% free!).
-            </p>
-        </div>
-
-        <div class="text-center pt-2">
-            <button id="btn-modal-dismiss" class="px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-xl transition-all">
-                Close Specifications
-            </button>
-        </div>
+        <button id="btn-modal-dismiss" class="w-full py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg text-xs">
+            Close
+        </button>
     </div>
 </div>
 
@@ -507,222 +407,248 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // ── Procedural Biomechanical Vector Wireframe SVG Generator ──
-    const SVG_MODELS = {
+    // ── Option 1: 2-Pose Technical Blueprint SVG Models ─────────
+    const BLUEPRINT_SVGS = {
         squat: `
-            <svg viewBox="0 0 200 160" class="w-44 h-44">
-                <!-- Bench / Box Target -->
-                <rect x="55" y="105" width="40" height="30" fill="#1e293b" stroke="#64748b" stroke-width="1.5" rx="2" stroke-dasharray="3,3" />
-                <line x1="60" y1="135" x2="60" y2="150" stroke="#64748b" stroke-width="2"/>
-                <line x1="90" y1="135" x2="90" y2="150" stroke="#64748b" stroke-width="2"/>
-                <text x="75" y="122" fill="#94a3b8" font-size="7" font-family="monospace" text-anchor="middle">BOX BENCH</text>
-                <!-- Floor -->
-                <line x1="20" y1="150" x2="180" y2="150" stroke="#334155" stroke-width="2"/>
-                <!-- Moving Body -->
-                <g class="vector-animate-squat">
-                    <!-- Head -->
-                    <circle cx="100" cy="40" r="9" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <!-- Torso -->
-                    <line x1="100" y1="49" x2="96" y2="92" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <!-- Dumbbell at Chest (Amber) -->
-                    <rect x="104" y="60" width="16" height="12" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <circle cx="106" cy="66" r="3" fill="#111827"/>
-                    <circle cx="118" cy="66" r="3" fill="#111827"/>
-                    <!-- Arms Holding Weight -->
-                    <path d="M 100 58 Q 112 65 110 72" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <!-- Joint Kinematic Node (Hip) -->
-                    <circle cx="96" cy="92" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
-                    <!-- Legs -->
-                    <path d="M 96 92 L 115 118 L 108 148" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Joint Kinematic Node (Knee) -->
-                    <circle cx="115" cy="118" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+            <svg viewBox="0 0 240 140" class="w-full h-full">
+                <!-- Floor and Box Bench -->
+                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+                <rect x="55" y="85" width="40" height="45" fill="#1e293b" stroke="#64748b" stroke-width="1.5" rx="2" stroke-dasharray="3,3"/>
+                <text x="75" y="110" fill="#64748b" font-size="7" font-family="monospace" text-anchor="middle">BOX BENCH</text>
+                
+                <!-- POSE A: Setup (Standing) -->
+                <g class="pose-layer-a">
+                    <circle cx="120" cy="30" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                    <line x1="120" y1="38" x2="120" y2="78" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="120" y1="78" x2="120" y2="128" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="120" cy="78" r="3" fill="#2ecc71"/>
+                    <rect x="126" y="48" width="14" height="12" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
+                    <text x="175" y="45" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. SETUP</text>
+                    <path d="M 160 55 L 160 75 M 156 70 L 160 76 L 164 70" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
+                </g>
+
+                <!-- POSE B: Peak Contraction (Safe Box Bench Depth) -->
+                <g class="pose-layer-b">
+                    <circle cx="105" cy="52" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                    <line x1="105" y1="60" x2="100" y2="92" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="100" y1="92" x2="122" y2="108" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                    <line x1="122" y1="108" x2="118" y2="128" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                    <!-- Joint Protection Alignment Node (Knee) -->
+                    <circle cx="100" cy="92" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+                    <circle cx="122" cy="108" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+                    <rect x="108" y="68" width="14" height="12" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <text x="160" y="95" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SAFE DEPTH</text>
                 </g>
             </svg>
         `,
         press: `
-            <svg viewBox="0 0 200 160" class="w-44 h-44">
-                <!-- Incline Bench -->
-                <line x1="30" y1="130" x2="140" y2="85" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
-                <line x1="60" y1="118" x2="60" y2="150" stroke="#475569" stroke-width="2.5"/>
-                <line x1="120" y1="92" x2="120" y2="150" stroke="#475569" stroke-width="2.5"/>
-                <line x1="20" y1="150" x2="180" y2="150" stroke="#334155" stroke-width="2"/>
+            <svg viewBox="0 0 240 140" class="w-full h-full">
+                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+                <line x1="45" y1="115" x2="145" y2="70" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+                <line x1="75" y1="102" x2="75" y2="130" stroke="#475569" stroke-width="2"/>
+                <line x1="125" y1="78" x2="125" y2="130" stroke="#475569" stroke-width="2"/>
+                
                 <!-- Torso on Bench -->
-                <line x1="55" y1="120" x2="125" y2="90" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                <circle cx="132" cy="85" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <!-- Moving Press Arms & Dumbbell -->
-                <g class="vector-animate-press">
-                    <line x1="100" y1="100" x2="92" y2="60" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="100" cy="100" r="3" fill="#2ecc71"/>
-                    <!-- Dumbbells (Amber Glow) -->
-                    <rect x="80" y="52" width="24" height="10" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <circle cx="84" cy="57" r="2.5" fill="#111827"/>
-                    <circle cx="100" cy="57" r="2.5" fill="#111827"/>
+                <line x1="65" y1="108" x2="130" y2="78" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="138" cy="74" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+
+                <!-- POSE A: Extended Press -->
+                <g class="pose-layer-a">
+                    <line x1="105" y1="88" x2="98" y2="48" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="105" cy="88" r="3" fill="#2ecc71"/>
+                    <rect x="86" y="40" width="24" height="9" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <text x="155" y="45" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. EXTENDED</text>
+                    <path d="M 145 52 L 145 68 M 141 64 L 145 70 L 149 64" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
+                </g>
+
+                <!-- POSE B: Lowered Eccentric -->
+                <g class="pose-layer-b">
+                    <line x1="105" y1="88" x2="98" y2="74" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="105" cy="88" r="3" fill="#2ecc71"/>
+                    <rect x="86" y="68" width="24" height="9" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
+                    <text x="155" y="78" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. CHEST STRETCH</text>
                 </g>
             </svg>
         `,
         pull: `
-            <svg viewBox="0 0 200 160" class="w-44 h-44">
-                <!-- Lat Cable Tower -->
-                <line x1="140" y1="20" x2="140" y2="150" stroke="#64748b" stroke-width="3"/>
-                <line x1="100" y1="20" x2="140" y2="20" stroke="#64748b" stroke-width="3"/>
-                <circle cx="100" cy="20" r="4" fill="#eab308"/>
-                <line x1="20" y1="150" x2="180" y2="150" stroke="#334155" stroke-width="2"/>
+            <svg viewBox="0 0 240 140" class="w-full h-full">
+                <!-- Cable Column -->
+                <line x1="155" y1="15" x2="155" y2="130" stroke="#64748b" stroke-width="3"/>
+                <line x1="115" y1="15" x2="155" y2="15" stroke="#64748b" stroke-width="3"/>
+                <circle cx="115" cy="15" r="3.5" fill="#eab308"/>
+                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+                
                 <!-- Athlete Seated -->
-                <rect x="60" y="110" width="30" height="20" fill="#1e293b" stroke="#475569" rx="2"/>
-                <line x1="75" y1="130" x2="75" y2="150" stroke="#475569" stroke-width="2"/>
-                <circle cx="78" cy="62" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <line x1="78" y1="70" x2="76" y2="115" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                <!-- Moving Lat Pulldown Bar & Arms -->
-                <g class="vector-animate-pull">
-                    <!-- Cable Line -->
-                    <line x1="100" y1="20" x2="88" y2="68" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
-                    <!-- Lat Bar -->
-                    <line x1="65" y1="68" x2="110" y2="68" stroke="#eab308" stroke-width="3" stroke-linecap="round" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <!-- Arms Pulling -->
-                    <path d="M 78 78 L 96 74 L 88 68" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="96" cy="74" r="3" fill="#2ecc71"/>
+                <rect x="70" y="90" width="26" height="20" fill="#1e293b" stroke="#475569" rx="2"/>
+                <circle cx="85" cy="48" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                <line x1="85" y1="55" x2="85" y2="95" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+
+                <!-- POSE A: Extended Arms (Setup) -->
+                <g class="pose-layer-a">
+                    <line x1="115" y1="15" x2="102" y2="45" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
+                    <line x1="88" y1="20" x2="120" y2="20" stroke="#eab308" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="85" y1="62" x2="104" y2="22" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                    <text x="145" y="45" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. REACH</text>
+                </g>
+
+                <!-- POSE B: Pulled Down (Back Contraction) -->
+                <g class="pose-layer-b">
+                    <line x1="115" y1="15" x2="98" y2="58" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
+                    <line x1="80" y1="58" x2="118" y2="58" stroke="#eab308" stroke-width="3" stroke-linecap="round" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <line x1="85" y1="65" x2="98" y2="60" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="98" cy="60" r="3" fill="#2ecc71"/>
+                    <text x="145" y="70" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SQUEEZE BACK</text>
                 </g>
             </svg>
         `,
         walk: `
-            <svg viewBox="0 0 200 160" class="w-44 h-44">
+            <svg viewBox="0 0 240 140" class="w-full h-full">
                 <!-- Incline Treadmill Deck (5% Incline) -->
-                <line x1="30" y1="145" x2="160" y2="128" stroke="#eab308" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0 0 3px #eab308)"/>
-                <line x1="45" y1="145" x2="45" y2="150" stroke="#64748b" stroke-width="3"/>
-                <line x1="150" y1="130" x2="150" y2="150" stroke="#64748b" stroke-width="3"/>
-                <line x1="20" y1="150" x2="180" y2="150" stroke="#334155" stroke-width="2"/>
-                <!-- Handrail -->
-                <path d="M 140 130 L 140 85 L 110 85" fill="none" stroke="#64748b" stroke-width="2"/>
-                <!-- Walking Person -->
-                <circle cx="95" cy="48" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <line x1="95" y1="56" x2="98" y2="98" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                <!-- Arms Striding -->
-                <path d="M 95 65 L 115 82 L 128 85" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                <!-- Striding Legs -->
-                <g class="vector-animate-walk-a">
-                    <line x1="98" y1="98" x2="82" y2="138" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="82" cy="138" r="3" fill="#2ecc71"/>
+                <line x1="35" y1="126" x2="155" y2="110" stroke="#eab308" stroke-width="3.5" stroke-linecap="round" filter="drop-shadow(0 0 3px #eab308)"/>
+                <line x1="45" y1="125" x2="45" y2="130" stroke="#64748b" stroke-width="2.5"/>
+                <line x1="145" y1="112" x2="145" y2="130" stroke="#64748b" stroke-width="2.5"/>
+                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+                <path d="M 135 110 L 135 70 L 110 70" fill="none" stroke="#64748b" stroke-width="2"/>
+                
+                <circle cx="95" cy="42" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                <line x1="95" y1="49" x2="96" y2="85" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                
+                <!-- Striding Motion -->
+                <g class="pose-layer-a">
+                    <line x1="96" y1="85" x2="80" y2="120" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="96" y1="85" x2="115" y2="115" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <text x="155" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
+                    <text x="155" y="70" fill="#38bdf8" font-size="8" font-family="monospace">ZERO IMPACT</text>
                 </g>
-                <g class="vector-animate-walk-b">
-                    <line x1="98" y1="98" x2="118" y2="134" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="118" cy="134" r="3" fill="#2ecc71"/>
+                <g class="pose-layer-b">
+                    <line x1="96" y1="85" x2="115" y2="115" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="96" y1="85" x2="80" y2="120" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <text x="155" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
+                    <text x="155" y="70" fill="#eab308" font-size="8" font-family="monospace">FAT DEFICIT</text>
                 </g>
             </svg>
         `,
         curl: `
-            <svg viewBox="0 0 200 160" class="w-44 h-44">
-                <line x1="20" y1="150" x2="180" y2="150" stroke="#334155" stroke-width="2"/>
-                <!-- Standing Torso -->
-                <circle cx="95" cy="45" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                <line x1="95" y1="53" x2="95" y2="105" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                <line x1="95" y1="105" x2="95" y2="148" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                <!-- Upper Arm Stable -->
-                <line x1="95" y1="65" x2="100" y2="95" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="100" cy="95" r="3" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
-                <!-- Forearm & Dumbbell Curling -->
-                <g class="vector-animate-curl">
-                    <line x1="100" y1="95" x2="125" y2="95" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <rect x="122" y="88" width="12" height="14" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+            <svg viewBox="0 0 240 140" class="w-full h-full">
+                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+                <circle cx="100" cy="35" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                <line x1="100" y1="42" x2="100" y2="85" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                <line x1="100" y1="85" x2="100" y2="128" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+
+                <!-- POSE A: Lowered Dumbbell -->
+                <g class="pose-layer-a">
+                    <line x1="100" y1="55" x2="105" y2="92" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="100" y="90" width="12" height="14" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
+                    <text x="135" y="55" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. BOTTOM</text>
+                </g>
+
+                <!-- POSE B: Curled Peak -->
+                <g class="pose-layer-b">
+                    <line x1="100" y1="55" x2="118" y2="60" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="105" cy="78" r="3" fill="#2ecc71"/>
+                    <rect x="114" y="52" width="12" height="14" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <text x="135" y="65" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. PEAK BICEP</text>
                 </g>
             </svg>
         `,
         rdl: `
-            <svg viewBox="0 0 200 160" class="w-44 h-44">
-                <line x1="20" y1="150" x2="180" y2="150" stroke="#334155" stroke-width="2"/>
-                <!-- Stable Lower Legs -->
-                <line x1="100" y1="110" x2="100" y2="148" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                <circle cx="100" cy="110" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
-                <!-- Hinged Upper Body -->
-                <g class="vector-animate-rdl">
-                    <line x1="100" y1="110" x2="100" y2="65" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <circle cx="100" cy="55" r="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <!-- Arms Dropping Vertically with DB -->
-                    <line x1="100" y1="75" x2="115" y2="115" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
-                    <rect x="108" y="112" width="16" height="10" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+            <svg viewBox="0 0 240 140" class="w-full h-full">
+                <line x1="20" y1="130" x2="220" y2="130" stroke="#334155" stroke-width="2"/>
+                <line x1="105" y1="88" x2="105" y2="128" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="105" cy="88" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+
+                <!-- POSE A: Standing Setup -->
+                <g class="pose-layer-a">
+                    <circle cx="105" cy="40" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                    <line x1="105" y1="47" x2="105" y2="88" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="112" y="75" width="14" height="10" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2"/>
+                    <text x="145" y="50" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. STAND TALL</text>
+                </g>
+
+                <!-- POSE B: Hinged RDL (Hamstring Stretch) -->
+                <g class="pose-layer-b">
+                    <circle cx="75" cy="55" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                    <line x1="75" y1="60" x2="105" y2="88" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="88" y1="72" x2="88" y2="105" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="80" y="102" width="16" height="10" fill="#eab308" stroke="#facc15" stroke-width="1.5" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
+                    <text x="145" y="85" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. HINGE HIPS</text>
                 </g>
             </svg>
         `
     };
 
-    // ── Exercise Database for 5-Day Apartment Gym Split ─────────
+    // ── Exercise Database for 5-Day Split ────────────────────────
     const WORKOUT_SPLIT = {
         1: {
-            title: "Day 1: Upper Body Strength & Cardio Finisher",
+            title: "Upper Body Strength & Cardio Finisher",
             shortTag: "Day 1 • Upper + Cardio",
-            warmup: "5–8 mins on Elliptical or Stationary Bike (Light Pace)",
             exercises: [
-                { name: "Dumbbell / Cable Chest Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Keep shoulders retracted and stable against bench. Controlled tempo." },
-                { name: "Lat Pulldown or Cable Seated Row", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Pull with your back muscles, squeeze shoulder blades together." },
-                { name: "Dumbbell Overhead / Incline Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Controlled tempo, engage core to prevent hyperextension." },
-                { name: "Dumbbell Bicep Curls (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "curl", cue: "Full range of motion, strictly no body swinging." },
+                { name: "Dumbbell / Cable Chest Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Keep shoulders retracted against bench. Controlled tempo." },
+                { name: "Lat Pulldown or Cable Seated Row", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Pull with your back, squeeze shoulder blades together." },
+                { name: "Dumbbell Overhead / Incline Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Engage core tightly to prevent hyperextension." },
+                { name: "Dumbbell Bicep Curls (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "curl", cue: "Full stretch, zero body swinging." },
                 { name: "Tricep Rope Pushdowns (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "pull", cue: "Flare rope outward at bottom contraction." },
-                { name: "Incline Treadmill Walk (Cardio Finisher)", sets: "15–20 mins @ 3.5–4.5 km/h (Incline: 3–6%)", totalSets: 1, model: "walk", cue: "Zero knee pounding, steady nose-breathing rate." }
+                { name: "Incline Treadmill Walk (Cardio)", sets: "15–20 mins @ 3.5–4.5 km/h", totalSets: 1, model: "walk", cue: "Zero knee pounding, maintain steady breathing rate." }
             ]
         },
         2: {
-            title: "Day 2: Lower Body & Core Focus",
+            title: "Lower Body & Core Focus",
             shortTag: "Day 2 • Lower & Core",
-            warmup: "5 mins on Stationary / Recumbent Bike (Light)",
             exercises: [
-                { name: "Goblet Squats (or Box Squats to Bench)", sets: "3 sets × 10–12 reps", totalSets: 3, model: "squat", cue: "Squatting to a bench protects knee cartilage and ensures safe depth." },
-                { name: "Dumbbell Romanian Deadlifts (RDLs)", sets: "3 sets × 10–12 reps", totalSets: 3, model: "rdl", cue: "Hinge at hips, keep spine neutral to load hamstrings/glutes." },
-                { name: "Seated or Standing Calf Raises", sets: "3 sets × 15 reps", totalSets: 3, model: "squat", cue: "Full stretch at bottom, 1-sec hold at peak." },
-                { name: "Leg Extensions or Machine Leg Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "squat", cue: "Controlled eccentric lowering." },
-                { name: "Plank Holds (or Standing Cable Pallof Press)", sets: "3 sets × 20–40s", totalSets: 3, model: "pull", cue: "Brace abdominal wall tightly without hip sagging." },
-                { name: "Stationary / Recumbent Bike (Cardio)", sets: "15 mins @ Moderate Pace", totalSets: 1, model: "walk", cue: "Smooth RPM cadence." }
+                { name: "Goblet Box Squats to Bench", sets: "3 sets × 10–12 reps", totalSets: 3, model: "squat", cue: "Squatting to a bench protects knee joints and builds glute drive." },
+                { name: "Dumbbell Romanian Deadlifts (RDLs)", sets: "3 sets × 10–12 reps", totalSets: 3, model: "rdl", cue: "Hinge at hips, keep spine neutral to load hamstrings." },
+                { name: "Seated / Standing Calf Raises", sets: "3 sets × 15 reps", totalSets: 3, model: "squat", cue: "Full stretch at bottom, 1-sec hold at peak." },
+                { name: "Leg Extensions or Machine Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "squat", cue: "Controlled eccentric lowering." },
+                { name: "Plank Holds (or Pallof Press)", sets: "3 sets × 20–40s", totalSets: 3, model: "pull", cue: "Brace abdominal wall tightly without hip sagging." },
+                { name: "Stationary Bike (Cardio Finisher)", sets: "15 mins @ Moderate Pace", totalSets: 1, model: "walk", cue: "Smooth RPM cadence without knee stress." }
             ]
         },
         3: {
-            title: "Day 3: Active Recovery & Mobility",
+            title: "Active Recovery & Joint Mobility",
             shortTag: "Day 3 • Active Recovery",
-            warmup: "Dynamic Arm Circles & Hip Openers",
             exercises: [
-                { name: "Outdoor Brisk Walk or Light Elliptical", sets: "30–45 mins continuous", totalSets: 1, model: "walk", cue: "Gentle aerobic blood flow without joint strain." },
-                { name: "Cat-Cow & Thoracic Spine Rotations", sets: "3 sets × 10 cycles", totalSets: 3, model: "rdl", cue: "Sync movement with deep diaphragm breathing." },
-                { name: "Standing Doorway Stretch", sets: "3 sets × 30s per side", totalSets: 3, model: "pull", cue: "Gentle static stretch, do not bounce." }
+                { name: "Outdoor Brisk Walk or Elliptical", sets: "30–45 mins continuous", totalSets: 1, model: "walk", cue: "Gentle aerobic blood flow without joint strain." },
+                { name: "Cat-Cow & Spine Rotations", sets: "3 sets × 10 cycles", totalSets: 3, model: "rdl", cue: "Sync movement with deep diaphragm breathing." },
+                { name: "Standing Hamstring & Quad Stretch", sets: "3 sets × 30s / leg", totalSets: 3, model: "pull", cue: "Gentle static stretch, do not bounce." }
             ]
         },
         4: {
-            title: "Day 4: Full Body Push / Pull Strength",
+            title: "Full Body Push / Pull Strength",
             shortTag: "Day 4 • Push / Pull",
-            warmup: "5 mins on Elliptical",
             exercises: [
                 { name: "Cable Standing Rows", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Stand athletic, pull elbows straight back." },
-                { name: "Dumbbell Incline Bench Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "30-degree bench angle targets upper pectorals." },
+                { name: "Dumbbell Incline Bench Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "30-degree bench angle targets upper chest." },
                 { name: "Dumbbell Lateral Raises (Shoulders)", sets: "3 sets × 15 reps", totalSets: 3, model: "curl", cue: "Lead with elbows, light controlled weight." },
                 { name: "Dumbbell Hammer Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "curl", cue: "Neutral grip builds forearm and bicep stability." },
                 { name: "Overhead Dumbbell Tricep Extension", sets: "3 sets × 12 reps", totalSets: 3, model: "press", cue: "Keep elbows tucked in close." },
-                { name: "Elliptical Steady Cardio Finisher", sets: "20 mins @ Moderate Resistance", totalSets: 1, model: "walk", cue: "Zero-impact cardiovascular conditioning." }
+                { name: "Elliptical Cardio Finisher", sets: "20 mins @ Moderate", totalSets: 1, model: "walk", cue: "Zero-impact cardiovascular conditioning." }
             ]
         },
         5: {
-            title: "Day 5: Lower Body & Cardio Focus",
+            title: "Lower Body & Cardio Focus",
             shortTag: "Day 5 • Lower & Cardio",
-            warmup: "5 mins Flat Treadmill Walk",
             exercises: [
-                { name: "Dumbbell Step-Ups (Low Step Height)", sets: "3 sets × 10 reps / leg", totalSets: 3, model: "squat", cue: "Drive through whole foot on low stable bench." },
-                { name: "Glute Bridges (Bodyweight or Weighted)", sets: "3 sets × 15 reps", totalSets: 3, model: "rdl", cue: "Squeeze glutes hard at the top on exercise mat." },
-                { name: "Dumbbell Lying / Standing Hamstring Curl", sets: "3 sets × 12 reps", totalSets: 3, model: "rdl", cue: "Controlled tempo." },
-                { name: "Incline Treadmill Walk (Cardio)", sets: "25–30 mins @ 3.8–4.5 km/h (Incline: 4–7%)", totalSets: 1, model: "walk", cue: "High calorie burn without knee impact." }
+                { name: "Dumbbell Step-Ups (Low Height)", sets: "3 sets × 10 reps / leg", totalSets: 3, model: "squat", cue: "Drive through whole foot on low stable bench." },
+                { name: "Glute Bridges (Mat Workout)", sets: "3 sets × 15 reps", totalSets: 3, model: "rdl", cue: "Squeeze glutes hard at the top." },
+                { name: "Dumbbell Hamstring Curl", sets: "3 sets × 12 reps", totalSets: 3, model: "rdl", cue: "Controlled tempo." },
+                { name: "Incline Treadmill Walk (Cardio)", sets: "25–30 mins @ 3.8–4.5 km/h", totalSets: 1, model: "walk", cue: "High calorie burn without knee impact." }
             ]
         },
         6: {
-            title: "Day 6: Light Walk & Active Recovery",
+            title: "Light Walk & Mobility",
             shortTag: "Day 6 • Light Walk",
-            warmup: "Joint Mobilizations",
             exercises: [
                 { name: "Leisure Outdoor Walk / Park Stroll", sets: "30–40 mins", totalSets: 1, model: "walk", cue: "Hit daily 7,000–10,000 step milestone." },
-                { name: "Full Body Mobility & Stretching", sets: "15 mins on mat", totalSets: 2, model: "rdl", cue: "Focus on tight hip flexors and lower back." }
+                { name: "Full Body Mobility on Mat", sets: "15 mins", totalSets: 2, model: "rdl", cue: "Focus on tight hip flexors and lower back." }
             ]
         },
         7: {
-            title: "Day 7: Complete Rest & Weekly Meal Prep",
+            title: "Complete Rest & Meal Prep",
             shortTag: "Day 7 • Rest & Prep",
-            warmup: "Hydration Focus",
             exercises: [
                 { name: "Full Physical Rest & Recovery", sets: "All Day", totalSets: 1, model: "walk", cue: "Allow connective tissues to adapt and rebuild." },
-                { name: "Hydration Target (3.0 – 4.0 Liters)", sets: "Throughout day", totalSets: 1, model: "walk", cue: "Clean water, electrolyte balance." },
-                { name: "High-Protein Meal Prep for Week", sets: "1–2 Hours", totalSets: 1, model: "press", cue: "Prep lean proteins to ensure 1.6–2.0g/kg target." }
+                { name: "Hydration Target (3.5 Liters)", sets: "Throughout day", totalSets: 1, model: "walk", cue: "Clean water and electrolyte balance." },
+                { name: "High-Protein Meal Prep", sets: "1–2 Hours", totalSets: 1, model: "press", cue: "Prep lean proteins for 1.6–2.0g/kg target." }
             ]
         }
     };
@@ -730,18 +656,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── State Variables ─────────────────────────────────────────
     let isLbs = false;
     let baselineStartWeight = 135.0; // kg
-    let selectedCalDay = 1;
+    let activeDay = 1;
     let activeExerciseIndex = 0;
-    let todayWater = 0; // ml
+    let todayWater = 0;
     let restTimerInterval = null;
     let restTimeRemaining = 90;
     let restTimerRunning = false;
-    let completedSets = {}; // key: "day_exIdx_setIdx" => boolean
+    let completedSets = {};
 
-    // ── State Persistence ───────────────────────────────────────
+    // ── Persistence ─────────────────────────────────────────────
     function loadAppState() {
         try {
-            const raw = localStorage.getItem('mrmahesh_openfit_v2');
+            const raw = localStorage.getItem('mrmahesh_openfit_v3');
             if (raw) {
                 const s = JSON.parse(raw);
                 if (s.isLbs !== undefined) isLbs = s.isLbs;
@@ -754,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveAppState() {
         try {
-            localStorage.setItem('mrmahesh_openfit_v2', JSON.stringify({
+            localStorage.setItem('mrmahesh_openfit_v3', JSON.stringify({
                 isLbs,
                 baselineStartWeight,
                 completedSets,
@@ -820,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gateUnlocked.classList.add('hidden');
             gateLocked.classList.remove('hidden');
             if (gateEmailLabel) {
-                gateEmailLabel.textContent = user ? 'Account Signed In (Private Beta Access Required)' : 'Guest (Not Signed In)';
+                gateEmailLabel.textContent = user ? 'Account Signed In (Beta Access Required)' : 'Guest (Not Signed In)';
                 gateEmailLabel.className = user ? 'text-yellow-400 font-bold' : 'text-gray-400';
             }
         }
@@ -830,20 +756,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderBaselineMetrics() {
         const startEl = document.getElementById('metric-start-weight');
         const targetEl = document.getElementById('metric-target-weight');
-        const lossEl = document.getElementById('metric-total-loss');
 
         if (startEl) startEl.textContent = formatWeight(baselineStartWeight);
         if (targetEl) {
             targetEl.textContent = isLbs
                 ? `${(70 * 2.20462).toFixed(0)} – ${(82 * 2.20462).toFixed(0)} lbs`
                 : '70 – 82 kg';
-        }
-        if (lossEl) {
-            const minLoss = baselineStartWeight - 82;
-            const maxLoss = baselineStartWeight - 70;
-            lossEl.textContent = isLbs
-                ? `~${(minLoss * 2.20462).toFixed(0)} – ${(maxLoss * 2.20462).toFixed(0)} lbs`
-                : `~${minLoss.toFixed(0)} – ${maxLoss.toFixed(0)} kg`;
         }
     }
 
@@ -858,127 +776,123 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ── 7x5 Dot-Matrix Month Calendar Render (Screen 1) ────────
-    function renderDotMatrixCalendar() {
-        const grid = document.getElementById('dot-matrix-grid');
-        if (!grid) return;
-        grid.innerHTML = '';
+    // ── Tab Navigation Switching (4 Mobile Focus Modes) ─────────
+    const TAB_BUTTONS = {
+        workout: document.getElementById('tab-btn-workout'),
+        plan:    document.getElementById('tab-btn-plan'),
+        log:     document.getElementById('tab-btn-log'),
+        guide:   document.getElementById('tab-btn-guide')
+    };
+    const TAB_PANELS = {
+        workout: document.getElementById('tab-panel-workout'),
+        plan:    document.getElementById('tab-panel-plan'),
+        log:     document.getElementById('tab-panel-log'),
+        guide:   document.getElementById('tab-panel-guide')
+    };
 
-        const now = new Date();
-        const currentDayOfMonth = now.getDate();
-        const daysInMonth = 31; // August
-        const startOffset = 5; // August 2026 starts on Saturday (0=Mon...5=Sat)
-
-        // Pad empty slots before 1st of month
-        for (let i = 0; i < startOffset; i++) {
-            const empty = document.createElement('div');
-            empty.className = 'w-6 h-6 rounded-full bg-gray-900/40 border border-gray-800/40';
-            grid.appendChild(empty);
-        }
-
-        // Render 31 days
-        for (let d = 1; d <= daysInMonth; d++) {
-            const dayOfWeek = (startOffset + d - 1) % 7 + 1; // 1=Mon...7=Sun
-            const isToday = (d === currentDayOfMonth);
-            const isPastOrToday = (d <= currentDayOfMonth);
-            const isCompleted = isPastOrToday && (d % 2 !== 0 || d === currentDayOfMonth); // Simulation of logged workout days
-
-            const dot = document.createElement('button');
-            dot.className = 'group relative w-7 h-7 rounded-full flex items-center justify-center font-mono text-[10px] transition-all cursor-pointer';
-
-            if (isToday) {
-                dot.className += ' bg-yellow-500 text-[#1f2937] font-bold ring-2 ring-yellow-400 ring-offset-2 ring-offset-[#1a202c] shadow-[0_0_8px_#facc15]';
-            } else if (isCompleted) {
-                dot.className += ' bg-green-500/90 text-gray-950 font-bold shadow-[0_0_6px_#2ecc71] hover:scale-110';
+    function switchMobileTab(tabKey) {
+        Object.keys(TAB_PANELS).forEach(k => {
+            if (k === tabKey) {
+                TAB_PANELS[k].classList.remove('hidden');
+                TAB_BUTTONS[k].className = 'tab-nav-btn py-2 rounded-lg bg-yellow-500 text-[#1f2937] transition-all flex flex-col items-center justify-center gap-0.5';
             } else {
-                dot.className += ' bg-[#111827] text-gray-400 border border-gray-700 hover:border-gray-500 hover:text-gray-200';
+                TAB_PANELS[k].classList.add('hidden');
+                TAB_BUTTONS[k].className = 'tab-nav-btn py-2 rounded-lg text-gray-400 hover:text-gray-200 transition-all flex flex-col items-center justify-center gap-0.5';
             }
+        });
 
-            dot.innerHTML = `<span>${d}</span>`;
-            dot.addEventListener('click', () => {
-                selectedCalDay = dayOfWeek;
-                updateDrawerCard(dayOfWeek);
-            });
-            grid.appendChild(dot);
-        }
-
-        updateDrawerCard(selectedCalDay);
+        if (tabKey === 'workout') renderActiveExercise();
+        if (tabKey === 'plan') renderDotMatrixCalendar();
+        if (tabKey === 'log') renderLogsTable();
+        if (tabKey === 'guide') renderBaselineMetrics();
     }
 
-    function updateDrawerCard(dayNum) {
-        const data = WORKOUT_SPLIT[dayNum];
-        if (!data) return;
-        document.getElementById('drawer-day-tag').textContent = data.shortTag;
-        document.getElementById('drawer-day-title').textContent = data.title;
-        document.getElementById('drawer-ex-count').textContent = `${data.exercises.length} Exercises`;
-    }
+    TAB_BUTTONS.workout?.addEventListener('click', () => switchMobileTab('workout'));
+    TAB_BUTTONS.plan?.addEventListener('click', () => switchMobileTab('plan'));
+    TAB_BUTTONS.log?.addEventListener('click', () => switchMobileTab('log'));
+    TAB_BUTTONS.guide?.addEventListener('click', () => switchMobileTab('guide'));
 
-    // ── Active Workout Session Interface Render (Screen 2) ─────
+    // ── Active Workout Screen (Option 1: 2-Pose Blueprint) ──────
     function renderActiveExercise() {
-        const dayData = WORKOUT_SPLIT[selectedCalDay];
+        const dayData = WORKOUT_SPLIT[activeDay];
         if (!dayData) return;
         const ex = dayData.exercises[activeExerciseIndex];
         if (!ex) return;
 
-        // Update headers & cues
-        document.getElementById('active-session-day-badge').textContent = `Day ${selectedCalDay}`;
-        document.getElementById('active-session-ex-index').textContent = `Exercise ${activeExerciseIndex + 1} of ${dayData.exercises.length}`;
-        document.getElementById('active-session-ex-name').textContent = ex.name;
+        document.getElementById('active-day-badge').textContent = `Day ${activeDay}`;
+        document.getElementById('active-ex-stepper').textContent = `Exercise ${activeExerciseIndex + 1} of ${dayData.exercises.length}`;
+        document.getElementById('active-ex-title').textContent = ex.name;
         document.getElementById('active-ex-volume').textContent = ex.sets;
-        document.getElementById('active-ex-cue').textContent = ex.cue;
+        document.getElementById('active-ex-cue-text').textContent = ex.cue;
 
-        // Render Biomechanical Wireframe Animation Canvas
-        const animCanvas = document.getElementById('vector-animation-canvas');
-        const modelSvg = SVG_MODELS[ex.model] || SVG_MODELS.squat;
-        animCanvas.innerHTML = modelSvg;
+        // Render Option 1: 2-Pose Blueprint SVG
+        const canvas = document.getElementById('technical-blueprint-canvas');
+        canvas.innerHTML = BLUEPRINT_SVGS[ex.model] || BLUEPRINT_SVGS.squat;
 
-        // Render Interactive Set Tracking Pills (Screen 2)
-        const pillsContainer = document.getElementById('active-set-pills-container');
+        // Render Set Tracking Pills (44px+ touch targets)
+        const pillsContainer = document.getElementById('set-pills-container');
         pillsContainer.innerHTML = '';
         const totalSets = ex.totalSets || 3;
 
         for (let s = 1; s <= totalSets; s++) {
-            const setKey = `d${selectedCalDay}_e${activeExerciseIndex}_s${s}`;
+            const setKey = `d${activeDay}_e${activeExerciseIndex}_s${s}`;
             const isDone = !!completedSets[setKey];
 
             const pill = document.createElement('button');
-            pill.className = `py-2.5 px-3 rounded-xl border text-xs font-mono font-bold transition-all flex items-center justify-between gap-1 shadow-sm ${
+            pill.className = `h-11 px-3 rounded-xl border text-xs font-mono font-bold transition-all flex items-center justify-between gap-1 shadow-sm active:scale-95 ${
                 isDone 
                     ? 'bg-yellow-500 text-[#1f2937] border-yellow-400 shadow-[0_0_8px_#facc15]' 
                     : 'bg-[#111827] text-gray-300 border-gray-700 hover:border-gray-500'
             }`;
             pill.innerHTML = `
                 <span>Set ${s}</span>
-                <span>${isDone ? '✓' : '○'}</span>
+                <span class="text-sm">${isDone ? '✓' : '○'}</span>
             `;
             pill.addEventListener('click', () => {
                 completedSets[setKey] = !isDone;
                 saveAppState();
                 renderActiveExercise();
                 if (!isDone) {
-                    // Auto-start rest countdown on completed set
                     startRestCountdown(90);
                 }
             });
             pillsContainer.appendChild(pill);
         }
 
-        // Prev / Next button states
+        // Stepper Buttons
         const prevBtn = document.getElementById('btn-prev-ex');
         const nextBtn = document.getElementById('btn-next-ex');
         prevBtn.disabled = (activeExerciseIndex === 0);
         prevBtn.className = activeExerciseIndex === 0 
-            ? 'px-4 py-2.5 bg-gray-900 text-gray-600 font-bold text-xs rounded-lg border border-gray-800 cursor-not-allowed'
-            : 'px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold text-xs rounded-lg transition-all border border-gray-700';
+            ? 'h-11 bg-gray-900 text-gray-600 font-bold font-mono text-xs rounded-xl border border-gray-800 cursor-not-allowed flex items-center justify-center gap-1'
+            : 'h-11 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold font-mono text-xs rounded-xl transition-all border border-gray-700 active:scale-95 flex items-center justify-center gap-1';
 
         if (activeExerciseIndex === dayData.exercises.length - 1) {
             nextBtn.textContent = 'Finish Workout 🎉';
-            nextBtn.className = 'px-6 py-2.5 bg-green-500 hover:bg-green-400 text-gray-950 font-bold text-xs rounded-lg transition-all shadow-md active:scale-95';
+            nextBtn.className = 'h-11 bg-green-500 hover:bg-green-400 text-gray-950 font-bold font-mono text-xs rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1';
         } else {
             nextBtn.textContent = 'Next Exercise →';
-            nextBtn.className = 'px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold text-xs rounded-lg transition-all shadow-md active:scale-95';
+            nextBtn.className = 'h-11 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1';
         }
     }
+
+    document.getElementById('btn-prev-ex')?.addEventListener('click', () => {
+        if (activeExerciseIndex > 0) {
+            activeExerciseIndex--;
+            renderActiveExercise();
+        }
+    });
+
+    document.getElementById('btn-next-ex')?.addEventListener('click', () => {
+        const dayData = WORKOUT_SPLIT[activeDay];
+        if (activeExerciseIndex < dayData.exercises.length - 1) {
+            activeExerciseIndex++;
+            renderActiveExercise();
+        } else {
+            alert('🎉 Outstanding! You completed today\'s workout session!');
+            switchMobileTab('log');
+        }
+    });
 
     // ── Rest Countdown Stopwatch ───────────────────────────────
     function formatTime(sec) {
@@ -991,10 +905,10 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(restTimerInterval);
         restTimeRemaining = seconds;
         restTimerRunning = true;
-        const display = document.getElementById('active-rest-display');
+        const display = document.getElementById('rest-timer-display');
         const toggleBtn = document.getElementById('btn-timer-toggle');
         display.textContent = formatTime(restTimeRemaining);
-        display.className = 'text-xl font-bold text-yellow-400 min-w-[55px] text-right animate-pulse';
+        display.className = 'text-sm font-bold text-yellow-400 min-w-[42px] text-right animate-pulse';
         toggleBtn.textContent = 'Pause';
 
         restTimerInterval = setInterval(() => {
@@ -1003,7 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(restTimerInterval);
                 restTimerRunning = false;
                 display.textContent = '00:00';
-                display.className = 'text-xl font-bold text-green-400 min-w-[55px] text-right';
+                display.className = 'text-sm font-bold text-green-400 min-w-[42px] text-right';
                 toggleBtn.textContent = 'Start';
             } else {
                 display.textContent = formatTime(restTimeRemaining);
@@ -1026,87 +940,83 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(restTimerInterval);
         restTimerRunning = false;
         restTimeRemaining = 90;
-        document.getElementById('active-rest-display').textContent = '01:30';
-        document.getElementById('active-rest-display').className = 'text-xl font-bold text-green-400 min-w-[55px] text-right';
+        document.getElementById('rest-timer-display').textContent = '01:30';
+        document.getElementById('rest-timer-display').className = 'text-sm font-bold text-green-400 min-w-[42px] text-right';
         document.getElementById('btn-timer-toggle').textContent = 'Start';
     });
 
-    // ── Navigation Between Overview & Active Workout ───────────
-    function switchView(viewName) {
-        const viewOverview = document.getElementById('view-section-overview');
-        const viewWorkout = document.getElementById('view-section-workout');
-        const btnCal = document.getElementById('btn-view-calendar');
-        const btnAct = document.getElementById('btn-view-active-workout');
+    // ── Dot Matrix Month Calendar & Day Carousel (Tab 2) ──────
+    function renderDotMatrixCalendar() {
+        const grid = document.getElementById('dot-matrix-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
 
-        if (viewName === 'workout') {
-            viewOverview.classList.add('hidden');
-            viewWorkout.classList.remove('hidden');
-            btnAct.className = 'px-3 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all';
-            btnCal.className = 'px-3 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all';
-            renderActiveExercise();
-        } else {
-            viewWorkout.classList.add('hidden');
-            viewOverview.classList.remove('hidden');
-            btnCal.className = 'px-3 py-1 rounded font-bold bg-yellow-500 text-[#1f2937] transition-all';
-            btnAct.className = 'px-3 py-1 rounded font-bold text-gray-400 hover:text-gray-200 transition-all';
-            renderDotMatrixCalendar();
+        const now = new Date();
+        const currentDayOfMonth = now.getDate();
+        const daysInMonth = 31;
+        const startOffset = 5; // Saturday
+
+        for (let i = 0; i < startOffset; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'w-6 h-6 rounded-full bg-gray-900/40 border border-gray-800/40';
+            grid.appendChild(empty);
         }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dayOfWeek = (startOffset + d - 1) % 7 + 1;
+            const isToday = (d === currentDayOfMonth);
+            const isCompleted = (d <= currentDayOfMonth) && (d % 2 !== 0 || d === currentDayOfMonth);
+
+            const dot = document.createElement('button');
+            dot.className = 'w-7 h-7 rounded-full flex items-center justify-center font-mono text-[10px] transition-all cursor-pointer';
+
+            if (isToday) {
+                dot.className += ' bg-yellow-500 text-[#1f2937] font-bold ring-2 ring-yellow-400 ring-offset-2 ring-offset-[#1a202c] shadow-[0_0_8px_#facc15]';
+            } else if (isCompleted) {
+                dot.className += ' bg-green-500/90 text-gray-950 font-bold shadow-[0_0_4px_#2ecc71]';
+            } else {
+                dot.className += ' bg-[#111827] text-gray-400 border border-gray-700 hover:border-gray-500';
+            }
+
+            dot.innerHTML = `<span>${d}</span>`;
+            dot.addEventListener('click', () => {
+                selectPlanDay(dayOfWeek);
+            });
+            grid.appendChild(dot);
+        }
+
+        selectPlanDay(activeDay);
     }
 
-    document.getElementById('btn-view-calendar')?.addEventListener('click', () => switchView('overview'));
-    document.getElementById('btn-view-active-workout')?.addEventListener('click', () => switchView('workout'));
-    document.getElementById('btn-launch-active-session')?.addEventListener('click', () => {
-        activeExerciseIndex = 0;
-        switchView('workout');
-    });
+    function selectPlanDay(dayNum) {
+        activeDay = dayNum;
+        const data = WORKOUT_SPLIT[dayNum];
+        if (!data) return;
 
-    document.getElementById('btn-prev-ex')?.addEventListener('click', () => {
-        if (activeExerciseIndex > 0) {
-            activeExerciseIndex--;
-            renderActiveExercise();
-        }
-    });
+        document.getElementById('plan-day-tag').textContent = data.shortTag;
+        document.getElementById('plan-day-title').textContent = data.title;
+        document.getElementById('plan-day-ex-count').textContent = `${data.exercises.length} Exercises`;
 
-    document.getElementById('btn-next-ex')?.addEventListener('click', () => {
-        const dayData = WORKOUT_SPLIT[selectedCalDay];
-        if (activeExerciseIndex < dayData.exercises.length - 1) {
-            activeExerciseIndex++;
-            renderActiveExercise();
-        } else {
-            alert('🎉 Outstanding! You completed today\'s workout session!');
-            switchView('overview');
-        }
-    });
+        document.querySelectorAll('.day-select-btn').forEach(btn => {
+            const isCur = parseInt(btn.dataset.day) === dayNum;
+            btn.className = isCur 
+                ? 'day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]' 
+                : 'day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400';
+        });
+    }
 
-    // ── Animation Play / Pause / Speed Controls ────────────────
-    let animPaused = false;
-    document.getElementById('btn-anim-pause')?.addEventListener('click', () => {
-        const canvas = document.getElementById('vector-animation-canvas');
-        animPaused = !animPaused;
-        canvas.style.animationPlayState = animPaused ? 'paused' : 'running';
-        canvas.querySelectorAll('*').forEach(el => el.style.animationPlayState = animPaused ? 'paused' : 'running');
-        document.getElementById('btn-anim-pause').innerHTML = animPaused ? '<span>▶️</span> <span>Play Form</span>' : '<span>⏸️</span> <span>Pause Form</span>';
-    });
-
-    document.querySelectorAll('.btn-speed-toggle').forEach(btn => {
+    document.querySelectorAll('.day-select-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const speed = e.target.dataset.speed;
-            const canvas = document.getElementById('vector-animation-canvas');
-            const factor = speed === '0.5' ? '1.8' : (speed === '1.5' ? '0.6' : '1.0');
-            canvas.style.filter = speed === '1.5' ? 'contrast(1.2)' : 'none';
-            document.querySelectorAll('.btn-speed-toggle').forEach(b => {
-                b.className = b === e.target 
-                    ? 'btn-speed-toggle px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-bold text-[10px]' 
-                    : 'btn-speed-toggle px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px]';
-            });
-            document.getElementById('anim-speed-label').textContent = `Speed: ${speed}x`;
+            selectPlanDay(parseInt(e.currentTarget.dataset.day));
         });
     });
 
-    // ── Daily Biometrics Logger & History Table ────────────────
-    const logDateInput = document.getElementById('log-date');
-    if (logDateInput) logDateInput.value = new Date().toISOString().split('T')[0];
+    document.getElementById('btn-start-selected-workout')?.addEventListener('click', () => {
+        activeExerciseIndex = 0;
+        switchMobileTab('workout');
+    });
 
+    // ── Daily Biometrics & Habit Logger (Tab 3) ────────────────
     function updateWaterDisplay() {
         const el = document.getElementById('water-display');
         if (el) el.textContent = `${(todayWater / 1000).toFixed(1)} / 3.5 L`;
@@ -1125,10 +1035,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btn-save-log')?.addEventListener('click', () => {
-        const date = document.getElementById('log-date').value || new Date().toISOString().split('T')[0];
+        const date = new Date().toISOString().split('T')[0];
         let weight = parseFloat(document.getElementById('log-weight').value);
         if (isNaN(weight) || weight <= 0) {
-            alert('Please enter a valid weight.');
+            alert('Please enter a valid morning weight.');
             return;
         }
 
@@ -1150,6 +1060,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveLogs(logs);
         document.getElementById('log-weight').value = '';
         renderLogsTable();
+        alert('✓ Log saved successfully!');
     });
 
     function renderLogsTable() {
@@ -1161,15 +1072,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!logs.length) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="py-6 text-center text-gray-500 font-mono text-xs">
-                        No weigh-in logs recorded yet. Log your morning weight above!
+                    <td colspan="4" class="py-4 text-center text-gray-500 font-mono text-xs">
+                        No weigh-in logs yet. Enter your morning weight above!
                     </td>
                 </tr>
             `;
             return;
         }
 
-        logs.forEach((item) => {
+        logs.slice(0, 5).forEach((item) => {
             const deltaKg = item.weightKg - baselineStartWeight;
             const deltaFormatted = isLbs
                 ? (deltaKg >= 0 ? `+${(deltaKg * 2.20462).toFixed(1)}` : `${(deltaKg * 2.20462).toFixed(1)}`) + ' lbs'
@@ -1178,12 +1089,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.className = 'border-b border-gray-800 hover:bg-[#2d3748] transition-colors';
             row.innerHTML = `
-                <td class="py-2 pr-2 text-gray-300">${item.date}</td>
-                <td class="py-2 pr-2 font-bold text-gray-100">${formatWeight(item.weightKg)}</td>
-                <td class="py-2 pr-2 font-bold ${deltaKg <= 0 ? 'text-green-400' : 'text-red-400'}">${deltaFormatted}</td>
-                <td class="py-2 pr-2 text-blue-300">${(item.waterMl / 1000).toFixed(1)} L</td>
-                <td class="py-2 pr-2 text-gray-300">${item.steps.toLocaleString()}</td>
-                <td class="py-2 text-center">${item.workoutDone ? '✅' : '—'}</td>
+                <td class="py-2 text-gray-300">${item.date}</td>
+                <td class="py-2 font-bold text-gray-100">${formatWeight(item.weightKg)}</td>
+                <td class="py-2 font-bold ${deltaKg <= 0 ? 'text-green-400' : 'text-red-400'}">${deltaFormatted}</td>
                 <td class="py-2 text-center">
                     <button class="btn-del-log text-gray-600 hover:text-red-400 font-bold" data-id="${item.id}">&times;</button>
                 </td>
@@ -1192,8 +1100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             row.querySelector('.btn-del-log').addEventListener('click', (e) => {
                 const id = e.currentTarget.dataset.id;
-                const updated = getLogs().filter(l => l.id !== id);
-                saveLogs(updated);
+                saveLogs(getLogs().filter(l => l.id !== id));
                 renderLogsTable();
             });
         });
@@ -1222,15 +1129,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAppState();
     updateUnitUI();
     updateWaterDisplay();
-    renderDotMatrixCalendar();
-    renderLogsTable();
+    renderActiveExercise();
 
-    // Check Access Gate and listen for auth changes
     checkAccessGate();
     if (window.MrMaheshAuth) {
-        window.MrMaheshAuth.onAuthStateChange(() => {
-            checkAccessGate();
-        });
+        window.MrMaheshAuth.onAuthStateChange(() => checkAccessGate());
     }
 });
 </script>

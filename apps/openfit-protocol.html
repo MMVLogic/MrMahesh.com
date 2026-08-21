@@ -5,54 +5,53 @@ permalink: /apps/openfit-protocol/
 ---
 
 <style>
-/* ── Retro Pencil-Drawn Sketch & Blueprint Styles ────────── */
-@keyframes phase-crossfade-a {
-    0%, 45% { opacity: 1; visibility: visible; }
-    50%, 95% { opacity: 0; visibility: hidden; }
+/* ── Retro LED Dot-Matrix Display Board Styles ───────────── */
+@keyframes led-blink {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px #f59e0b); }
+    50% { opacity: 0.25; filter: none; }
+}
+@keyframes led-pulse {
+    0%, 100% { filter: drop-shadow(0 0 3px #f59e0b); }
+    50% { filter: drop-shadow(0 0 8px #fbbf24); }
+}
+@keyframes led-frame-cycle-1 {
+    0%, 48% { opacity: 1; visibility: visible; }
+    50%, 98% { opacity: 0; visibility: hidden; }
     100% { opacity: 1; visibility: visible; }
 }
-@keyframes phase-crossfade-b {
-    0%, 45% { opacity: 0; visibility: hidden; }
-    50%, 95% { opacity: 1; visibility: visible; }
+@keyframes led-frame-cycle-2 {
+    0%, 48% { opacity: 0; visibility: hidden; }
+    50%, 98% { opacity: 1; visibility: visible; }
     100% { opacity: 0; visibility: hidden; }
 }
-@keyframes arrow-pulse {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(4px); opacity: 1; filter: drop-shadow(0 0 4px #eab308); }
-}
-.pose-layer-a { animation: phase-crossfade-a 3.2s infinite ease-in-out; }
-.pose-layer-b { animation: phase-crossfade-b 3.2s infinite ease-in-out; }
-.motion-arrow { animation: arrow-pulse 1.6s infinite ease-in-out; }
 
-/* Pencil Sketch Texture & Glow */
-.sketch-line {
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 0.5, 0.5;
+.led-on {
+    fill: #f59e0b;
+    filter: drop-shadow(0 0 3px #f59e0b);
 }
-.sketch-muscle {
-    fill: #1e293b;
-    fill-opacity: 0.6;
-    stroke: #38bdf8;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+.led-on-green {
+    fill: #22c55e;
+    filter: drop-shadow(0 0 3px #22c55e);
 }
-.sketch-muscle-active {
-    fill: #064e3b;
-    fill-opacity: 0.7;
-    stroke: #2ecc71;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    filter: drop-shadow(0 0 3px #2ecc71);
+.led-on-cyan {
+    fill: #38bdf8;
+    filter: drop-shadow(0 0 3px #38bdf8);
 }
-.sketch-equipment {
-    fill: #27272a;
-    stroke: #eab308;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+.led-off {
+    fill: #272a30;
+    opacity: 0.6;
+}
+.led-board-bg {
+    fill: #14171d;
+    stroke: #2b303c;
+    stroke-width: 3;
+    rx: 12;
+}
+.led-cycle-frame-1 {
+    animation: led-frame-cycle-1 1.6s infinite steps(1, end);
+}
+.led-cycle-frame-2 {
+    animation: led-frame-cycle-2 1.6s infinite steps(1, end);
 }
 </style>
 
@@ -142,7 +141,7 @@ permalink: /apps/openfit-protocol/
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 1: ACTIVE WORKOUT INTERFACE (PENCIL SKETCH 2-POSE)          -->
+        <!-- TAB 1: ACTIVE WORKOUT INTERFACE (RETRO-FIT LED BOARD)           -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <div id="tab-panel-workout" class="space-y-4">
             
@@ -168,25 +167,12 @@ permalink: /apps/openfit-protocol/
                     </div>
                 </div>
 
-                <!-- Pencil-Drawn Retro Sketch 2-Pose Blueprint Canvas -->
-                <div class="bg-[#111827] rounded-xl p-3 border border-gray-800 relative overflow-hidden flex flex-col items-center">
-                    
-                    <div class="w-full flex justify-between items-center text-[10px] font-mono text-gray-400 mb-1">
-                        <span class="text-cyan-400 font-bold flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> RETRO PENCIL SKETCH BLUEPRINT
-                        </span>
-                        <span class="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20" id="pose-indicator">PHASE: [SETUP ⟷ PEAK]</span>
-                    </div>
-
-                    <!-- SVG Pencil Sketch Container -->
-                    <div id="technical-blueprint-canvas" class="w-full h-48 flex items-center justify-center relative">
-                        <!-- Populated dynamically with detailed anatomically contoured sketch SVGs -->
-                    </div>
-
-                    <!-- 1-Line Bite-Sized Form Cue -->
-                    <div class="w-full mt-2 pt-2 border-t border-gray-800 text-[11px] font-mono text-gray-300 flex items-center gap-1.5">
-                        <span class="text-yellow-400 font-bold">💡 Cue:</span>
-                        <span id="active-ex-cue-text">Squat to bench depth to protect knee cartilage and drive hips back.</span>
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <!-- RETRO-FIT LED DOT-MATRIX DISPLAY BOARD (REFERENCE MATCH) -->
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <div class="rounded-2xl p-1 bg-[#0b0d11] border-2 border-gray-800 shadow-2xl relative overflow-hidden">
+                    <div id="led-board-container" class="w-full relative">
+                        <!-- Procedural LED Matrix SVG inserted by JS -->
                     </div>
                 </div>
 
@@ -279,7 +265,7 @@ permalink: /apps/openfit-protocol/
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <!-- TAB 3: UNIFIED MULTI-METRIC TREND GRAPH & HABIT LOGGER          -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <div id="tab-panel-log" class="space-y-4">
+        <div id="tab-panel-log" class="hidden space-y-4">
             
             <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-5">
                 
@@ -312,7 +298,6 @@ permalink: /apps/openfit-protocol/
                 <!-- Unified Interactive Line Graph Canvas -->
                 <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 relative">
                     <div id="graph-container" class="w-full h-56 flex items-center justify-center relative overflow-hidden">
-                        <!-- Populated by Canvas / SVG Render -->
                         <canvas id="multi-metric-canvas" class="w-full h-full"></canvas>
                     </div>
                 </div>
@@ -433,43 +418,11 @@ permalink: /apps/openfit-protocol/
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- 3. CUSTOM PLAN & REFERRAL SPECS MODAL                               -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<div id="custom-plan-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-[#1a202c] border-2 border-yellow-500/80 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl relative font-mono text-xs">
-        <button id="btn-close-custom-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl font-bold">
-            &times;
-        </button>
-
-        <div class="space-y-1">
-            <span class="text-[10px] font-bold text-yellow-500 uppercase">AFFILIATE_ARCHITECTURE_</span>
-            <h3 class="text-lg font-bold text-gray-100">Custom Plan & Referral Model</h3>
-        </div>
-
-        <div class="space-y-2 text-[11px] text-gray-300 leading-relaxed">
-            <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 space-y-1">
-                <p class="font-bold text-yellow-400">1. Custom Plan Builder ($X)</p>
-                <p>Individualized routine tailored to home equipment photos & biometrics.</p>
-            </div>
-            <div class="p-3 bg-[#111827] rounded-xl border border-gray-800 space-y-1">
-                <p class="font-bold text-green-400">2. 1% Discount per Follower</p>
-                <p>For every active member following your public routine, earn 1% off monthly membership (100 followers = 100% free!).</p>
-            </div>
-        </div>
-
-        <button id="btn-modal-dismiss" class="w-full py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg text-xs">
-            Close
-        </button>
-    </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- 4. JAVASCRIPT ENGINE & LOGIC                                        -->
+<!-- 3. JAVASCRIPT ENGINE & LOGIC                                        -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    // SHA-256 cryptographic hash of authorized owner email
     const AUTHORIZED_LEAD_HASH = 'f5e6ee2dc8ab06440666b705ad3d7a414a21eb60b683c33e818370d9e1b770d8';
 
     async function sha256(str) {
@@ -477,190 +430,387 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // ── Anatomically Contoured Retro Pencil Sketch SVG Models ────
-    const PENCIL_SKETCH_SVGS = {
-        squat: `
-            <svg viewBox="0 0 240 150" class="w-full h-full">
-                <!-- Ground Floor & Textured Hatching -->
-                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-                <path d="M 20 142 L 30 148 M 50 142 L 60 148 M 80 142 L 90 148 M 110 142 L 120 148 M 140 142 L 150 148 M 170 142 L 180 148 M 200 142 L 210 148" stroke="#334155" stroke-width="1.5"/>
-                
-                <!-- Apartment Gym Box Bench (Crosshatched Pencil Outline) -->
-                <rect x="48" y="90" width="45" height="48" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,2" rx="3"/>
-                <line x1="52" y1="110" x2="89" y2="110" stroke="#475569" stroke-width="1" stroke-dasharray="2,2"/>
-                <text x="70" y="118" fill="#94a3b8" font-size="7" font-family="monospace" text-anchor="middle">BOX BENCH</text>
+    // ── Helper to build LED dot background matrix ──────────────
+    function generateLedBgGrid(cols, rows, startX, startY, spacing, radius) {
+        let dots = '';
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                dots += `<circle cx="${startX + c * spacing}" cy="${startY + r * spacing}" r="${radius}" class="led-off"/>`;
+            }
+        }
+        return dots;
+    }
 
-                <!-- POSE A: Setup (Standing Tall With Dumbbell at Chest) -->
-                <g class="pose-layer-a">
-                    <!-- Head & Neck -->
-                    <circle cx="120" cy="28" r="9" class="sketch-muscle"/>
-                    <!-- Contoured Muscular Torso & Chest -->
-                    <path d="M 112 36 Q 110 55 113 74 Q 120 76 127 74 Q 130 55 128 36 Z" class="sketch-muscle"/>
-                    <!-- Arms Holding Heavy Dumbbell -->
-                    <path d="M 113 42 Q 124 50 120 62" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <!-- Contoured Dumbbell (Amber Pencil Hatch) -->
-                    <rect x="120" y="44" width="16" height="15" class="sketch-equipment" rx="2"/>
-                    <line x1="128" y1="44" x2="128" y2="59" stroke="#facc15" stroke-width="2"/>
-                    <!-- Contoured Thighs & Calves -->
-                    <path d="M 114 74 Q 112 100 115 112 L 115 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <path d="M 126 74 Q 128 100 125 112 L 125 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <circle cx="120" cy="74" r="3.5" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
-                    <text x="175" y="42" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. SETUP</text>
-                    <path d="M 165 52 L 165 72 M 161 67 L 165 73 L 169 67" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
+    // ── RETRO-FIT LED DOT MATRIX MODELS (MATCHING REFERENCE IMAGE) ──
+    const LED_MODELS = {
+        squat: `
+            <svg viewBox="0 0 520 280" class="w-full h-auto">
+                <rect width="520" height="280" class="led-board-bg"/>
+                
+                <!-- Background LED Socket Dots (50 cols x 26 rows) -->
+                ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
+
+                <!-- LEFT INFO TELEMETRY (LED TYPOGRAPHY) -->
+                <g class="led-on">
+                    <!-- RETRO-FIT GUIDE! -->
+                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
+                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
+                    
+                    <!-- EXERCISE METRICS -->
+                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: BASELINE</text>
+                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
+                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DUMBBELL BOX SQUAT</text>
+                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 10–12</text>
+                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
+
+                    <!-- Glowing LED Dumbbell Icon (Bottom Left) -->
+                    <g transform="translate(25, 222)">
+                        <circle cx="5" cy="12" r="3.5" class="led-on"/>
+                        <circle cx="5" cy="18" r="3.5" class="led-on"/>
+                        <circle cx="5" cy="24" r="3.5" class="led-on"/>
+                        <circle cx="10" cy="18" r="3.5" class="led-on"/>
+                        <line x1="12" y1="18" x2="28" y2="18" stroke="#f59e0b" stroke-width="4" stroke-dasharray="2,5" stroke-linecap="round"/>
+                        <circle cx="30" cy="18" r="3.5" class="led-on"/>
+                        <circle cx="35" cy="12" r="3.5" class="led-on"/>
+                        <circle cx="35" cy="18" r="3.5" class="led-on"/>
+                        <circle cx="35" cy="24" r="3.5" class="led-on"/>
+                    </g>
                 </g>
 
-                <!-- POSE B: Safe Box Squat Depth (Joint Protected) -->
-                <g class="pose-layer-b">
-                    <!-- Head & Forward Gaze -->
-                    <circle cx="102" cy="46" r="9" class="sketch-muscle-active"/>
-                    <!-- Contoured Inclined Torso with Tight Core Brace -->
-                    <path d="M 94 54 Q 90 70 94 88 Q 106 90 114 86 Q 118 70 110 54 Z" class="sketch-muscle-active"/>
-                    <!-- Arms Holding DB -->
-                    <rect x="108" y="58" width="16" height="15" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <!-- Contoured Thigh Hinged to Bench Depth -->
-                    <path d="M 94 88 Q 115 96 128 104 L 122 138" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Protected Knee Pivot Node -->
-                    <circle cx="128" cy="104" r="4" fill="#2ecc71" filter="drop-shadow(0 0 5px #2ecc71)"/>
-                    <circle cx="94" cy="88" r="4" fill="#2ecc71" filter="drop-shadow(0 0 5px #2ecc71)"/>
-                    <text x="155" y="96" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SAFE DEPTH</text>
+                <!-- CENTER ANIMATION: FRAME 1 (STANDING SETUP) -->
+                <g>
+                    <text x="255" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 1</text>
+                    <!-- Head LED Ring -->
+                    <circle cx="255" cy="48" r="2.8" class="led-on"/>
+                    <circle cx="264" cy="52" r="2.8" class="led-on"/>
+                    <circle cx="268" cy="61" r="2.8" class="led-on"/>
+                    <circle cx="264" cy="70" r="2.8" class="led-on"/>
+                    <circle cx="255" cy="74" r="2.8" class="led-on"/>
+                    <circle cx="246" cy="70" r="2.8" class="led-on"/>
+                    <circle cx="242" cy="61" r="2.8" class="led-on"/>
+                    <circle cx="246" cy="52" r="2.8" class="led-on"/>
+                    
+                    <!-- Torso LED Array -->
+                    ${[83, 93, 103, 113, 123, 133].map(y => `
+                        <circle cx="250" cy="${y}" r="2.8" class="led-on"/>
+                        <circle cx="260" cy="${y}" r="2.8" class="led-on"/>
+                    `).join('')}
+                    
+                    <!-- Arms Holding DB at Chest -->
+                    ${[83, 93, 103, 113, 123].map(y => `
+                        <circle cx="238" cy="${y}" r="2.8" class="led-on"/>
+                        <circle cx="272" cy="${y}" r="2.8" class="led-on"/>
+                    `).join('')}
+                    <!-- Dumbbell LED -->
+                    <circle cx="255" cy="98" r="3.8" class="led-on" fill="#fbbf24"/>
+
+                    <!-- Legs Standing -->
+                    ${[145, 157, 169, 181, 193, 205].map(y => `
+                        <circle cx="248" cy="${y}" r="2.8" class="led-on"/>
+                        <circle cx="262" cy="${y}" r="2.8" class="led-on"/>
+                    `).join('')}
+                    <circle cx="242" cy="205" r="2.8" class="led-on"/>
+                    <circle cx="268" cy="205" r="2.8" class="led-on"/>
+                </g>
+
+                <!-- CENTER ANIMATION: FRAME 2 (SAFE BOX BENCH DEPTH) -->
+                <g>
+                    <text x="385" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 2</text>
+                    
+                    <!-- Box Bench LED Matrix -->
+                    <rect x="345" y="160" width="30" height="46" fill="#1b2028" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,3" rx="2"/>
+                    <text x="360" y="185" fill="#f59e0b" font-size="7" font-family="monospace" text-anchor="middle">BENCH</text>
+
+                    <!-- Lowered Head -->
+                    <circle cx="395" cy="80" r="2.8" class="led-on"/>
+                    <circle cx="404" cy="84" r="2.8" class="led-on"/>
+                    <circle cx="408" cy="93" r="2.8" class="led-on"/>
+                    <circle cx="404" cy="102" r="2.8" class="led-on"/>
+                    <circle cx="395" cy="106" r="2.8" class="led-on"/>
+                    <circle cx="386" cy="102" r="2.8" class="led-on"/>
+                    <circle cx="382" cy="93" r="2.8" class="led-on"/>
+                    <circle cx="386" cy="84" r="2.8" class="led-on"/>
+
+                    <!-- Hinged Torso to Bench -->
+                    ${[115, 125, 135, 145].map((y, i) => `
+                        <circle cx="${390 - i * 3}" cy="${y}" r="2.8" class="led-on"/>
+                        <circle cx="${400 - i * 3}" cy="${y}" r="2.8" class="led-on"/>
+                    `).join('')}
+                    <!-- Dumbbell -->
+                    <circle cx="395" cy="125" r="3.8" class="led-on"/>
+
+                    <!-- Bent Legs (Bench Depth) -->
+                    <circle cx="375" cy="155" r="3.2" class="led-on-green"/>
+                    <circle cx="387" cy="155" r="3.2" class="led-on-green"/>
+                    <circle cx="400" cy="165" r="3.2" class="led-on-green"/>
+                    <circle cx="400" cy="180" r="2.8" class="led-on"/>
+                    <circle cx="400" cy="195" r="2.8" class="led-on"/>
+                    <circle cx="400" cy="205" r="2.8" class="led-on"/>
+                </g>
+
+                <!-- BOTTOM RIGHT: MONOSPACE TERMINAL CODE & REP COUNTER -->
+                <g>
+                    <!-- Rep Counter 7-Segment Box -->
+                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
+                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle" filter="drop-shadow(0 0 4px #f59e0b)">12</text>
+
+                    <!-- C Code Snippet Box -->
+                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
+                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_box_squat() {</text>
+                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  draw_frame(bench_depth);</text>
+                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  protect_joints(SAFE);</text>
+                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
                 </g>
             </svg>
         `,
         press: `
-            <svg viewBox="0 0 240 150" class="w-full h-full">
-                <!-- Ground Floor -->
-                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-                <!-- Incline Bench (30° Angle) -->
-                <path d="M 40 125 L 145 75 L 150 82 L 45 132 Z" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
-                <line x1="75" y1="110" x2="75" y2="138" stroke="#475569" stroke-width="3"/>
-                <line x1="135" y1="80" x2="135" y2="138" stroke="#475569" stroke-width="3"/>
-                
-                <!-- Torso on Bench -->
-                <path d="M 60 115 Q 95 95 130 80" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
-                <circle cx="138" cy="74" r="8" class="sketch-muscle"/>
+            <svg viewBox="0 0 520 280" class="w-full h-auto">
+                <rect width="520" height="280" class="led-board-bg"/>
+                ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- POSE A: Full Press Lockout -->
-                <g class="pose-layer-a">
-                    <!-- Contoured Upper Arm & Forearm -->
-                    <path d="M 105 92 Q 100 68 96 46" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <circle cx="105" cy="92" r="3.5" fill="#2ecc71"/>
-                    <!-- Dumbbell Pair (Amber Sketch) -->
-                    <rect x="84" y="36" width="24" height="11" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <text x="155" y="42" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. EXTENDED</text>
-                    <path d="M 145 50 L 145 68 M 141 63 L 145 69 L 149 63" fill="none" stroke="#eab308" stroke-width="2" class="motion-arrow"/>
+                <!-- LEFT INFO TELEMETRY -->
+                <g class="led-on">
+                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
+                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
+                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: CHEST PRESS</text>
+                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
+                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">INCLINE DB PRESS</text>
+                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 10–12</text>
+                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
                 </g>
 
-                <!-- POSE B: Lowered Chest Stretch -->
-                <g class="pose-layer-b">
-                    <path d="M 105 92 Q 95 85 92 74" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round"/>
-                    <circle cx="105" cy="92" r="3.5" fill="#2ecc71"/>
-                    <rect x="82" y="68" width="24" height="11" class="sketch-equipment" rx="2"/>
-                    <text x="155" y="78" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. CHEST STRETCH</text>
+                <!-- CENTER ANIMATION: FRAME 1 (EXTENDED PRESS) -->
+                <g>
+                    <text x="255" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 1</text>
+                    <!-- Incline Bench -->
+                    <line x1="220" y1="180" x2="280" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+                    <!-- Torso -->
+                    <line x1="230" y1="170" x2="275" y2="130" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="282" cy="124" r="6" class="led-on"/>
+                    <!-- Arms Fully Extended Up -->
+                    <circle cx="260" cy="90" r="3.5" class="led-on"/>
+                    <circle cx="260" cy="75" r="3.5" class="led-on"/>
+                    <circle cx="260" cy="60" r="4.5" class="led-on" fill="#fbbf24"/>
+                </g>
+
+                <!-- CENTER ANIMATION: FRAME 2 (LOWERED CHEST STRETCH) -->
+                <g>
+                    <text x="385" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 2</text>
+                    <line x1="350" y1="180" x2="410" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+                    <line x1="360" y1="170" x2="405" y2="130" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="412" cy="124" r="6" class="led-on"/>
+                    <!-- Arms Bent at Chest Level -->
+                    <circle cx="385" cy="130" r="3.5" class="led-on-green"/>
+                    <circle cx="385" cy="115" r="4.5" class="led-on" fill="#fbbf24"/>
+                </g>
+
+                <!-- BOTTOM RIGHT: REP COUNTER & CODE -->
+                <g>
+                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
+                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">10</text>
+                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
+                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_incline_press() {</text>
+                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  press_dumbbells(LOCKOUT);</text>
+                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  delay(500);</text>
+                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
                 </g>
             </svg>
         `,
         pull: `
-            <svg viewBox="0 0 240 150" class="w-full h-full">
-                <!-- Lat Cable Tower -->
-                <line x1="160" y1="12" x2="160" y2="138" stroke="#64748b" stroke-width="3"/>
-                <line x1="115" y1="12" x2="160" y2="12" stroke="#64748b" stroke-width="3"/>
-                <circle cx="115" cy="12" r="4" fill="#eab308"/>
-                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2"/>
-                
-                <!-- Seated Athlete Contour -->
-                <rect x="68" y="94" width="30" height="24" fill="#1e293b" stroke="#475569" rx="2"/>
-                <circle cx="85" cy="48" r="8" class="sketch-muscle"/>
-                <path d="M 85 56 Q 88 78 84 100" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+            <svg viewBox="0 0 520 280" class="w-full h-auto">
+                <rect width="520" height="280" class="led-board-bg"/>
+                ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- POSE A: Overhead Reach -->
-                <g class="pose-layer-a">
-                    <line x1="115" y1="12" x2="100" y2="24" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
-                    <line x1="80" y1="24" x2="120" y2="24" class="sketch-equipment" stroke-width="3"/>
-                    <path d="M 85 64 L 100 25" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                    <text x="145" y="44" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. FULL REACH</text>
+                <!-- LEFT INFO TELEMETRY -->
+                <g class="led-on">
+                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
+                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
+                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: LAT PULLDOWN</text>
+                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
+                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">LAT PULLDOWN / ROW</text>
+                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 12</text>
+                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
                 </g>
 
-                <!-- POSE B: Lat Contraction -->
-                <g class="pose-layer-b">
-                    <line x1="115" y1="12" x2="96" y2="60" stroke="#facc15" stroke-width="1.5" stroke-dasharray="2,2"/>
-                    <line x1="75" y1="60" x2="120" y2="60" class="sketch-equipment" stroke-width="3.5" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <path d="M 85 68 Q 96 64 96 60" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round"/>
-                    <circle cx="96" cy="60" r="3.5" fill="#2ecc71"/>
-                    <text x="145" y="72" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. SQUEEZE LATS</text>
+                <!-- CENTER ANIMATION: FRAME 1 (REACH) -->
+                <g>
+                    <text x="255" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 1</text>
+                    <line x1="225" y1="45" x2="285" y2="45" stroke="#f59e0b" stroke-width="4"/>
+                    <circle cx="255" cy="85" r="7" class="led-on"/>
+                    <line x1="255" y1="92" x2="255" y2="150" stroke="#f59e0b" stroke-width="6"/>
+                    <!-- Arms Reaching Up -->
+                    <line x1="255" y1="100" x2="235" y2="48" stroke="#f59e0b" stroke-width="3"/>
+                    <line x1="255" y1="100" x2="275" y2="48" stroke="#f59e0b" stroke-width="3"/>
+                </g>
+
+                <!-- CENTER ANIMATION: FRAME 2 (SQUEEZE LATS) -->
+                <g>
+                    <text x="385" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 2</text>
+                    <line x1="355" y1="90" x2="415" y2="90" stroke="#fbbf24" stroke-width="4"/>
+                    <circle cx="385" cy="85" r="7" class="led-on"/>
+                    <line x1="385" y1="92" x2="385" y2="150" stroke="#f59e0b" stroke-width="6"/>
+                    <!-- Arms Pulled to Chest -->
+                    <circle cx="365" cy="100" r="4" class="led-on-green"/>
+                    <circle cx="405" cy="100" r="4" class="led-on-green"/>
+                </g>
+
+                <!-- BOTTOM RIGHT: REP COUNTER & CODE -->
+                <g>
+                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
+                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">12</text>
+                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
+                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_lat_pull() {</text>
+                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  squeeze_back_muscles();</text>
+                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  retract_scapula();</text>
+                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
                 </g>
             </svg>
         `,
         walk: `
-            <svg viewBox="0 0 240 150" class="w-full h-full">
-                <!-- Incline Treadmill Deck (5% Incline) -->
-                <path d="M 30 134 L 160 115 L 162 122 L 32 140 Z" fill="#1e293b" stroke="#eab308" stroke-width="2.5" filter="drop-shadow(0 0 3px #eab308)"/>
-                <line x1="45" y1="135" x2="45" y2="142" stroke="#64748b" stroke-width="3"/>
-                <line x1="150" y1="118" x2="150" y2="142" stroke="#64748b" stroke-width="3"/>
-                <line x1="15" y1="142" x2="225" y2="142" stroke="#475569" stroke-width="2"/>
-                <path d="M 140 115 L 140 72 L 110 72" fill="none" stroke="#64748b" stroke-width="2.5"/>
-                
-                <!-- Walking Human Contour -->
-                <circle cx="95" cy="40" r="8" class="sketch-muscle"/>
-                <path d="M 95 48 Q 96 68 96 90" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+            <svg viewBox="0 0 520 280" class="w-full h-auto">
+                <rect width="520" height="280" class="led-board-bg"/>
+                ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <g class="pose-layer-a">
-                    <path d="M 96 90 L 78 126" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <path d="M 96 90 L 118 120" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                    <text x="160" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
-                    <text x="160" y="70" fill="#38bdf8" font-size="8" font-family="monospace">ZERO IMPACT</text>
+                <!-- LEFT INFO TELEMETRY -->
+                <g class="led-on">
+                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
+                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
+                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: CARDIO FINISHER</text>
+                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
+                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">INCLINE TREADMILL</text>
+                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">INCLINE: 5%</text>
+                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">TIME: 20 MINS</text>
                 </g>
-                <g class="pose-layer-b">
-                    <path d="M 96 90 L 118 120" fill="none" stroke="#2ecc71" stroke-width="4" stroke-linecap="round"/>
-                    <path d="M 96 90 L 78 126" fill="none" stroke="#2ecc71" stroke-width="4" stroke-linecap="round"/>
-                    <text x="160" y="55" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">INCLINE 5%</text>
-                    <text x="160" y="70" fill="#eab308" font-size="8" font-family="monospace">FAT DEFICIT</text>
+
+                <!-- CENTER ANIMATION: FRAME 1 (LEFT STRIDE) -->
+                <g>
+                    <text x="255" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 1</text>
+                    <!-- Incline Treadmill Deck -->
+                    <line x1="210" y1="205" x2="295" y2="185" stroke="#f59e0b" stroke-width="4"/>
+                    <circle cx="255" cy="70" r="7" class="led-on"/>
+                    <line x1="255" y1="77" x2="255" y2="135" stroke="#f59e0b" stroke-width="5"/>
+                    <line x1="255" y1="135" x2="235" y2="198" stroke="#f59e0b" stroke-width="4"/>
+                    <line x1="255" y1="135" x2="275" y2="190" stroke="#f59e0b" stroke-width="4"/>
+                </g>
+
+                <!-- CENTER ANIMATION: FRAME 2 (RIGHT STRIDE) -->
+                <g>
+                    <text x="385" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 2</text>
+                    <line x1="340" y1="205" x2="425" y2="185" stroke="#f59e0b" stroke-width="4"/>
+                    <circle cx="385" cy="70" r="7" class="led-on"/>
+                    <line x1="385" y1="77" x2="385" y2="135" stroke="#f59e0b" stroke-width="5"/>
+                    <line x1="385" y1="135" x2="405" y2="190" stroke="#f59e0b" stroke-width="4"/>
+                    <line x1="385" y1="135" x2="365" y2="198" stroke="#f59e0b" stroke-width="4"/>
+                </g>
+
+                <!-- BOTTOM RIGHT: TIME & CODE -->
+                <g>
+                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
+                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="24" font-weight="bold" fill="#f59e0b" text-anchor="middle">20m</text>
+                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
+                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_treadmill() {</text>
+                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  incline_grade = 5.0;</text>
+                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  zero_knee_impact(TRUE);</text>
+                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
                 </g>
             </svg>
         `,
         curl: `
-            <svg viewBox="0 0 240 150" class="w-full h-full">
-                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2"/>
-                <circle cx="100" cy="34" r="8" class="sketch-muscle"/>
-                <path d="M 100 42 Q 100 68 100 90" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
-                <path d="M 100 90 L 100 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+            <svg viewBox="0 0 520 280" class="w-full h-auto">
+                <rect width="520" height="280" class="led-board-bg"/>
+                ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- POSE A: Lowered Position -->
-                <g class="pose-layer-a">
-                    <path d="M 100 55 Q 105 78 105 100" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                    <rect x="100" y="98" width="14" height="15" class="sketch-equipment" rx="2"/>
-                    <text x="140" y="55" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. STRETCH</text>
+                <!-- LEFT INFO TELEMETRY -->
+                <g class="led-on">
+                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
+                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
+                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: ARM ACCESSORY</text>
+                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
+                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DUMBBELL BICEP CURL</text>
+                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 12–15</text>
+                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
                 </g>
 
-                <!-- POSE B: Curled Peak -->
-                <g class="pose-layer-b">
-                    <path d="M 100 55 Q 110 75 120 62" fill="none" stroke="#2ecc71" stroke-width="4.5" stroke-linecap="round"/>
-                    <circle cx="106" cy="80" r="3.5" fill="#2ecc71"/>
-                    <rect x="115" y="54" width="14" height="15" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <text x="140" y="65" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. PEAK BICEP</text>
+                <!-- CENTER ANIMATION: FRAME 1 (LOWERED) -->
+                <g>
+                    <text x="255" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 1</text>
+                    <circle cx="255" cy="55" r="7" class="led-on"/>
+                    <line x1="255" y1="62" x2="255" y2="135" stroke="#f59e0b" stroke-width="6"/>
+                    <line x1="255" y1="135" x2="248" y2="200" stroke="#f59e0b" stroke-width="4"/>
+                    <line x1="255" y1="135" x2="262" y2="200" stroke="#f59e0b" stroke-width="4"/>
+                    <!-- Arms Straight Down Holding Dumbbell -->
+                    <line x1="255" y1="75" x2="272" y2="135" stroke="#f59e0b" stroke-width="3.5"/>
+                    <circle cx="272" cy="138" r="4.5" class="led-on" fill="#fbbf24"/>
+                </g>
+
+                <!-- CENTER ANIMATION: FRAME 2 (PEAK BICEP CONTRACTION) -->
+                <g>
+                    <text x="385" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 2</text>
+                    <circle cx="385" cy="55" r="7" class="led-on"/>
+                    <line x1="385" y1="62" x2="385" y2="135" stroke="#f59e0b" stroke-width="6"/>
+                    <line x1="385" y1="135" x2="378" y2="200" stroke="#f59e0b" stroke-width="4"/>
+                    <line x1="385" y1="135" x2="392" y2="200" stroke="#f59e0b" stroke-width="4"/>
+                    <!-- Curled Forearm & Bicep -->
+                    <circle cx="395" cy="100" r="3.5" class="led-on-green"/>
+                    <circle cx="402" cy="75" r="5" class="led-on" fill="#fbbf24"/>
+                </g>
+
+                <!-- BOTTOM RIGHT: REPS & CODE -->
+                <g>
+                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
+                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">15</text>
+                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
+                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_curl() {</text>
+                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  flex_bicep_peak();</text>
+                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  delay(500);</text>
+                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
                 </g>
             </svg>
         `,
         rdl: `
-            <svg viewBox="0 0 240 150" class="w-full h-full">
-                <line x1="15" y1="138" x2="225" y2="138" stroke="#475569" stroke-width="2"/>
-                <path d="M 108 92 L 108 138" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-                <circle cx="108" cy="92" r="4" fill="#2ecc71" filter="drop-shadow(0 0 3px #2ecc71)"/>
+            <svg viewBox="0 0 520 280" class="w-full h-auto">
+                <rect width="520" height="280" class="led-board-bg"/>
+                ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- POSE A: Standing Setup -->
-                <g class="pose-layer-a">
-                    <circle cx="108" cy="36" r="8" class="sketch-muscle"/>
-                    <path d="M 108 44 L 108 92" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
-                    <rect x="114" y="78" width="16" height="12" class="sketch-equipment" rx="2"/>
-                    <text x="150" y="48" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">1. NEUTRAL SPINE</text>
+                <!-- LEFT INFO TELEMETRY -->
+                <g class="led-on">
+                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
+                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
+                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 2: POSTERIOR CHAIN</text>
+                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
+                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DUMBBELL RDL</text>
+                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 10–12</text>
+                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
                 </g>
 
-                <!-- POSE B: Hinged RDL (Hamstring Load) -->
-                <g class="pose-layer-b">
-                    <circle cx="75" cy="54" r="8" class="sketch-muscle-active"/>
-                    <path d="M 75 60 L 108 92" fill="none" stroke="#2ecc71" stroke-width="5" stroke-linecap="round"/>
-                    <path d="M 88 74 L 88 112" fill="none" stroke="#2ecc71" stroke-width="3" stroke-linecap="round"/>
-                    <rect x="80" y="108" width="16" height="12" class="sketch-equipment" rx="2" filter="drop-shadow(0 0 4px #eab308)"/>
-                    <text x="145" y="85" fill="#2ecc71" font-size="9" font-family="monospace" font-weight="bold">2. HINGE HIPS</text>
+                <!-- CENTER ANIMATION: FRAME 1 (STANDING TALL) -->
+                <g>
+                    <text x="255" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 1</text>
+                    <circle cx="255" cy="55" r="7" class="led-on"/>
+                    <line x1="255" y1="62" x2="255" y2="135" stroke="#f59e0b" stroke-width="6"/>
+                    <line x1="255" y1="135" x2="255" y2="205" stroke="#f59e0b" stroke-width="4"/>
+                    <circle cx="265" cy="115" r="4.5" class="led-on" fill="#fbbf24"/>
+                </g>
+
+                <!-- CENTER ANIMATION: FRAME 2 (HINGED RDL - HAMSTRINGS) -->
+                <g>
+                    <text x="385" y="32" font-family="'Courier New', monospace" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">FRAME 2</text>
+                    <circle cx="345" cy="85" r="7" class="led-on"/>
+                    <line x1="345" y1="92" x2="385" y2="135" stroke="#f59e0b" stroke-width="6"/>
+                    <line x1="385" y1="135" x2="385" y2="205" stroke="#f59e0b" stroke-width="4"/>
+                    <circle cx="385" cy="135" r="4" class="led-on-green"/>
+                    <circle cx="360" cy="160" r="4.5" class="led-on" fill="#fbbf24"/>
+                </g>
+
+                <!-- BOTTOM RIGHT: REPS & CODE -->
+                <g>
+                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
+                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">12</text>
+                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
+                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_rdl() {</text>
+                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  hinge_hips(NEUTRAL_SPINE);</text>
+                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  load_hamstrings();</text>
+                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
                 </g>
             </svg>
         `
@@ -753,10 +903,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let restTimerRunning = false;
     let completedSets = {};
 
-    // ── Persistence ─────────────────────────────────────────────
     function loadAppState() {
         try {
-            const raw = localStorage.getItem('mrmahesh_openfit_v4');
+            const raw = localStorage.getItem('mrmahesh_openfit_v5');
             if (raw) {
                 const s = JSON.parse(raw);
                 if (s.isLbs !== undefined) isLbs = s.isLbs;
@@ -769,7 +918,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveAppState() {
         try {
-            localStorage.setItem('mrmahesh_openfit_v4', JSON.stringify({
+            localStorage.setItem('mrmahesh_openfit_v5', JSON.stringify({
                 isLbs,
                 baselineStartWeight,
                 completedSets,
@@ -788,7 +937,6 @@ document.addEventListener('DOMContentLoaded', () => {
         catch (e) {}
     }
 
-    // ── Unit Formatting ─────────────────────────────────────────
     function formatWeight(kg) {
         if (kg === null || kg === undefined || isNaN(kg)) return '—';
         return isLbs ? (kg * 2.20462).toFixed(1) + ' lbs' : Number(kg).toFixed(1) + ' kg';
@@ -811,7 +959,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMultiMetricGraph();
     }
 
-    // ── Access Gate Verification ───────────────────────────────
     async function checkAccessGate() {
         const user = window.MrMaheshAuth?.getUser();
         const gateLocked = document.getElementById('access-gate-locked');
@@ -824,9 +971,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const hash = await sha256(userEmail);
                 isAuthorized = (hash === AUTHORIZED_LEAD_HASH);
-            } catch (e) {
-                console.error('Hash verification error:', e);
-            }
+            } catch (e) {}
         }
 
         if (isAuthorized) {
@@ -842,11 +987,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ── Baseline Metrics Render ────────────────────────────────
     function renderBaselineMetrics() {
         const startEl = document.getElementById('metric-start-weight');
         const targetEl = document.getElementById('metric-target-weight');
-
         if (startEl) startEl.textContent = formatWeight(baselineStartWeight);
         if (targetEl) {
             targetEl.textContent = isLbs
@@ -867,7 +1010,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ── Tab Navigation Switching (4 Mobile Focus Modes) ─────────
     const TAB_BUTTONS = {
         workout: document.getElementById('tab-btn-workout'),
         plan:    document.getElementById('tab-btn-plan'),
@@ -906,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
     TAB_BUTTONS.log?.addEventListener('click', () => switchMobileTab('log'));
     TAB_BUTTONS.guide?.addEventListener('click', () => switchMobileTab('guide'));
 
-    // ── Active Workout Screen (Pencil Sketch 2-Pose) ────────────
+    // ── Active Workout Screen (RETRO-FIT LED BOARD) ────────────
     function renderActiveExercise() {
         const dayData = WORKOUT_SPLIT[activeDay];
         if (!dayData) return;
@@ -917,11 +1059,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('active-ex-stepper').textContent = `Exercise ${activeExerciseIndex + 1} of ${dayData.exercises.length}`;
         document.getElementById('active-ex-title').textContent = ex.name;
         document.getElementById('active-ex-volume').textContent = ex.sets;
-        document.getElementById('active-ex-cue-text').textContent = ex.cue;
 
-        // Render Retro Pencil Sketch SVG
-        const canvas = document.getElementById('technical-blueprint-canvas');
-        canvas.innerHTML = PENCIL_SKETCH_SVGS[ex.model] || PENCIL_SKETCH_SVGS.squat;
+        // Render Retro LED Dot Matrix SVG Board
+        const board = document.getElementById('led-board-container');
+        board.innerHTML = LED_MODELS[ex.model] || LED_MODELS.squat;
 
         // Render Set Tracking Pills (44px+ touch targets)
         const pillsContainer = document.getElementById('set-pills-container');
@@ -1117,7 +1258,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctx = canvas.getContext('2d');
         const logs = getLogs();
 
-        // High DPI Canvas Setup
         const rect = canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
         canvas.width = (rect.width || 320) * dpr;
@@ -1128,7 +1268,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const h = rect.height || 220;
         ctx.clearRect(0, 0, w, h);
 
-        // Prepare at least 5 data points (generate baseline if few logs)
         let chartData = logs.slice(0, 7).reverse();
         if (chartData.length < 5) {
             const seed = [
@@ -1145,7 +1284,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const innerW = w - padding.left - padding.right;
         const innerH = h - padding.top - padding.bottom;
 
-        // Draw Retro Grid Lines
         ctx.strokeStyle = '#1e293b';
         ctx.lineWidth = 1;
         for (let i = 0; i <= 4; i++) {
@@ -1159,7 +1297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = chartData.length;
         const getX = (i) => padding.left + (innerW / (n - 1)) * i;
 
-        // 1. Plot Blue Line: Water Intake (0 to 4.0 L)
+        // 1. Blue Line: Water Intake
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
@@ -1171,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         ctx.stroke();
 
-        // 2. Plot Green Line: Steps (0 to 12,000 steps)
+        // 2. Green Line: Steps
         ctx.strokeStyle = '#10b981';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
@@ -1183,7 +1321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         ctx.stroke();
 
-        // 3. Plot Yellow Line: Weight Trend (Normalized ±3kg around baseline)
+        // 3. Yellow Line: Weight Trend
         const minW = baselineStartWeight - 5;
         const maxW = baselineStartWeight + 2;
         ctx.strokeStyle = '#eab308';
@@ -1198,18 +1336,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         ctx.stroke();
 
-        // 4. Plot Points, Dates, and Green Glowing "Workout Done" Dots
+        // 4. Workout Green Dots on X-Axis
         chartData.forEach((d, i) => {
             const x = getX(i);
+            const shortDate = d.date.length > 5 ? d.date.slice(5) : d.date;
 
-            // Date Labels on X Axis
             ctx.fillStyle = '#64748b';
             ctx.font = '10px monospace';
             ctx.textAlign = 'center';
-            const shortDate = d.date.length > 5 ? d.date.slice(5) : d.date;
             ctx.fillText(shortDate, x, h - 12);
 
-            // Yellow Weight Dot
             const wt = d.weightKg || baselineStartWeight;
             const norm = (wt - minW) / (maxW - minW);
             const yW = padding.top + innerH - Math.max(0, Math.min(1, norm)) * innerH;
@@ -1218,7 +1354,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.arc(x, yW, 4, 0, Math.PI * 2);
             ctx.fill();
 
-            // GREEN GLOWING "WORKOUT DONE" DOT ON X-AXIS / BOTTOM
             if (d.workoutDone) {
                 ctx.fillStyle = '#2ecc71';
                 ctx.shadowColor = '#2ecc71';
@@ -1226,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.beginPath();
                 ctx.arc(x, h - 25, 4.5, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.shadowBlur = 0; // reset
+                ctx.shadowBlur = 0;
             }
         });
     }
@@ -1334,12 +1469,6 @@ document.addEventListener('DOMContentLoaded', () => {
         saveAppState();
         updateUnitUI();
     });
-
-    // ── Modal Handlers ──────────────────────────────────────────
-    const customModal = document.getElementById('custom-plan-modal');
-    document.getElementById('btn-open-custom-modal')?.addEventListener('click', () => customModal?.classList.remove('hidden'));
-    document.getElementById('btn-close-custom-modal')?.addEventListener('click', () => customModal?.classList.add('hidden'));
-    document.getElementById('btn-modal-dismiss')?.addEventListener('click', () => customModal?.classList.add('hidden'));
 
     // ── Initialization ──────────────────────────────────────────
     loadAppState();

@@ -1330,13 +1330,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function checkAccessGate() {
-        const user = window.MrMaheshAuth?.getUser();
+        let user = window.MrMaheshAuth?.getUser();
+
+        // Resilient fallback: read active Supabase / local session from storage if async init is resolving
+        if (!user) {
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && ((key.startsWith('sb-') && key.endsWith('-auth-token')) || key === 'mrmahesh_user_session')) {
+                        const raw = localStorage.getItem(key);
+                        if (raw) {
+                            const val = JSON.parse(raw);
+                            if (val?.user?.email) user = val.user;
+                            else if (val?.email) user = val;
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+
+        const userEmail = (user?.email || '').trim().toLowerCase();
+        let isAuthorized = false;
+        if (userEmail) {
+            try {
+                const hash = await sha256(userEmail);
+                isAuthorized = (hash === AUTHORIZED_LEAD_HASH);
+            } catch (e) {}
+        }
+
         const gateLocked = document.getElementById('access-gate-locked');
         const gateUnlocked = document.getElementById('access-gate-unlocked');
         const gateEmailLabel = document.getElementById('gate-user-email');
-
-        // Grant immediate full access to authenticated sessions
-        const isAuthorized = !!user;
 
         if (isAuthorized) {
             gateLocked?.classList.add('hidden');
@@ -1345,8 +1369,10 @@ document.addEventListener('DOMContentLoaded', () => {
             gateUnlocked?.classList.add('hidden');
             gateLocked?.classList.remove('hidden');
             if (gateEmailLabel) {
-                gateEmailLabel.textContent = 'Guest (Sign in to unlock)';
-                gateEmailLabel.className = 'text-yellow-400 font-bold';
+                gateEmailLabel.textContent = user 
+                    ? 'Account Signed In (Unauthorized Lead)' 
+                    : 'Guest (Not Signed In)';
+                gateEmailLabel.className = user ? 'text-red-400 font-bold' : 'text-gray-400';
             }
         }
     }
@@ -1861,5 +1887,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.MrMaheshAuth) {
         window.MrMaheshAuth.onAuthStateChange(() => checkAccessGate());
     }
+    [50, 150, 300, 600, 1200, 2500].forEach(ms => setTimeout(checkAccessGate, ms));
 });
 </script>

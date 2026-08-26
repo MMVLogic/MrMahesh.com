@@ -1918,10 +1918,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    checkAccessGate();
-    if (window.MrMaheshAuth) {
-        window.MrMaheshAuth.onAuthStateChange(() => checkAccessGate());
+    // ── Auth Gate: wait for MrMaheshAuth to finish its async init ──
+    // auth.js calls MrMaheshAuth.init() on DOMContentLoaded — this is async
+    // (it awaits supabase.auth.getSession()). We must not read getUser() until
+    // that promise resolves, otherwise we always see null and stay locked out.
+    function waitForAuth(callback) {
+        if (window.MrMaheshAuth && window.MrMaheshAuth.isReady()) {
+            callback();
+        } else {
+            setTimeout(() => waitForAuth(callback), 50);
+        }
     }
-    [50, 150, 300, 600, 1200, 2500].forEach(ms => setTimeout(checkAccessGate, ms));
+
+    waitForAuth(() => {
+        checkAccessGate();
+        if (window.MrMaheshAuth) {
+            window.MrMaheshAuth.onAuthStateChange(() => checkAccessGate());
+        }
+    });
 });
 </script>

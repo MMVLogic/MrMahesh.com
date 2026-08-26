@@ -144,23 +144,23 @@ permalink: /apps/openfit-protocol/
             <div class="bg-[#1a202c] p-4 sm:p-5 rounded-2xl border-2 border-yellow-500/80 shadow-xl space-y-4">
                 
                 <!-- Active Day & Exercise Header -->
-                <div class="flex justify-between items-start gap-2 border-b border-gray-800 pb-3">
-                    <div class="space-y-0.5">
+                <div class="space-y-1.5 border-b border-gray-800 pb-3">
+                    <div class="flex justify-between items-center gap-2">
                         <div class="flex items-center gap-2">
                             <span id="active-day-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 uppercase">Day 1</span>
                             <span id="active-ex-stepper" class="text-xs text-gray-400 font-mono">Exercise 1 of 6</span>
                         </div>
-                        <h2 id="active-ex-title" class="text-lg font-bold text-gray-100 font-mono">
-                            Dumbbell Box Squat
-                        </h2>
+                        <!-- Rest Timer Pill -->
+                        <div class="flex items-center gap-1.5 bg-[#111827] px-2.5 py-1.5 rounded-xl border border-gray-700 font-mono text-xs shrink-0">
+                            <span class="text-gray-400 text-[10px]">⏱️</span>
+                            <span id="rest-timer-display" class="text-sm font-bold text-green-400 min-w-[42px] text-right">01:30</span>
+                            <button id="btn-timer-toggle" class="ml-1 px-2 py-0.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 text-[10px] font-bold rounded">Start</button>
+                            <button id="btn-timer-reset" class="px-1.5 py-0.5 bg-gray-800 hover:bg-gray-700 text-gray-400 text-[10px] rounded">↺</button>
+                        </div>
                     </div>
-                    <!-- Rest Timer Pill -->
-                    <div class="flex items-center gap-1.5 bg-[#111827] px-2.5 py-1.5 rounded-xl border border-gray-700 font-mono text-xs">
-                        <span class="text-gray-400 text-[10px]">⏱️</span>
-                        <span id="rest-timer-display" class="text-sm font-bold text-green-400 min-w-[42px] text-right">01:30</span>
-                        <button id="btn-timer-toggle" class="ml-1 px-2 py-0.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 text-[10px] font-bold rounded">Start</button>
-                        <button id="btn-timer-reset" class="px-1.5 py-0.5 bg-gray-800 hover:bg-gray-700 text-gray-400 text-[10px] rounded">↺</button>
-                    </div>
+                    <h2 id="active-ex-title" class="text-lg md:text-xl font-bold text-gray-100 font-mono">
+                        Dumbbell Box Squat
+                    </h2>
                 </div>
 
                 <!-- ═══════════════════════════════════════════════════════ -->

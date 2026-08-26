@@ -444,126 +444,92 @@ document.addEventListener('DOMContentLoaded', () => {
                 <rect width="520" height="280" class="led-board-bg"/>
                 ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- LEFT INFO TELEMETRY (RETRO LED TYPOGRAPHY) -->
-                <g class="led-on">
-                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
-                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
-                    
-                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: BASELINE</text>
-                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
-                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DUMBBELL BOX SQUAT</text>
-                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 10–12</text>
-                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
-
-                    <!-- Glowing LED Dumbbell Icon (Bottom Left) -->
-                    <g transform="translate(25, 222)">
-                        <circle cx="5" cy="12" r="3.5" class="led-on"/>
-                        <circle cx="5" cy="18" r="3.5" class="led-on"/>
-                        <circle cx="5" cy="24" r="3.5" class="led-on"/>
-                        <circle cx="10" cy="18" r="3.5" class="led-on"/>
-                        <line x1="12" y1="18" x2="28" y2="18" stroke="#f59e0b" stroke-width="4" stroke-dasharray="2,5" stroke-linecap="round"/>
-                        <circle cx="30" cy="18" r="3.5" class="led-on"/>
-                        <circle cx="35" cy="12" r="3.5" class="led-on"/>
-                        <circle cx="35" cy="18" r="3.5" class="led-on"/>
-                        <circle cx="35" cy="24" r="3.5" class="led-on"/>
-                    </g>
-                </g>
-
                 <!-- CENTER STAGE: SINGLE FRONT-VIEW ANIMATED FIGURE -->
-                <g id="center-animated-figure" transform="translate(45, 0)">
+                <g id="center-animated-figure" transform="translate(0, 0)">
                     
                     <!-- PHASE 1: FRONT VIEW (STANDING TALL SETUP) -->
                     <g class="led-anim-frame-1">
                         <!-- Head Circle of Glowing LEDs -->
-                        <circle cx="265" cy="35" r="3" class="led-on"/>
-                        <circle cx="276" cy="40" r="3" class="led-on"/>
-                        <circle cx="280" cy="51" r="3" class="led-on"/>
-                        <circle cx="276" cy="62" r="3" class="led-on"/>
-                        <circle cx="265" cy="67" r="3" class="led-on"/>
-                        <circle cx="254" cy="62" r="3" class="led-on"/>
-                        <circle cx="250" cy="51" r="3" class="led-on"/>
-                        <circle cx="254" cy="40" r="3" class="led-on"/>
+                        <circle cx="260" cy="35" r="3" class="led-on"/>
+                        <circle cx="271" cy="40" r="3" class="led-on"/>
+                        <circle cx="275" cy="51" r="3" class="led-on"/>
+                        <circle cx="271" cy="62" r="3" class="led-on"/>
+                        <circle cx="260" cy="67" r="3" class="led-on"/>
+                        <circle cx="249" cy="62" r="3" class="led-on"/>
+                        <circle cx="245" cy="51" r="3" class="led-on"/>
+                        <circle cx="249" cy="40" r="3" class="led-on"/>
 
                         <!-- Neck -->
-                        <circle cx="265" cy="74" r="3" class="led-on"/>
+                        <circle cx="260" cy="74" r="3" class="led-on"/>
 
                         <!-- Broad Front Torso (3 Cols x 6 Rows) -->
                         ${[84, 94, 104, 114, 124, 134].map(y => `
-                            <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="270" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
 
                         <!-- Arms Holding Heavy Dumbbell Symmetrically at Chest -->
                         ${[84, 94, 104].map(y => `
-                            <circle cx="243" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="287" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="238" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="282" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
-                        <circle cx="253" cy="104" r="3" class="led-on-gold"/>
-                        <circle cx="265" cy="104" r="4.5" class="led-on-gold"/>
-                        <circle cx="277" cy="104" r="3" class="led-on-gold"/>
+                        <circle cx="248" cy="104" r="3" class="led-on-gold"/>
+                        <circle cx="260" cy="104" r="4.5" class="led-on-gold"/>
+                        <circle cx="272" cy="104" r="3" class="led-on-gold"/>
 
                         <!-- Legs (Standing Symmetrical Vertical Stance) -->
                         ${[146, 158, 170, 182, 194, 206].map(y => `
-                            <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="270" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
-                        <circle cx="250" cy="206" r="3" class="led-on"/>
-                        <circle cx="280" cy="206" r="3" class="led-on"/>
+                        <circle cx="245" cy="206" r="3" class="led-on"/>
+                        <circle cx="275" cy="206" r="3" class="led-on"/>
                     </g>
 
                     <!-- PHASE 2: FRONT VIEW (SQUATTING DOWN INTO SAFE BOX BENCH DEPTH) -->
                     <g class="led-anim-frame-2">
                         <!-- Lowered Head Circle -->
-                        <circle cx="265" cy="65" r="3" class="led-on"/>
-                        <circle cx="276" cy="70" r="3" class="led-on"/>
-                        <circle cx="280" cy="81" r="3" class="led-on"/>
-                        <circle cx="276" cy="92" r="3" class="led-on"/>
-                        <circle cx="265" cy="97" r="3" class="led-on"/>
-                        <circle cx="254" cy="92" r="3" class="led-on"/>
-                        <circle cx="250" cy="81" r="3" class="led-on"/>
-                        <circle cx="254" cy="70" r="3" class="led-on"/>
+                        <circle cx="260" cy="65" r="3" class="led-on"/>
+                        <circle cx="271" cy="70" r="3" class="led-on"/>
+                        <circle cx="275" cy="81" r="3" class="led-on"/>
+                        <circle cx="271" cy="92" r="3" class="led-on"/>
+                        <circle cx="260" cy="97" r="3" class="led-on"/>
+                        <circle cx="249" cy="92" r="3" class="led-on"/>
+                        <circle cx="245" cy="81" r="3" class="led-on"/>
+                        <circle cx="249" cy="70" r="3" class="led-on"/>
 
                         <!-- Neck -->
-                        <circle cx="265" cy="104" r="3" class="led-on"/>
+                        <circle cx="260" cy="104" r="3" class="led-on"/>
 
                         <!-- Lowered Torso -->
                         ${[114, 124, 134, 144].map(y => `
-                            <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="270" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
 
                         <!-- Dumbbell Held at Chest -->
-                        <circle cx="253" cy="124" r="3" class="led-on-gold"/>
-                        <circle cx="265" cy="124" r="4.5" class="led-on-gold"/>
-                        <circle cx="277" cy="124" r="3" class="led-on-gold"/>
+                        <circle cx="248" cy="124" r="3" class="led-on-gold"/>
+                        <circle cx="260" cy="124" r="4.5" class="led-on-gold"/>
+                        <circle cx="272" cy="124" r="3" class="led-on-gold"/>
 
                         <!-- Splayed/Bent Knees (Safe Depth Front Silhouette) -->
-                        <circle cx="242" cy="155" r="3.5" class="led-on-green"/>
-                        <circle cx="288" cy="155" r="3.5" class="led-on-green"/>
-                        <circle cx="236" cy="172" r="3.5" class="led-on-green"/>
-                        <circle cx="294" cy="172" r="3.5" class="led-on-green"/>
-                        <circle cx="242" cy="190" r="3" class="led-on"/>
-                        <circle cx="288" cy="190" r="3" class="led-on"/>
-                        <circle cx="248" cy="206" r="3" class="led-on"/>
-                        <circle cx="282" cy="206" r="3" class="led-on"/>
+                        <circle cx="237" cy="155" r="3.5" class="led-on-green"/>
+                        <circle cx="283" cy="155" r="3.5" class="led-on-green"/>
+                        <circle cx="231" cy="172" r="3.5" class="led-on-green"/>
+                        <circle cx="289" cy="172" r="3.5" class="led-on-green"/>
+                        <circle cx="237" cy="190" r="3" class="led-on"/>
+                        <circle cx="283" cy="190" r="3" class="led-on"/>
+                        <circle cx="243" cy="206" r="3" class="led-on"/>
+                        <circle cx="277" cy="206" r="3" class="led-on"/>
                     </g>
                 </g>
 
-                <!-- BOTTOM RIGHT: REP COUNTER & CODE SNIPPET -->
-                <g>
-                    <!-- Rep Counter 7-Segment Box -->
-                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
-                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle" filter="drop-shadow(0 0 4px #f59e0b)">12</text>
-
-                    <!-- C Code Snippet Box -->
-                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
-                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_squat() {</text>
-                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  for (frame=0; frame&lt;2; f++) {</text>
-                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">    draw_front_loop(f);</text>
-                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}}</text>
-                </g>
+                <!-- SINGLE-LINE METADATA UNDER ANIMATION -->
+                <text x="260" y="255" font-family="'Courier New', monospace" font-size="10.5" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="1">
+                    DAY 2: LOWER & CORE  •  EXERCISE: DUMBBELL BOX SQUAT  •  REPS: 10–12  •  SETS: 3
+                </text>
             </svg>
         `,
         press: `
@@ -571,80 +537,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 <rect width="520" height="280" class="led-board-bg"/>
                 ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- LEFT INFO TELEMETRY -->
-                <g class="led-on">
-                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
-                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
-                    
-                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: CHEST / OHP</text>
-                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
-                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DB OVERHEAD PRESS</text>
-                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 10–12</text>
-                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
-                </g>
-
                 <!-- CENTER STAGE: SINGLE FRONT-VIEW ANIMATED FIGURE -->
-                <g id="center-animated-figure" transform="translate(45, 0)">
+                <g id="center-animated-figure" transform="translate(0, 0)">
                     
-                    <!-- Base Standing Figure -->
-                    <circle cx="265" cy="55" r="3" class="led-on"/>
-                    <circle cx="276" cy="60" r="3" class="led-on"/>
-                    <circle cx="280" cy="71" r="3" class="led-on"/>
-                    <circle cx="276" cy="82" r="3" class="led-on"/>
-                    <circle cx="265" cy="87" r="3" class="led-on"/>
-                    <circle cx="254" cy="82" r="3" class="led-on"/>
-                    <circle cx="250" cy="71" r="3" class="led-on"/>
-                    <circle cx="254" cy="60" r="3" class="led-on"/>
-                    <circle cx="265" cy="94" r="3" class="led-on"/>
+                    <!-- Base Standing Head & Torso -->
+                    <circle cx="260" cy="55" r="3" class="led-on"/>
+                    <circle cx="271" cy="60" r="3" class="led-on"/>
+                    <circle cx="275" cy="71" r="3" class="led-on"/>
+                    <circle cx="271" cy="82" r="3" class="led-on"/>
+                    <circle cx="260" cy="87" r="3" class="led-on"/>
+                    <circle cx="249" cy="82" r="3" class="led-on"/>
+                    <circle cx="245" cy="71" r="3" class="led-on"/>
+                    <circle cx="249" cy="60" r="3" class="led-on"/>
+                    <circle cx="260" cy="94" r="3" class="led-on"/>
 
                     <!-- Torso -->
                     ${[104, 114, 124, 134, 144].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- Legs -->
                     ${[156, 168, 180, 192, 204].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- PHASE 1: ARMS LOWERED TO SHOULDERS (SETUP) -->
                     <g class="led-anim-frame-1">
-                        <circle cx="242" cy="104" r="3" class="led-on"/>
-                        <circle cx="288" cy="104" r="3" class="led-on"/>
-                        <circle cx="236" cy="115" r="3" class="led-on"/>
-                        <circle cx="294" cy="115" r="3" class="led-on"/>
+                        <circle cx="237" cy="104" r="3" class="led-on"/>
+                        <circle cx="283" cy="104" r="3" class="led-on"/>
+                        <circle cx="231" cy="115" r="3" class="led-on"/>
+                        <circle cx="289" cy="115" r="3" class="led-on"/>
                         <!-- Dumbbells at Shoulders -->
-                        <circle cx="236" cy="100" r="4.5" class="led-on-gold"/>
-                        <circle cx="294" cy="100" r="4.5" class="led-on-gold"/>
+                        <circle cx="231" cy="100" r="4.5" class="led-on-gold"/>
+                        <circle cx="289" cy="100" r="4.5" class="led-on-gold"/>
                     </g>
 
                     <!-- PHASE 2: ARMS FULLY PRESSED OVERHEAD (LOCKOUT) -->
                     <g class="led-anim-frame-2">
-                        <circle cx="242" cy="84" r="3" class="led-on-green"/>
-                        <circle cx="288" cy="84" r="3" class="led-on-green"/>
-                        <circle cx="248" cy="65" r="3" class="led-on-green"/>
-                        <circle cx="282" cy="65" r="3" class="led-on-green"/>
-                        <circle cx="255" cy="46" r="3" class="led-on-green"/>
-                        <circle cx="275" cy="46" r="3" class="led-on-green"/>
+                        <circle cx="237" cy="84" r="3" class="led-on-green"/>
+                        <circle cx="283" cy="84" r="3" class="led-on-green"/>
+                        <circle cx="243" cy="65" r="3" class="led-on-green"/>
+                        <circle cx="277" cy="65" r="3" class="led-on-green"/>
+                        <circle cx="250" cy="46" r="3" class="led-on-green"/>
+                        <circle cx="270" cy="46" r="3" class="led-on-green"/>
                         <!-- Dumbbells at Overhead Lockout -->
-                        <circle cx="255" cy="32" r="4.5" class="led-on-gold"/>
-                        <circle cx="275" cy="32" r="4.5" class="led-on-gold"/>
+                        <circle cx="250" cy="32" r="4.5" class="led-on-gold"/>
+                        <circle cx="270" cy="32" r="4.5" class="led-on-gold"/>
                     </g>
                 </g>
 
-                <!-- BOTTOM RIGHT: REP COUNTER & CODE -->
-                <g>
-                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
-                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">10</text>
-                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
-                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_press() {</text>
-                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  press_overhead(LOCKOUT);</text>
-                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  delay(500);</text>
-                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
-                </g>
+                <!-- SINGLE-LINE METADATA UNDER ANIMATION -->
+                <text x="260" y="255" font-family="'Courier New', monospace" font-size="10.5" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="1">
+                    DAY 1: CHEST / OHP  •  EXERCISE: DB OVERHEAD PRESS  •  REPS: 10–12  •  SETS: 3
+                </text>
             </svg>
         `,
         pull: `
@@ -652,80 +600,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 <rect width="520" height="280" class="led-board-bg"/>
                 ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- LEFT INFO TELEMETRY -->
-                <g class="led-on">
-                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
-                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
-                    
-                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: BACK STRENGTH</text>
-                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
-                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">LAT PULLDOWN / ROW</text>
-                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 12</text>
-                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
-                </g>
-
                 <!-- CENTER STAGE: SINGLE FRONT-VIEW ANIMATED FIGURE -->
-                <g id="center-animated-figure" transform="translate(45, 0)">
+                <g id="center-animated-figure" transform="translate(0, 0)">
                     
                     <!-- Head -->
-                    <circle cx="265" cy="55" r="3" class="led-on"/>
-                    <circle cx="276" cy="60" r="3" class="led-on"/>
-                    <circle cx="280" cy="71" r="3" class="led-on"/>
-                    <circle cx="276" cy="82" r="3" class="led-on"/>
-                    <circle cx="265" cy="87" r="3" class="led-on"/>
-                    <circle cx="254" cy="82" r="3" class="led-on"/>
-                    <circle cx="250" cy="71" r="3" class="led-on"/>
-                    <circle cx="254" cy="60" r="3" class="led-on"/>
-                    <circle cx="265" cy="94" r="3" class="led-on"/>
+                    <circle cx="260" cy="55" r="3" class="led-on"/>
+                    <circle cx="271" cy="60" r="3" class="led-on"/>
+                    <circle cx="275" cy="71" r="3" class="led-on"/>
+                    <circle cx="271" cy="82" r="3" class="led-on"/>
+                    <circle cx="260" cy="87" r="3" class="led-on"/>
+                    <circle cx="249" cy="82" r="3" class="led-on"/>
+                    <circle cx="245" cy="71" r="3" class="led-on"/>
+                    <circle cx="249" cy="60" r="3" class="led-on"/>
+                    <circle cx="260" cy="94" r="3" class="led-on"/>
 
                     <!-- Torso -->
                     ${[104, 114, 124, 134, 144].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- Seated Base Legs -->
                     ${[156, 168, 180, 192, 204].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- PHASE 1: ARMS REACHING WIDE TO OVERHEAD BAR -->
                     <g class="led-anim-frame-1">
                         <!-- Wide Lat Bar -->
-                        <line x1="220" y1="35" x2="310" y2="35" stroke="#f59e0b" stroke-width="4"/>
+                        <line x1="215" y1="35" x2="305" y2="35" stroke="#f59e0b" stroke-width="4"/>
                         <!-- Symmetrical Reaching Arms -->
-                        <circle cx="235" cy="45" r="3" class="led-on"/>
-                        <circle cx="295" cy="45" r="3" class="led-on"/>
-                        <circle cx="245" cy="65" r="3" class="led-on"/>
-                        <circle cx="285" cy="65" r="3" class="led-on"/>
-                        <circle cx="252" cy="85" r="3" class="led-on"/>
-                        <circle cx="278" cy="85" r="3" class="led-on"/>
+                        <circle cx="230" cy="45" r="3" class="led-on"/>
+                        <circle cx="290" cy="45" r="3" class="led-on"/>
+                        <circle cx="240" cy="65" r="3" class="led-on"/>
+                        <circle cx="280" cy="65" r="3" class="led-on"/>
+                        <circle cx="247" cy="85" r="3" class="led-on"/>
+                        <circle cx="273" cy="85" r="3" class="led-on"/>
                     </g>
 
                     <!-- PHASE 2: BAR PULLED TO CLAVICLE WITH BACK CONTRACTION -->
                     <g class="led-anim-frame-2">
                         <!-- Lowered Lat Bar -->
-                        <line x1="220" y1="95" x2="310" y2="95" stroke="#fbbf24" stroke-width="4"/>
+                        <line x1="215" y1="95" x2="305" y2="95" stroke="#fbbf24" stroke-width="4"/>
                         <!-- Flared Elbows -->
-                        <circle cx="230" cy="115" r="3.5" class="led-on-green"/>
-                        <circle cx="300" cy="115" r="3.5" class="led-on-green"/>
-                        <circle cx="242" cy="100" r="3" class="led-on-green"/>
-                        <circle cx="288" cy="100" r="3" class="led-on-green"/>
+                        <circle cx="225" cy="115" r="3.5" class="led-on-green"/>
+                        <circle cx="295" cy="115" r="3.5" class="led-on-green"/>
+                        <circle cx="237" cy="100" r="3" class="led-on-green"/>
+                        <circle cx="283" cy="100" r="3" class="led-on-green"/>
                     </g>
                 </g>
 
-                <!-- BOTTOM RIGHT: REP COUNTER & CODE -->
-                <g>
-                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
-                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">12</text>
-                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
-                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_lat_pull() {</text>
-                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  retract_scapula();</text>
-                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  squeeze_lats();</text>
-                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
-                </g>
+                <!-- SINGLE-LINE METADATA UNDER ANIMATION -->
+                <text x="260" y="255" font-family="'Courier New', monospace" font-size="10.5" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="1">
+                    DAY 1: BACK STRENGTH  •  EXERCISE: LAT PULLDOWN / ROW  •  REPS: 12  •  SETS: 3
+                </text>
             </svg>
         `,
         walk: `
@@ -733,83 +663,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 <rect width="520" height="280" class="led-board-bg"/>
                 ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- LEFT INFO TELEMETRY -->
-                <g class="led-on">
-                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
-                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
-                    
-                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: CARDIO FINISHER</text>
-                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
-                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">INCLINE TREADMILL</text>
-                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">INCLINE: 5%</text>
-                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">TIME: 20 MINS</text>
-                </g>
-
                 <!-- CENTER STAGE: SINGLE FRONT-VIEW ANIMATED FIGURE -->
-                <g id="center-animated-figure" transform="translate(45, 0)">
+                <g id="center-animated-figure" transform="translate(0, 0)">
                     
                     <!-- Head & Torso -->
-                    <circle cx="265" cy="45" r="3" class="led-on"/>
-                    <circle cx="276" cy="50" r="3" class="led-on"/>
-                    <circle cx="280" cy="61" r="3" class="led-on"/>
-                    <circle cx="276" cy="72" r="3" class="led-on"/>
-                    <circle cx="265" cy="77" r="3" class="led-on"/>
-                    <circle cx="254" cy="72" r="3" class="led-on"/>
-                    <circle cx="250" cy="61" r="3" class="led-on"/>
-                    <circle cx="254" cy="50" r="3" class="led-on"/>
-                    <circle cx="265" cy="84" r="3" class="led-on"/>
+                    <circle cx="260" cy="45" r="3" class="led-on"/>
+                    <circle cx="271" cy="50" r="3" class="led-on"/>
+                    <circle cx="275" cy="61" r="3" class="led-on"/>
+                    <circle cx="271" cy="72" r="3" class="led-on"/>
+                    <circle cx="260" cy="77" r="3" class="led-on"/>
+                    <circle cx="249" cy="72" r="3" class="led-on"/>
+                    <circle cx="245" cy="61" r="3" class="led-on"/>
+                    <circle cx="249" cy="50" r="3" class="led-on"/>
+                    <circle cx="260" cy="84" r="3" class="led-on"/>
 
                     ${[94, 104, 114, 124, 134].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- PHASE 1: LEFT STRIDE FORWARD -->
                     <g class="led-anim-frame-1">
                         <!-- Left Arm Pump Forward / Right Back -->
-                        <circle cx="242" cy="110" r="3" class="led-on"/>
-                        <circle cx="236" cy="95" r="3" class="led-on"/>
-                        <circle cx="288" cy="120" r="3" class="led-on"/>
-                        <circle cx="294" cy="135" r="3" class="led-on"/>
+                        <circle cx="237" cy="110" r="3" class="led-on"/>
+                        <circle cx="231" cy="95" r="3" class="led-on"/>
+                        <circle cx="283" cy="120" r="3" class="led-on"/>
+                        <circle cx="289" cy="135" r="3" class="led-on"/>
                         <!-- Legs -->
-                        <circle cx="250" cy="150" r="3.5" class="led-on-green"/>
-                        <circle cx="245" cy="168" r="3" class="led-on-green"/>
-                        <circle cx="242" cy="188" r="3" class="led-on"/>
-                        <circle cx="240" cy="205" r="3" class="led-on"/>
-                        <circle cx="278" cy="150" r="3" class="led-on"/>
-                        <circle cx="282" cy="172" r="3" class="led-on"/>
-                        <circle cx="286" cy="195" r="3" class="led-on"/>
+                        <circle cx="245" cy="150" r="3.5" class="led-on-green"/>
+                        <circle cx="240" cy="168" r="3" class="led-on-green"/>
+                        <circle cx="237" cy="188" r="3" class="led-on"/>
+                        <circle cx="235" cy="205" r="3" class="led-on"/>
+                        <circle cx="273" cy="150" r="3" class="led-on"/>
+                        <circle cx="277" cy="172" r="3" class="led-on"/>
+                        <circle cx="281" cy="195" r="3" class="led-on"/>
                     </g>
 
                     <!-- PHASE 2: RIGHT STRIDE FORWARD -->
                     <g class="led-anim-frame-2">
                         <!-- Right Arm Pump Forward / Left Back -->
-                        <circle cx="288" cy="110" r="3" class="led-on"/>
-                        <circle cx="294" cy="95" r="3" class="led-on"/>
-                        <circle cx="242" cy="120" r="3" class="led-on"/>
-                        <circle cx="236" cy="135" r="3" class="led-on"/>
+                        <circle cx="283" cy="110" r="3" class="led-on"/>
+                        <circle cx="289" cy="95" r="3" class="led-on"/>
+                        <circle cx="237" cy="120" r="3" class="led-on"/>
+                        <circle cx="231" cy="135" r="3" class="led-on"/>
                         <!-- Legs -->
-                        <circle cx="280" cy="150" r="3.5" class="led-on-green"/>
-                        <circle cx="285" cy="168" r="3" class="led-on-green"/>
-                        <circle cx="288" cy="188" r="3" class="led-on"/>
-                        <circle cx="290" cy="205" r="3" class="led-on"/>
-                        <circle cx="252" cy="150" r="3" class="led-on"/>
-                        <circle cx="248" cy="172" r="3" class="led-on"/>
-                        <circle cx="244" cy="195" r="3" class="led-on"/>
+                        <circle cx="275" cy="150" r="3.5" class="led-on-green"/>
+                        <circle cx="280" cy="168" r="3" class="led-on-green"/>
+                        <circle cx="283" cy="188" r="3" class="led-on"/>
+                        <circle cx="285" cy="205" r="3" class="led-on"/>
+                        <circle cx="247" cy="150" r="3" class="led-on"/>
+                        <circle cx="243" cy="172" r="3" class="led-on"/>
+                        <circle cx="239" cy="195" r="3" class="led-on"/>
                     </g>
                 </g>
 
-                <!-- BOTTOM RIGHT: TIME & CODE -->
-                <g>
-                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
-                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="24" font-weight="bold" fill="#f59e0b" text-anchor="middle">20m</text>
-                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
-                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_walk() {</text>
-                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  incline_step(5_PERCENT);</text>
-                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  zero_joint_impact();</text>
-                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
-                </g>
+                <!-- SINGLE-LINE METADATA UNDER ANIMATION -->
+                <text x="260" y="255" font-family="'Courier New', monospace" font-size="10.5" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="1">
+                    DAY 1: CARDIO FINISHER  •  EXERCISE: INCLINE TREADMILL  •  INCLINE: 5%  •  TIME: 20 MINS
+                </text>
             </svg>
         `,
         curl: `
@@ -817,79 +729,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 <rect width="520" height="280" class="led-board-bg"/>
                 ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- LEFT INFO TELEMETRY -->
-                <g class="led-on">
-                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
-                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
-                    
-                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 1: ARM ACCESSORY</text>
-                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
-                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DUMBBELL BICEP CURL</text>
-                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 12–15</text>
-                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
-                </g>
-
                 <!-- CENTER STAGE: SINGLE FRONT-VIEW ANIMATED FIGURE -->
-                <g id="center-animated-figure" transform="translate(45, 0)">
+                <g id="center-animated-figure" transform="translate(0, 0)">
                     
                     <!-- Head & Torso -->
-                    <circle cx="265" cy="45" r="3" class="led-on"/>
-                    <circle cx="276" cy="50" r="3" class="led-on"/>
-                    <circle cx="280" cy="61" r="3" class="led-on"/>
-                    <circle cx="276" cy="72" r="3" class="led-on"/>
-                    <circle cx="265" cy="77" r="3" class="led-on"/>
-                    <circle cx="254" cy="72" r="3" class="led-on"/>
-                    <circle cx="250" cy="61" r="3" class="led-on"/>
-                    <circle cx="254" cy="50" r="3" class="led-on"/>
-                    <circle cx="265" cy="84" r="3" class="led-on"/>
+                    <circle cx="260" cy="45" r="3" class="led-on"/>
+                    <circle cx="271" cy="50" r="3" class="led-on"/>
+                    <circle cx="275" cy="61" r="3" class="led-on"/>
+                    <circle cx="271" cy="72" r="3" class="led-on"/>
+                    <circle cx="260" cy="77" r="3" class="led-on"/>
+                    <circle cx="249" cy="72" r="3" class="led-on"/>
+                    <circle cx="245" cy="61" r="3" class="led-on"/>
+                    <circle cx="249" cy="50" r="3" class="led-on"/>
+                    <circle cx="260" cy="84" r="3" class="led-on"/>
 
                     ${[94, 104, 114, 124, 134].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- Legs -->
                     ${[146, 158, 170, 182, 194, 206].map(y => `
-                        <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                        <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                        <circle cx="270" cy="${y}" r="3" class="led-on"/>
                     `).join('')}
 
                     <!-- PHASE 1: ARMS STRAIGHT DOWN AT SIDES -->
                     <g class="led-anim-frame-1">
-                        <circle cx="242" cy="98" r="3" class="led-on"/>
-                        <circle cx="288" cy="98" r="3" class="led-on"/>
-                        <circle cx="240" cy="118" r="3" class="led-on"/>
-                        <circle cx="290" cy="118" r="3" class="led-on"/>
-                        <circle cx="238" cy="138" r="3" class="led-on"/>
-                        <circle cx="292" cy="138" r="3" class="led-on"/>
+                        <circle cx="237" cy="98" r="3" class="led-on"/>
+                        <circle cx="283" cy="98" r="3" class="led-on"/>
+                        <circle cx="235" cy="118" r="3" class="led-on"/>
+                        <circle cx="285" cy="118" r="3" class="led-on"/>
+                        <circle cx="233" cy="138" r="3" class="led-on"/>
+                        <circle cx="287" cy="138" r="3" class="led-on"/>
                         <!-- Dumbbells at Thighs -->
-                        <circle cx="238" cy="148" r="4.5" class="led-on-gold"/>
-                        <circle cx="292" cy="148" r="4.5" class="led-on-gold"/>
+                        <circle cx="233" cy="148" r="4.5" class="led-on-gold"/>
+                        <circle cx="287" cy="148" r="4.5" class="led-on-gold"/>
                     </g>
 
                     <!-- PHASE 2: FOREARMS CURLED UP TO SHOULDERS (BICEP PEAK) -->
                     <g class="led-anim-frame-2">
-                        <circle cx="242" cy="98" r="3" class="led-on"/>
-                        <circle cx="288" cy="98" r="3" class="led-on"/>
-                        <circle cx="236" cy="118" r="3.5" class="led-on-green"/>
-                        <circle cx="294" cy="118" r="3.5" class="led-on-green"/>
+                        <circle cx="237" cy="98" r="3" class="led-on"/>
+                        <circle cx="283" cy="98" r="3" class="led-on"/>
+                        <circle cx="231" cy="118" r="3.5" class="led-on-green"/>
+                        <circle cx="289" cy="118" r="3.5" class="led-on-green"/>
                         <!-- Curled Dumbbells at Chest/Shoulders -->
-                        <circle cx="244" cy="90" r="4.5" class="led-on-gold"/>
-                        <circle cx="286" cy="90" r="4.5" class="led-on-gold"/>
+                        <circle cx="239" cy="90" r="4.5" class="led-on-gold"/>
+                        <circle cx="281" cy="90" r="4.5" class="led-on-gold"/>
                     </g>
                 </g>
 
-                <!-- BOTTOM RIGHT: REPS & CODE -->
-                <g>
-                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
-                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">15</text>
-                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
-                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_curl() {</text>
-                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  flex_biceps(PEAK);</text>
-                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  delay(500);</text>
-                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
-                </g>
+                <!-- SINGLE-LINE METADATA UNDER ANIMATION -->
+                <text x="260" y="255" font-family="'Courier New', monospace" font-size="10.5" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="1">
+                    DAY 1: ARM ACCESSORY  •  EXERCISE: DUMBBELL BICEP CURL  •  REPS: 12–15  •  SETS: 3
+                </text>
             </svg>
         `,
         rdl: `
@@ -897,91 +791,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 <rect width="520" height="280" class="led-board-bg"/>
                 ${generateLedBgGrid(50, 26, 15, 15, 10, 1.8)}
 
-                <!-- LEFT INFO TELEMETRY -->
-                <g class="led-on">
-                    <text x="25" y="42" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">RETRO-FIT</text>
-                    <text x="25" y="65" font-family="'Courier New', monospace" font-size="19" font-weight="900" letter-spacing="2">GUIDE!</text>
-                    
-                    <text x="25" y="105" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#f59e0b">DAY 2: POSTERIOR CHAIN</text>
-                    <text x="25" y="126" font-family="'Courier New', monospace" font-size="11" font-weight="bold">EXERCISE:</text>
-                    <text x="25" y="145" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#fbbf24">DUMBBELL RDL</text>
-                    <text x="25" y="174" font-family="'Courier New', monospace" font-size="11" font-weight="bold">REPS: 10–12</text>
-                    <text x="25" y="196" font-family="'Courier New', monospace" font-size="11" font-weight="bold">SETS: 3</text>
-                </g>
-
                 <!-- CENTER STAGE: SINGLE FRONT-VIEW ANIMATED FIGURE -->
-                <g id="center-animated-figure" transform="translate(45, 0)">
+                <g id="center-animated-figure" transform="translate(0, 0)">
                     
                     <!-- PHASE 1: STANDING TALL SETUP -->
                     <g class="led-anim-frame-1">
-                        <circle cx="265" cy="45" r="3" class="led-on"/>
-                        <circle cx="276" cy="50" r="3" class="led-on"/>
-                        <circle cx="280" cy="61" r="3" class="led-on"/>
-                        <circle cx="276" cy="72" r="3" class="led-on"/>
-                        <circle cx="265" cy="77" r="3" class="led-on"/>
-                        <circle cx="254" cy="72" r="3" class="led-on"/>
-                        <circle cx="250" cy="61" r="3" class="led-on"/>
-                        <circle cx="254" cy="50" r="3" class="led-on"/>
-                        <circle cx="265" cy="84" r="3" class="led-on"/>
+                        <circle cx="260" cy="45" r="3" class="led-on"/>
+                        <circle cx="271" cy="50" r="3" class="led-on"/>
+                        <circle cx="275" cy="61" r="3" class="led-on"/>
+                        <circle cx="271" cy="72" r="3" class="led-on"/>
+                        <circle cx="260" cy="77" r="3" class="led-on"/>
+                        <circle cx="249" cy="72" r="3" class="led-on"/>
+                        <circle cx="245" cy="61" r="3" class="led-on"/>
+                        <circle cx="249" cy="50" r="3" class="led-on"/>
+                        <circle cx="260" cy="84" r="3" class="led-on"/>
 
                         ${[94, 104, 114, 124, 134].map(y => `
-                            <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="270" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
 
                         ${[146, 158, 170, 182, 194, 206].map(y => `
-                            <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="270" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
                         <!-- Dumbbells at Top of Thighs -->
-                        <circle cx="245" cy="135" r="4" class="led-on-gold"/>
-                        <circle cx="285" cy="135" r="4" class="led-on-gold"/>
+                        <circle cx="240" cy="135" r="4" class="led-on-gold"/>
+                        <circle cx="280" cy="135" r="4" class="led-on-gold"/>
                     </g>
 
                     <!-- PHASE 2: HINGING HIPS FORWARD (LOWERING SHINS) -->
                     <g class="led-anim-frame-2">
                         <!-- Lowered Torso Front View -->
-                        <circle cx="265" cy="75" r="3" class="led-on"/>
-                        <circle cx="276" cy="80" r="3" class="led-on"/>
-                        <circle cx="280" cy="91" r="3" class="led-on"/>
-                        <circle cx="276" cy="102" r="3" class="led-on"/>
-                        <circle cx="265" cy="107" r="3" class="led-on"/>
-                        <circle cx="254" cy="102" r="3" class="led-on"/>
-                        <circle cx="250" cy="91" r="3" class="led-on"/>
-                        <circle cx="254" cy="80" r="3" class="led-on"/>
+                        <circle cx="260" cy="75" r="3" class="led-on"/>
+                        <circle cx="271" cy="80" r="3" class="led-on"/>
+                        <circle cx="275" cy="91" r="3" class="led-on"/>
+                        <circle cx="271" cy="102" r="3" class="led-on"/>
+                        <circle cx="260" cy="107" r="3" class="led-on"/>
+                        <circle cx="249" cy="102" r="3" class="led-on"/>
+                        <circle cx="245" cy="91" r="3" class="led-on"/>
+                        <circle cx="249" cy="80" r="3" class="led-on"/>
 
                         ${[118, 128, 138].map(y => `
-                            <circle cx="255" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="265" cy="${y}" r="3" class="led-on"/>
-                            <circle cx="275" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="250" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="260" cy="${y}" r="3" class="led-on"/>
+                            <circle cx="270" cy="${y}" r="3" class="led-on"/>
                         `).join('')}
 
                         <!-- Soft Knee Bend & Loaded Hamstrings -->
-                        <circle cx="250" cy="150" r="3.5" class="led-on-green"/>
-                        <circle cx="280" cy="150" r="3.5" class="led-on-green"/>
-                        <circle cx="255" cy="170" r="3" class="led-on"/>
-                        <circle cx="275" cy="170" r="3" class="led-on"/>
-                        <circle cx="255" cy="190" r="3" class="led-on"/>
-                        <circle cx="275" cy="190" r="3" class="led-on"/>
-                        <circle cx="255" cy="206" r="3" class="led-on"/>
-                        <circle cx="275" cy="206" r="3" class="led-on"/>
+                        <circle cx="245" cy="150" r="3.5" class="led-on-green"/>
+                        <circle cx="275" cy="150" r="3.5" class="led-on-green"/>
+                        <circle cx="250" cy="170" r="3" class="led-on"/>
+                        <circle cx="270" cy="170" r="3" class="led-on"/>
+                        <circle cx="250" cy="190" r="3" class="led-on"/>
+                        <circle cx="270" cy="190" r="3" class="led-on"/>
+                        <circle cx="250" cy="206" r="3" class="led-on"/>
+                        <circle cx="270" cy="206" r="3" class="led-on"/>
                         <!-- Lowered Dumbbells Along Shins -->
-                        <circle cx="245" cy="175" r="4.5" class="led-on-gold"/>
-                        <circle cx="285" cy="175" r="4.5" class="led-on-gold"/>
+                        <circle cx="240" cy="175" r="4.5" class="led-on-gold"/>
+                        <circle cx="280" cy="175" r="4.5" class="led-on-gold"/>
                     </g>
                 </g>
 
-                <!-- BOTTOM RIGHT: REPS & CODE -->
-                <g>
-                    <rect x="455" y="140" width="48" height="52" fill="#0f1115" stroke="#2a2e39" stroke-width="2" rx="4"/>
-                    <text x="479" y="178" font-family="'Courier New', monospace" font-size="28" font-weight="bold" fill="#f59e0b" text-anchor="middle">12</text>
-                    <rect x="355" y="218" width="148" height="48" fill="#0f1115" stroke="#f59e0b" stroke-width="1" rx="4"/>
-                    <text x="362" y="230" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">void animate_rdl() {</text>
-                    <text x="368" y="240" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  hinge_hips(HAMSTRINGS);</text>
-                    <text x="368" y="250" font-family="'Courier New', monospace" font-size="7.5" fill="#f59e0b">  delay(500);</text>
-                    <text x="362" y="260" font-family="'Courier New', monospace" font-size="7.5" fill="#fbbf24">}</text>
-                </g>
+                <!-- SINGLE-LINE METADATA UNDER ANIMATION -->
+                <text x="260" y="255" font-family="'Courier New', monospace" font-size="10.5" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="1">
+                    DAY 2: POSTERIOR CHAIN  •  EXERCISE: DUMBBELL RDL  •  REPS: 10–12  •  SETS: 3
+                </text>
             </svg>
         `
     };

@@ -34,9 +34,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp
           port: 21
-          security: loose
           timeout: 60000
           local-dir: ./_site/
           server-dir: domains/mrmahesh.com/public_html/

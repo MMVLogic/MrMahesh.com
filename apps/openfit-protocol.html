@@ -108,7 +108,7 @@ permalink: /apps/openfit-protocol/
             <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 max-w-sm mx-auto font-mono text-xs text-left space-y-1">
                 <div class="flex justify-between items-center text-gray-400 text-[11px]">
                     <span>Access Tier:</span>
-                    <span class="text-yellow-400 font-bold">Verified Lead Only</span>
+                    <span class="text-yellow-400 font-bold">Authenticated Members</span>
                 </div>
                 <div class="flex justify-between items-center text-gray-400 text-[11px]">
                     <span>Status:</span>
@@ -118,7 +118,7 @@ permalink: /apps/openfit-protocol/
 
             <div class="pt-2">
                 <button onclick="openAuthModal('signin')" class="w-full sm:w-auto px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-md active:scale-95 text-xs">
-                    👤 Login as Protocol Lead
+                    👤 Sign In to Enter Protocol
                 </button>
             </div>
         </div>
@@ -1335,24 +1335,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const gateUnlocked = document.getElementById('access-gate-unlocked');
         const gateEmailLabel = document.getElementById('gate-user-email');
 
-        const userEmail = (user?.email || '').trim().toLowerCase();
-        let isAuthorized = false;
-        if (userEmail) {
-            try {
-                const hash = await sha256(userEmail);
-                isAuthorized = (hash === AUTHORIZED_LEAD_HASH);
-            } catch (e) {}
-        }
+        // Grant immediate full access to authenticated sessions
+        const isAuthorized = !!user;
 
         if (isAuthorized) {
-            gateLocked.classList.add('hidden');
-            gateUnlocked.classList.remove('hidden');
+            gateLocked?.classList.add('hidden');
+            gateUnlocked?.classList.remove('hidden');
         } else {
-            gateUnlocked.classList.add('hidden');
-            gateLocked.classList.remove('hidden');
+            gateUnlocked?.classList.add('hidden');
+            gateLocked?.classList.remove('hidden');
             if (gateEmailLabel) {
-                gateEmailLabel.textContent = user ? 'Account Signed In (Beta Access Required)' : 'Guest (Not Signed In)';
-                gateEmailLabel.className = user ? 'text-yellow-400 font-bold' : 'text-gray-400';
+                gateEmailLabel.textContent = 'Guest (Sign in to unlock)';
+                gateEmailLabel.className = 'text-yellow-400 font-bold';
             }
         }
     }

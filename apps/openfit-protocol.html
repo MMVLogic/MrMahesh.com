@@ -49,6 +49,19 @@ permalink: /apps/openfit-protocol/
 .led-anim-frame-2 {
     animation: led-rep-cycle-2 1.4s infinite steps(1, end);
 }
+@keyframes led-marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+.led-marquee-track {
+    display: inline-flex;
+    white-space: nowrap;
+    width: max-content;
+    animation: led-marquee 28s linear infinite;
+}
+.led-marquee-track:hover {
+    animation-play-state: paused;
+}
 </style>
 
 <div class="flex flex-col space-y-4 max-w-2xl mx-auto pb-12">
@@ -169,6 +182,14 @@ permalink: /apps/openfit-protocol/
                 <div class="rounded-2xl p-1 bg-[#0b0d11] border-2 border-gray-800 shadow-2xl relative overflow-hidden">
                     <div id="led-board-container" class="w-full relative">
                         <!-- Procedural Front-View Animated LED Matrix SVG inserted by JS -->
+                    </div>
+                    
+                    <!-- Edge-to-Edge Scrolling LED Ticker (How-To Form Cue) -->
+                    <div class="border-t border-gray-800 bg-[#08090d] py-2 overflow-hidden relative select-none">
+                        <div class="led-marquee-track text-[11px] sm:text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest">
+                            <span id="ex-ticker-text-1" class="px-3"></span>
+                            <span id="ex-ticker-text-2" class="px-3" aria-hidden="true"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -868,45 +889,45 @@ document.addEventListener('DOMContentLoaded', () => {
             title: "Upper Body Strength & Cardio Finisher",
             shortTag: "Day 1 • Upper + Cardio",
             exercises: [
-                { name: "Dumbbell / Cable Chest Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Keep shoulders retracted against bench. Controlled tempo." },
-                { name: "Lat Pulldown or Cable Seated Row", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Pull with your back, squeeze shoulder blades together." },
-                { name: "Dumbbell Overhead / Incline Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Engage core tightly to prevent hyperextension." },
-                { name: "Dumbbell Bicep Curls (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "curl", cue: "Full stretch, zero body swinging." },
-                { name: "Tricep Rope Pushdowns (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "pull", cue: "Flare rope outward at bottom contraction." },
-                { name: "Incline Treadmill Walk (Cardio)", sets: "15–20 mins @ 3.5–4.5 km/h", totalSets: 1, model: "walk", cue: "Zero knee pounding, maintain steady breathing rate." }
+                { name: "Dumbbell / Cable Chest Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Retract shoulder blades flat against bench. Press dumbbells straight up over mid-chest. Lower smoothly with elbows at 45-degree angle." },
+                { name: "Lat Pulldown or Cable Seated Row", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Grip wide bar with thumbs over. Pull elbows down and back toward your hips. Squeeze back muscles firmly at clavicle level." },
+                { name: "Dumbbell Overhead / Incline Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Start dumbbells at shoulder level. Press straight overhead until arms lock out. Keep ribs pulled down and glutes tight." },
+                { name: "Dumbbell Bicep Curls (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "curl", cue: "Pin elbows tight against ribs. Curl up toward shoulders. Squeeze biceps for 1 second at top. Full controlled extension down." },
+                { name: "Tricep Rope Pushdowns (Superset)", sets: "3 sets × 12–15 reps", totalSets: 3, model: "pull", cue: "Hinge forward slightly. Drive rope straight down and flare ends apart at full lockout. Keep elbows stationary." },
+                { name: "Incline Treadmill Walk (Cardio)", sets: "15–20 mins @ 3.5–4.5 km/h", totalSets: 1, model: "walk", cue: "Set incline to 3–6%. Walk briskly with upright chest. Zero joint impact. Maintain steady nasal breathing." }
             ]
         },
         2: {
             title: "Lower Body & Core Focus",
             shortTag: "Day 2 • Lower & Core",
             exercises: [
-                { name: "Goblet Box Squats to Bench", sets: "3 sets × 10–12 reps", totalSets: 3, model: "squat", cue: "Squatting to a bench protects knee joints and builds glute drive." },
-                { name: "Dumbbell Romanian Deadlifts (RDLs)", sets: "3 sets × 10–12 reps", totalSets: 3, model: "rdl", cue: "Hinge at hips, keep spine neutral to load hamstrings." },
-                { name: "Seated / Standing Calf Raises", sets: "3 sets × 15 reps", totalSets: 3, model: "squat", cue: "Full stretch at bottom, 1-sec hold at peak." },
-                { name: "Leg Extensions or Machine Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "squat", cue: "Controlled eccentric lowering." },
-                { name: "Plank Holds (or Pallof Press)", sets: "3 sets × 20–40s", totalSets: 3, model: "pull", cue: "Brace abdominal wall tightly without hip sagging." },
-                { name: "Stationary Bike (Cardio Finisher)", sets: "15 mins @ Moderate Pace", totalSets: 1, model: "walk", cue: "Smooth RPM cadence without knee stress." }
+                { name: "Goblet Box Squats to Bench", sets: "3 sets × 10–12 reps", totalSets: 3, model: "squat", cue: "Hold dumbbell tight against chest. Push hips back and descend until touching the box bench. Keep knees wide over toes." },
+                { name: "Dumbbell Romanian Deadlifts (RDLs)", sets: "3 sets × 10–12 reps", totalSets: 3, model: "rdl", cue: "Soft knee bend with hip-width feet. Push hips back while sliding dumbbells down shins. Squeeze glutes to stand tall." },
+                { name: "Seated / Standing Calf Raises", sets: "3 sets × 15 reps", totalSets: 3, model: "squat", cue: "Lower heels below step for full calf stretch. Press through balls of feet to maximum peak contraction. Hold 1 sec." },
+                { name: "Leg Extensions or Machine Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "squat", cue: "Adjust pad against ankles. Extend legs smoothly. 2-second controlled lowering cadence." },
+                { name: "Plank Holds (or Pallof Press)", sets: "3 sets × 20–40s", totalSets: 3, model: "pull", cue: "Brace abdominal wall like preparing for a punch. Keep neutral spine without lower back sagging." },
+                { name: "Stationary Bike (Cardio Finisher)", sets: "15 mins @ Moderate Pace", totalSets: 1, model: "walk", cue: "Maintain smooth 75–85 RPM cadence. Zero knee torque or high pounding." }
             ]
         },
         3: {
             title: "Active Recovery & Joint Mobility",
             shortTag: "Day 3 • Active Recovery",
             exercises: [
-                { name: "Outdoor Brisk Walk or Elliptical", sets: "30–45 mins continuous", totalSets: 1, model: "walk", cue: "Gentle aerobic blood flow without joint strain." },
-                { name: "Cat-Cow & Spine Rotations", sets: "3 sets × 10 cycles", totalSets: 3, model: "rdl", cue: "Sync movement with deep diaphragm breathing." },
-                { name: "Standing Hamstring & Quad Stretch", sets: "3 sets × 30s / leg", totalSets: 3, model: "pull", cue: "Gentle static stretch, do not bounce." }
+                { name: "Outdoor Brisk Walk or Elliptical", sets: "30–45 mins continuous", totalSets: 1, model: "walk", cue: "Gentle aerobic blood flow without joint strain. Relax shoulders and maintain conversational pace." },
+                { name: "Cat-Cow & Spine Rotations", sets: "3 sets × 10 cycles", totalSets: 3, model: "rdl", cue: "Inhale arching spine upward, exhale tucking chin and pelvis. Gentle spinal mobilization." },
+                { name: "Standing Hamstring & Quad Stretch", sets: "3 sets × 30s / leg", totalSets: 3, model: "pull", cue: "Gentle static stretch. Hold steady without bouncing. Breathe deeply into tight tissues." }
             ]
         },
         4: {
             title: "Full Body Push / Pull Strength",
             shortTag: "Day 4 • Push / Pull",
             exercises: [
-                { name: "Cable Standing Rows", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Stand athletic, pull elbows straight back." },
-                { name: "Dumbbell Incline Bench Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "30-degree bench angle targets upper chest." },
-                { name: "Dumbbell Lateral Raises (Shoulders)", sets: "3 sets × 15 reps", totalSets: 3, model: "curl", cue: "Lead with elbows, light controlled weight." },
-                { name: "Dumbbell Hammer Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "curl", cue: "Neutral grip builds forearm and bicep stability." },
-                { name: "Overhead Dumbbell Tricep Extension", sets: "3 sets × 12 reps", totalSets: 3, model: "press", cue: "Keep elbows tucked in close." },
-                { name: "Elliptical Cardio Finisher", sets: "20 mins @ Moderate", totalSets: 1, model: "walk", cue: "Zero-impact cardiovascular conditioning." }
+                { name: "Cable Standing Rows", sets: "3 sets × 12 reps", totalSets: 3, model: "pull", cue: "Stand athletic with knees soft. Pull handles toward belly button driving elbows back. Squeeze shoulder blades." },
+                { name: "Dumbbell Incline Bench Press", sets: "3 sets × 10–12 reps", totalSets: 3, model: "press", cue: "Set bench at 30-degree incline. Press dumbbells in gentle upward arc. Lower with 2-second controlled tempo." },
+                { name: "Dumbbell Lateral Raises (Shoulders)", sets: "3 sets × 15 reps", totalSets: 3, model: "curl", cue: "Slight forward torso lean. Raise dumbbells outward leading with elbows until parallel with floor. No body swinging." },
+                { name: "Dumbbell Hammer Curls", sets: "3 sets × 12 reps", totalSets: 3, model: "curl", cue: "Keep neutral palms-facing grip. Curl up towards shoulders focusing on forearm and brachialis contraction." },
+                { name: "Overhead Dumbbell Tricep Extension", sets: "3 sets × 12 reps", totalSets: 3, model: "press", cue: "Hold single dumbbell overhead with both hands. Lower behind head bending elbows. Press to full extension." },
+                { name: "Elliptical Cardio Finisher", sets: "20 mins @ Moderate", totalSets: 1, model: "walk", cue: "Zero-impact cardiovascular conditioning. Maintain steady heart rate between 110–130 BPM." }
             ]
         },
         5: {
@@ -1109,6 +1130,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Front-View Looping LED Dot Matrix SVG Board
         const board = document.getElementById('led-board-container');
         board.innerHTML = LED_MODELS[ex.model] || LED_MODELS.squat;
+
+        // Populate Edge-to-Edge Scrolling LED Ticker (How-To Execution Guide)
+        const tickerStr = `⚡ HOW TO PERFORM: ${ex.cue.toUpperCase()} • TARGET: ${ex.sets.toUpperCase()} • JOINT SAFETY: CONTROLLED TEMPO & ZERO HIGH IMPACT • `;
+        const ticker1 = document.getElementById('ex-ticker-text-1');
+        const ticker2 = document.getElementById('ex-ticker-text-2');
+        if (ticker1 && ticker2) {
+            ticker1.textContent = tickerStr;
+            ticker2.textContent = tickerStr;
+        }
 
         // Render Set Tracking Pills (44px+ touch targets)
         const pillsContainer = document.getElementById('set-pills-container');

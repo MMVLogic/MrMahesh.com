@@ -137,6 +137,8 @@
         if (isAuthorized) {
             gateLocked?.classList.add('hidden');
             gateUnlocked?.classList.remove('hidden');
+            renderActiveExercise();
+            renderMultiMetricGraph();
         } else {
             gateUnlocked?.classList.add('hidden');
             gateLocked?.classList.remove('hidden');
@@ -499,8 +501,8 @@
         });
     }
 
-    // ── DOM Initialization ───────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
+    // ── DOM Initialization Runner ────────────────────────────────
+    function startApp() {
         initTabElements();
         loadAppState();
         updateUnitUI();
@@ -699,6 +701,12 @@
         });
 
         [50, 150, 300, 600, 1200, 2500].forEach(ms => setTimeout(checkAccessGate, ms));
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startApp);
+    } else {
+        startApp();
+    }
 
 })();

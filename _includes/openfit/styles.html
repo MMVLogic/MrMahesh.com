@@ -1,0 +1,71 @@
+<style>
+/* ── OpenFit Protocol: Retro LED Dot-Matrix & App Styles ───────────── */
+
+@keyframes led-rep-cycle-1 {
+    0%, 45% { opacity: 1; visibility: visible; }
+    50%, 95% { opacity: 0; visibility: hidden; }
+    100% { opacity: 1; visibility: visible; }
+}
+
+@keyframes led-rep-cycle-2 {
+    0%, 45% { opacity: 0; visibility: hidden; }
+    50%, 95% { opacity: 1; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+.led-on {
+    fill: #f59e0b;
+    filter: drop-shadow(0 0 3.5px #f59e0b);
+}
+
+.led-on-gold {
+    fill: #fbbf24;
+    filter: drop-shadow(0 0 4.5px #fbbf24);
+}
+
+.led-on-green {
+    fill: #22c55e;
+    filter: drop-shadow(0 0 4px #22c55e);
+}
+
+.led-on-cyan {
+    fill: #38bdf8;
+    filter: drop-shadow(0 0 4px #38bdf8);
+}
+
+.led-off {
+    fill: #242830;
+    opacity: 0.5;
+}
+
+.led-board-bg {
+    fill: #12141a;
+    stroke: #2b303c;
+    stroke-width: 3;
+    rx: 14;
+}
+
+.led-anim-frame-1 {
+    animation: led-rep-cycle-1 1.4s infinite steps(1, end);
+}
+
+.led-anim-frame-2 {
+    animation: led-rep-cycle-2 1.4s infinite steps(1, end);
+}
+
+@keyframes led-marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.led-marquee-track {
+    display: inline-flex;
+    white-space: nowrap;
+    width: max-content;
+    animation: led-marquee 28s linear infinite;
+}
+
+.led-marquee-track:hover {
+    animation-play-state: paused;
+}
+</style>

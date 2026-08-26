@@ -1,20 +1,30 @@
 /* ── OpenFit Protocol: Retro LED Dot-Matrix & App Styles ───────────── */
 
 @keyframes led-rep-cycle-1 {
-    0%, 45% { opacity: 1; visibility: visible; }
-    50%, 95% { opacity: 0; visibility: hidden; }
-    100% { opacity: 1; visibility: visible; }
+    0%, 49.9% {
+        opacity: 1;
+        display: inline;
+    }
+    50%, 100% {
+        opacity: 0;
+        display: none;
+    }
 }
 
 @keyframes led-rep-cycle-2 {
-    0%, 45% { opacity: 0; visibility: hidden; }
-    50%, 95% { opacity: 1; visibility: visible; }
-    100% { opacity: 0; visibility: hidden; }
+    0%, 49.9% {
+        opacity: 0;
+        display: none;
+    }
+    50%, 100% {
+        opacity: 1;
+        display: inline;
+    }
 }
 
 .led-on {
     fill: #f59e0b;
-    filter: drop-shadow(0 0 3.5px #f59e0b);
+    filter: drop-shadow(0 0 3px #f59e0b);
 }
 
 .led-on-gold {
@@ -34,7 +44,7 @@
 
 .led-off {
     fill: #242830;
-    opacity: 0.5;
+    opacity: 0.45;
 }
 
 .led-board-bg {
@@ -45,11 +55,11 @@
 }
 
 .led-anim-frame-1 {
-    animation: led-rep-cycle-1 1.4s infinite steps(1, end);
+    animation: led-rep-cycle-1 1.4s infinite;
 }
 
 .led-anim-frame-2 {
-    animation: led-rep-cycle-2 1.4s infinite steps(1, end);
+    animation: led-rep-cycle-2 1.4s infinite;
 }
 
 @keyframes led-marquee {

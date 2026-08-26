@@ -89,45 +89,35 @@
 
     // ── Access Gate Verification ─────────────────────────────────
     async function checkAccessGate() {
-        let isAuthorized = false;
+        let user = window.MrMaheshAuth?.getUser();
 
-        // 1. Direct persistent lead unlock token check
-        try {
-            if (localStorage.getItem('openfit_lead_auth') === AUTHORIZED_LEAD_HASH) {
-                isAuthorized = true;
-            }
-        } catch (e) {}
-
-        // 2. Auth Session Check (window.MrMaheshAuth or direct storage)
-        if (!isAuthorized) {
-            let user = window.MrMaheshAuth?.getUser();
-
-            if (!user) {
-                try {
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const key = localStorage.key(i);
-                        if (key && ((key.startsWith('sb-') && key.endsWith('-auth-token')) || key === 'mrmahesh_user_session')) {
-                            const raw = localStorage.getItem(key);
-                            if (raw) {
-                                const val = JSON.parse(raw);
-                                if (val?.user?.email) user = val.user;
-                                else if (val?.email) user = val;
-                            }
+        // Direct storage fallback if auth.js is still resolving async network session
+        if (!user) {
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && ((key.startsWith('sb-') && key.endsWith('-auth-token')) || key === 'mrmahesh_user_session')) {
+                        const raw = localStorage.getItem(key);
+                        if (raw) {
+                            const val = JSON.parse(raw);
+                            if (val?.user?.email) user = val.user;
+                            else if (val?.email) user = val;
                         }
                     }
-                } catch (e) {}
-            }
+                }
+            } catch (e) {}
+        }
 
-            const userEmail = (user?.email || '').trim().toLowerCase();
-            if (userEmail) {
-                try {
-                    const hash = await sha256(userEmail);
-                    if (hash === AUTHORIZED_LEAD_HASH) {
-                        isAuthorized = true;
-                        try { localStorage.setItem('openfit_lead_auth', AUTHORIZED_LEAD_HASH); } catch(e) {}
-                    }
-                } catch (e) {}
-            }
+        const userEmail = (user?.email || '').trim().toLowerCase();
+        let isAuthorized = false;
+
+        if (userEmail) {
+            try {
+                const hash = await sha256(userEmail);
+                if (hash === AUTHORIZED_LEAD_HASH) {
+                    isAuthorized = true;
+                }
+            } catch (e) {}
         }
 
         const gateLocked = document.getElementById('access-gate-locked');
@@ -143,32 +133,16 @@
             gateUnlocked?.classList.add('hidden');
             gateLocked?.classList.remove('hidden');
             if (gateEmailLabel) {
-                const user = window.MrMaheshAuth?.getUser();
-                gateEmailLabel.textContent = user 
-                    ? 'Account Signed In (Unauthorized Lead)' 
-                    : 'Guest (Not Signed In)';
-                gateEmailLabel.className = user ? 'text-red-400 font-bold' : 'text-gray-400';
+                if (userEmail) {
+                    gateEmailLabel.textContent = `Signed In: ${userEmail} (Unauthorized)`;
+                    gateEmailLabel.className = 'text-red-400 font-bold';
+                } else {
+                    gateEmailLabel.textContent = 'Guest (Not Signed In)';
+                    gateEmailLabel.className = 'text-gray-400';
+                }
             }
         }
     }
-
-    // Direct Lead Unlock Prompt
-    window.promptLeadAccess = async function() {
-        const input = prompt("🔐 Enter Authorized Protocol Lead Email / Passkey:");
-        if (!input) return;
-        try {
-            const hash = await sha256(input.trim().toLowerCase());
-            if (hash === AUTHORIZED_LEAD_HASH) {
-                localStorage.setItem('openfit_lead_auth', AUTHORIZED_LEAD_HASH);
-                alert("✓ Identity Verified! Access Granted.");
-                checkAccessGate();
-            } else {
-                alert("✗ Access Denied: Unrecognized Lead Signature.");
-            }
-        } catch (err) {
-            alert("Error validating signature: " + err.message);
-        }
-    };
 
     function renderBaselineMetrics() {
         const startEl = document.getElementById('metric-start-weight');

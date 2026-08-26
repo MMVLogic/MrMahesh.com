@@ -108,7 +108,7 @@ permalink: /apps/openfit-protocol/
             <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 max-w-sm mx-auto font-mono text-xs text-left space-y-1">
                 <div class="flex justify-between items-center text-gray-400 text-[11px]">
                     <span>Access Tier:</span>
-                    <span class="text-yellow-400 font-bold">Authenticated Members</span>
+                    <span class="text-yellow-400 font-bold">Authorized Lead Only</span>
                 </div>
                 <div class="flex justify-between items-center text-gray-400 text-[11px]">
                     <span>Status:</span>
@@ -116,9 +116,12 @@ permalink: /apps/openfit-protocol/
                 </div>
             </div>
 
-            <div class="pt-2">
-                <button onclick="openAuthModal('signin')" class="w-full sm:w-auto px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-md active:scale-95 text-xs">
-                    👤 Sign In to Enter Protocol
+            <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+                <button onclick="promptLeadAccess()" class="w-full sm:w-auto px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-md active:scale-95 text-xs flex items-center justify-center gap-1.5">
+                    <span>🔐</span> Direct Lead Unlock
+                </button>
+                <button onclick="openAuthModal('signin')" class="w-full sm:w-auto px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold font-mono rounded-xl transition-all border border-gray-700 active:scale-95 text-xs flex items-center justify-center gap-1.5">
+                    <span>👤</span> Website Sign In
                 </button>
             </div>
         </div>
@@ -1330,32 +1333,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function checkAccessGate() {
-        let user = window.MrMaheshAuth?.getUser();
+        let isAuthorized = false;
 
-        // Resilient fallback: read active Supabase / local session from storage if async init is resolving
-        if (!user) {
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && ((key.startsWith('sb-') && key.endsWith('-auth-token')) || key === 'mrmahesh_user_session')) {
-                        const raw = localStorage.getItem(key);
-                        if (raw) {
-                            const val = JSON.parse(raw);
-                            if (val?.user?.email) user = val.user;
-                            else if (val?.email) user = val;
+        // 1. Direct persistent lead unlock token check
+        try {
+            if (localStorage.getItem('openfit_lead_auth') === AUTHORIZED_LEAD_HASH) {
+                isAuthorized = true;
+            }
+        } catch (e) {}
+
+        // 2. Auth Session Check (window.MrMaheshAuth or direct storage)
+        if (!isAuthorized) {
+            let user = window.MrMaheshAuth?.getUser();
+
+            if (!user) {
+                try {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && ((key.startsWith('sb-') && key.endsWith('-auth-token')) || key === 'mrmahesh_user_session')) {
+                            const raw = localStorage.getItem(key);
+                            if (raw) {
+                                const val = JSON.parse(raw);
+                                if (val?.user?.email) user = val.user;
+                                else if (val?.email) user = val;
+                            }
                         }
                     }
-                }
-            } catch (e) {}
-        }
+                } catch (e) {}
+            }
 
-        const userEmail = (user?.email || '').trim().toLowerCase();
-        let isAuthorized = false;
-        if (userEmail) {
-            try {
-                const hash = await sha256(userEmail);
-                isAuthorized = (hash === AUTHORIZED_LEAD_HASH);
-            } catch (e) {}
+            const userEmail = (user?.email || '').trim().toLowerCase();
+            if (userEmail) {
+                try {
+                    const hash = await sha256(userEmail);
+                    if (hash === AUTHORIZED_LEAD_HASH) {
+                        isAuthorized = true;
+                        try { localStorage.setItem('openfit_lead_auth', AUTHORIZED_LEAD_HASH); } catch(e) {}
+                    }
+                } catch (e) {}
+            }
         }
 
         const gateLocked = document.getElementById('access-gate-locked');
@@ -1369,6 +1385,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gateUnlocked?.classList.add('hidden');
             gateLocked?.classList.remove('hidden');
             if (gateEmailLabel) {
+                const user = window.MrMaheshAuth?.getUser();
                 gateEmailLabel.textContent = user 
                     ? 'Account Signed In (Unauthorized Lead)' 
                     : 'Guest (Not Signed In)';
@@ -1376,6 +1393,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    // Direct Lead Unlock Prompt
+    window.promptLeadAccess = async function() {
+        const input = prompt("🔐 Enter Authorized Protocol Lead Email / Passkey:");
+        if (!input) return;
+        try {
+            const hash = await sha256(input.trim().toLowerCase());
+            if (hash === AUTHORIZED_LEAD_HASH) {
+                localStorage.setItem('openfit_lead_auth', AUTHORIZED_LEAD_HASH);
+                alert("✓ Identity Verified! Access Granted.");
+                checkAccessGate();
+            } else {
+                alert("✗ Access Denied: Unrecognized Lead Signature.");
+            }
+        } catch (err) {
+            alert("Error validating signature: " + err.message);
+        }
+    };
 
     function renderBaselineMetrics() {
         const startEl = document.getElementById('metric-start-weight');

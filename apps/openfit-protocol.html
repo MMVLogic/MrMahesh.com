@@ -1129,7 +1129,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render Front-View Looping LED Dot Matrix SVG Board
         const board = document.getElementById('led-board-container');
-        board.innerHTML = LED_MODELS[ex.model] || LED_MODELS.squat;
+        let svgTemplate = LED_MODELS[ex.model] || LED_MODELS.squat;
+        svgTemplate = svgTemplate.replace(/• EXERCISE: [^•]+ •/, `• EXERCISE: ${ex.name.toUpperCase()} •`);
+        board.innerHTML = svgTemplate;
 
         // Populate Edge-to-Edge Scrolling LED Ticker (How-To Execution Guide)
         const tickerStr = `⚡ HOW TO PERFORM: ${ex.cue.toUpperCase()} • TARGET: ${ex.sets.toUpperCase()} • JOINT SAFETY: CONTROLLED TEMPO & ZERO HIGH IMPACT • `;

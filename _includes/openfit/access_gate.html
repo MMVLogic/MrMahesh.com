@@ -1,0 +1,43 @@
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PRIVATE BETA ACCESS GATE (LOCKED VIEW)                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="access-gate-locked" class="space-y-4">
+    <div class="bg-[#1a202c] p-6 md:p-8 rounded-2xl border-2 border-dashed border-yellow-500/60 text-center space-y-4 shadow-xl">
+        <div class="inline-flex p-3 bg-yellow-500/10 rounded-full border border-yellow-500/30 text-3xl">
+            🚧
+        </div>
+        
+        <div class="space-y-1">
+            <p class="text-[10px] font-bold text-yellow-400 font-mono tracking-widest uppercase">
+                PROTOCOL_STATUS: UNDER_CALIBRATION_
+            </p>
+            <h2 class="text-lg md:text-xl font-bold text-gray-100">
+                OpenFit Protocol is in Private Beta
+            </h2>
+            <p class="text-xs text-gray-300 leading-relaxed max-w-md mx-auto">
+                Baseline biometrics calibration in progress. Access restricted to verified protocol leads.
+            </p>
+        </div>
+
+        <!-- Current User State Indicator -->
+        <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 max-w-sm mx-auto font-mono text-xs text-left space-y-1">
+            <div class="flex justify-between items-center text-gray-400 text-[11px]">
+                <span>Access Tier:</span>
+                <span class="text-yellow-400 font-bold">Authorized Lead Only</span>
+            </div>
+            <div class="flex justify-between items-center text-gray-400 text-[11px]">
+                <span>Status:</span>
+                <span id="gate-user-email" class="text-gray-300">Guest (Not Signed In)</span>
+            </div>
+        </div>
+
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <button onclick="promptLeadAccess()" class="w-full sm:w-auto px-6 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-xl transition-all shadow-md active:scale-95 text-xs flex items-center justify-center gap-1.5">
+                <span>🔐</span> Direct Lead Unlock
+            </button>
+            <button onclick="openAuthModal('signin')" class="w-full sm:w-auto px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold font-mono rounded-xl transition-all border border-gray-700 active:scale-95 text-xs flex items-center justify-center gap-1.5">
+                <span>👤</span> Website Sign In
+            </button>
+        </div>
+    </div>
+</div>

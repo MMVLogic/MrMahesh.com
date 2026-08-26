@@ -1,0 +1,68 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- TAB 1: ACTIVE WORKOUT INTERFACE (FRONT & SIDE VIEW LED BOARD)   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-panel-workout" class="space-y-4">
+    
+    <div class="bg-[#1a202c] p-4 sm:p-5 rounded-2xl border-2 border-yellow-500/80 shadow-xl space-y-4">
+        
+        <!-- Active Day & Exercise Header -->
+        <div class="space-y-1.5 border-b border-gray-800 pb-3">
+            <div class="flex justify-between items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <span id="active-day-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 uppercase">Day 1</span>
+                    <span id="active-ex-stepper" class="text-xs text-gray-400 font-mono">Exercise 1 of 6</span>
+                </div>
+                <!-- Rest Timer Pill -->
+                <div class="flex items-center gap-1.5 bg-[#111827] px-2.5 py-1.5 rounded-xl border border-gray-700 font-mono text-xs shrink-0">
+                    <span class="text-gray-400 text-[10px]">⏱️</span>
+                    <span id="rest-timer-display" class="text-sm font-bold text-green-400 min-w-[42px] text-right">01:30</span>
+                    <button id="btn-timer-toggle" class="ml-1 px-2 py-0.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 text-[10px] font-bold rounded">Start</button>
+                    <button id="btn-timer-reset" class="px-1.5 py-0.5 bg-gray-800 hover:bg-gray-700 text-gray-400 text-[10px] rounded">↺</button>
+                </div>
+            </div>
+            <h2 id="active-ex-title" class="text-lg md:text-xl font-bold text-gray-100 font-mono">
+                Dumbbell Box Squat
+            </h2>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- RETRO-FIT ANIMATED LED DISPLAY BOARD (FRONT + SIDE VIEW)        -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="rounded-2xl p-1 bg-[#0b0d11] border-2 border-gray-800 shadow-2xl relative overflow-hidden">
+            <div id="led-board-container" class="w-full relative">
+                <!-- Procedural Front & Side Animated LED Matrix SVG inserted by JS -->
+            </div>
+            
+            <!-- Edge-to-Edge Scrolling LED Ticker (How-To Form Cue) -->
+            <div class="border-t border-gray-800 bg-[#08090d] py-2 overflow-hidden relative select-none">
+                <div class="led-marquee-track text-[11px] sm:text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest">
+                    <span id="ex-ticker-text-1" class="px-3"></span>
+                    <span id="ex-ticker-text-2" class="px-3" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Set Tracking Pills (44px+ Touch Targets) -->
+        <div class="space-y-2 font-mono">
+            <div class="flex justify-between text-xs font-bold text-gray-300">
+                <span>Interactive Sets</span>
+                <span id="active-ex-volume" class="text-yellow-400 text-[11px]">3 sets × 10–12 reps</span>
+            </div>
+            <div id="set-pills-container" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                <!-- Populated dynamically with large clickable pills -->
+            </div>
+        </div>
+
+        <!-- Thumb-Friendly Navigation Action Bar -->
+        <div class="grid grid-cols-2 gap-3 pt-2">
+            <button id="btn-prev-ex" class="h-11 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold font-mono text-xs rounded-xl transition-all border border-gray-700 active:scale-95 flex items-center justify-center gap-1">
+                &larr; Prev
+            </button>
+            <button id="btn-next-ex" class="h-11 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1">
+                Next Exercise &rarr;
+            </button>
+        </div>
+
+    </div>
+
+</div>

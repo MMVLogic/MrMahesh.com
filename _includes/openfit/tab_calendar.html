@@ -1,0 +1,60 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- TAB 2: CALENDAR & 5-DAY SCHEDULE SELECTOR                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-panel-plan" class="hidden space-y-4">
+    
+    <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-4">
+        
+        <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+            <span class="font-bold text-gray-200 font-mono text-sm flex items-center gap-1.5">
+                <span>📅</span> August 2026 Activity Matrix
+            </span>
+            <div class="flex items-center gap-2 text-[10px] font-mono text-gray-400">
+                <span class="inline-block w-2 h-2 rounded-full bg-green-400 shadow-[0_0_4px_#2ecc71]"></span>
+                <span>Logged</span>
+                <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 ml-1"></span>
+                <span>Today</span>
+            </div>
+        </div>
+
+        <!-- 7x5 Dot Matrix Grid -->
+        <div class="space-y-2">
+            <div class="grid grid-cols-7 text-center font-mono text-[10px] font-bold text-gray-500">
+                <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+            </div>
+            <div id="dot-matrix-grid" class="grid grid-cols-7 gap-y-2 gap-x-1.5 place-items-center">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Day Selector Carousel -->
+        <div class="space-y-2 pt-2 border-t border-gray-800">
+            <span class="text-[10px] font-mono text-gray-400 font-bold uppercase tracking-wider block">
+                Select Split Day:
+            </span>
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 text-[11px] font-mono font-bold">
+                <button class="day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]" data-day="1">Mon<br><span class="text-[9px] font-normal">Upper</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="2">Tue<br><span class="text-[9px] font-normal">Lower</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="3">Wed<br><span class="text-[9px] font-normal">Walk</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="4">Thu<br><span class="text-[9px] font-normal">Push/Pull</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="5">Fri<br><span class="text-[9px] font-normal">Legs</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="6">Sat<br><span class="text-[9px] font-normal">Mobility</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="7">Sun<br><span class="text-[9px] font-normal">Rest</span></button>
+            </div>
+        </div>
+
+        <!-- Selected Day Quick Overview Card -->
+        <div class="p-3.5 bg-[#111827] rounded-xl border border-gray-800 space-y-2 font-mono text-xs">
+            <div class="flex justify-between items-center">
+                <span id="plan-day-tag" class="text-yellow-400 font-bold uppercase text-[10px]">Day 1 • Upper + Cardio</span>
+                <span id="plan-day-ex-count" class="text-gray-400 text-[10px]">6 Exercises</span>
+            </div>
+            <p id="plan-day-title" class="text-sm font-bold text-gray-100">Upper Body Strength + Incline Cardio Finisher</p>
+            <button id="btn-start-selected-workout" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-lg transition-all text-xs active:scale-95 shadow-md">
+                Start This Workout &rarr;
+            </button>
+        </div>
+
+    </div>
+
+</div>

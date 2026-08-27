@@ -493,6 +493,24 @@
     }
 
     // ── Blueprint Customization Controls ─────────────────────────
+    const PRESET_EQUIPMENT_MAP = {
+        zero: ['bodyweight'],
+        home: ['dumbbell', 'bench', 'bodyweight'],
+        condo: ['dumbbell', 'bench', 'cable', 'treadmill', 'bike', 'bodyweight'],
+        commercial: ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight']
+    };
+
+    function determineActivePreset() {
+        const current = (userPrefs.availableEquipment || []).slice().sort();
+        for (const [key, list] of Object.entries(PRESET_EQUIPMENT_MAP)) {
+            const sorted = list.slice().sort();
+            if (current.length === sorted.length && current.every((v, i) => v === sorted[i])) {
+                return key;
+            }
+        }
+        return null;
+    }
+
     function syncBlueprintUI() {
         const equipList = userPrefs.availableEquipment || [];
         const equipIds = ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'];
@@ -502,34 +520,69 @@
         });
         const shieldEl = document.getElementById('pref-shield-joints');
         if (shieldEl) shieldEl.checked = userPrefs.shieldJoints !== false;
+
+        updatePresetButtonsUI(determineActivePreset());
     }
 
-    function initBlueprintControls() {
-        syncBlueprintUI();
+    function updatePresetButtonsUI(activePresetKey) {
+        document.querySelectorAll('.equip-preset-btn').forEach(btn => {
+            const isMatch = btn.dataset.preset === activePresetKey;
+            if (isMatch) {
+                btn.className = 'equip-preset-btn p-2.5 rounded-xl bg-yellow-500/15 border-2 border-yellow-500 text-left transition-all ring-1 ring-yellow-500/40';
+            } else {
+                btn.className = 'equip-preset-btn p-2.5 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all';
+            }
+        });
 
-        const setEquip = (list) => {
-            ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'].forEach(id => {
+        const badge = document.getElementById('active-preset-badge');
+        if (badge) {
+            if (activePresetKey) {
+                badge.textContent = `Active: ${activePresetKey.toUpperCase()}`;
+                badge.className = 'text-[10px] text-yellow-400 font-bold uppercase tracking-wider';
+            } else {
+                badge.textContent = 'Active: Custom Setup';
+                badge.className = 'text-[10px] text-gray-400 font-bold uppercase tracking-wider';
+            }
+        }
+    }
+
+    function renderCalendarDayOverview() {
+        const split = window.OpenFitData?.WORKOUT_SPLIT || {};
+        const dData = split[activeDay] || split[1];
+        if (!dData) return;
+
+        const tag = document.getElementById('plan-day-tag');
+        const count = document.getElementById('plan-day-ex-count');
+        const title = document.getElementById('plan-day-title');
+        const list = document.getElementById('plan-day-exercise-list');
+
+        if (tag) tag.textContent = dData.shortTag;
+        if (count) count.textContent = `${dData.exercises.length} Exercises`;
+        if (title) title.textContent = dData.title;
+
+        if (list) {
+            list.innerHTML = dData.exercises.map((ex, i) => `
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1117] border border-gray-800/80">
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-yellow-500/20 text-yellow-400 font-bold text-[10px] flex items-center justify-center">${i + 1}</span>
+                        <span class="font-bold text-gray-200 text-xs">${ex.name}</span>
+                    </div>
+                    <span class="text-[10px] text-yellow-400/90 font-mono">${ex.sets.split('×')[0] || ex.sets}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    function applyBlueprintSettings(presetKey = null) {
+        if (presetKey && PRESET_EQUIPMENT_MAP[presetKey]) {
+            userPrefs.availableEquipment = [...PRESET_EQUIPMENT_MAP[presetKey]];
+            // Sync checkboxes immediately
+            const equipIds = ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'];
+            equipIds.forEach(id => {
                 const el = document.getElementById(`equip-${id}`);
-                if (el) el.checked = list.includes(id);
+                if (el) el.checked = userPrefs.availableEquipment.includes(id);
             });
-        };
-
-        // Presets
-        document.getElementById('preset-zero')?.addEventListener('click', () => {
-            setEquip(['bodyweight']);
-        });
-        document.getElementById('preset-home')?.addEventListener('click', () => {
-            setEquip(['dumbbell', 'bench', 'bodyweight']);
-        });
-        document.getElementById('preset-condo')?.addEventListener('click', () => {
-            setEquip(['dumbbell', 'bench', 'cable', 'treadmill', 'bike', 'bodyweight']);
-        });
-        document.getElementById('preset-commercial')?.addEventListener('click', () => {
-            setEquip(['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight']);
-        });
-
-        // Generate and Apply Button
-        document.getElementById('btn-generate-workout')?.addEventListener('click', () => {
+        } else {
             const selected = [];
             ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'].forEach(id => {
                 const el = document.getElementById(`equip-${id}`);
@@ -540,42 +593,65 @@
                 const bw = document.getElementById('equip-bodyweight');
                 if (bw) bw.checked = true;
             }
-
-            const shieldEl = document.getElementById('pref-shield-joints');
             userPrefs.availableEquipment = selected;
-            userPrefs.shieldJoints = shieldEl ? shieldEl.checked : true;
-            userPrefs.userWeightKg = baselineStartWeight;
+        }
 
-            try {
-                localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify(userPrefs));
-            } catch (e) {}
+        const shieldEl = document.getElementById('pref-shield-joints');
+        userPrefs.shieldJoints = shieldEl ? shieldEl.checked : true;
+        userPrefs.userWeightKg = baselineStartWeight;
 
-            if (window.OpenFitData?.generateCustomSplit) {
-                window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
-            }
+        try {
+            localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify(userPrefs));
+        } catch (e) {}
 
-            activeExerciseIndex = 0;
-            renderActiveExercise();
+        if (window.OpenFitData?.generateCustomSplit) {
+            window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
+        }
 
-            // Refresh Calendar Tab Display
-            const split = window.OpenFitData?.WORKOUT_SPLIT || {};
-            const dData = split[activeDay] || split[1];
-            if (dData) {
-                const tag = document.getElementById('plan-day-tag');
-                const count = document.getElementById('plan-day-ex-count');
-                const title = document.getElementById('plan-day-title');
-                if (tag) tag.textContent = dData.shortTag;
-                if (count) count.textContent = `${dData.exercises.length} Exercises`;
-                if (title) title.textContent = dData.title;
-            }
+        updatePresetButtonsUI(presetKey || determineActivePreset());
 
-            // Show Toast Notification
-            const toast = document.getElementById('blueprint-status-toast');
-            if (toast) {
-                toast.textContent = `✓ Protocol calibrated! Active routine updated with ${selected.length} equipment types.`;
-                toast.classList.remove('hidden');
-                setTimeout(() => toast.classList.add('hidden'), 4000);
-            }
+        // Live update active exercise on Workout Tab
+        activeExerciseIndex = 0;
+        renderActiveExercise();
+
+        // Live update Calendar Tab
+        renderCalendarDayOverview();
+
+        // Show Toast Notification
+        const toast = document.getElementById('blueprint-status-toast');
+        if (toast) {
+            const name = presetKey ? `${presetKey.toUpperCase()} preset` : 'custom selection';
+            toast.textContent = `✓ Protocol calibrated! Live applied ${name} (${userPrefs.availableEquipment.length} equipment types).`;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+    }
+
+    function initBlueprintControls() {
+        syncBlueprintUI();
+
+        // Preset 1-click buttons: immediately switch and live update!
+        ['zero', 'home', 'condo', 'commercial'].forEach(preset => {
+            document.getElementById(`preset-${preset}`)?.addEventListener('click', () => {
+                applyBlueprintSettings(preset);
+            });
+        });
+
+        // Individual equipment checkboxes: immediately live update!
+        ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'].forEach(id => {
+            document.getElementById(`equip-${id}`)?.addEventListener('change', () => {
+                applyBlueprintSettings();
+            });
+        });
+
+        // Shield joints checkbox: immediately live update!
+        document.getElementById('pref-shield-joints')?.addEventListener('change', () => {
+            applyBlueprintSettings();
+        });
+
+        // Manual Generate and Apply Button
+        document.getElementById('btn-generate-workout')?.addEventListener('click', () => {
+            applyBlueprintSettings();
         });
     }
 
@@ -587,6 +663,7 @@
         updateWaterDisplay();
         initBlueprintControls();
         renderActiveExercise();
+        renderCalendarDayOverview();
         renderDotMatrixGrid();
         renderLogsTable();
 
@@ -629,16 +706,7 @@
                 
                 const d = parseInt(btn.dataset.day, 10);
                 activeDay = d;
-                const split = window.OpenFitData?.WORKOUT_SPLIT || {};
-                const dData = split[d] || split[1];
-                if (dData) {
-                    const tag = document.getElementById('plan-day-tag');
-                    const count = document.getElementById('plan-day-ex-count');
-                    const title = document.getElementById('plan-day-title');
-                    if (tag) tag.textContent = dData.shortTag;
-                    if (count) count.textContent = `${dData.exercises.length} Exercises`;
-                    if (title) title.textContent = dData.title;
-                }
+                renderCalendarDayOverview();
             });
         });
 

@@ -41,21 +41,24 @@
 
         <!-- One-Click Environment Presets -->
         <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-gray-300 block">Quick Environment Presets:</label>
+            <div class="flex justify-between items-center">
+                <label class="text-[11px] font-bold text-gray-300 block">Quick Environment Presets:</label>
+                <span id="active-preset-badge" class="text-[10px] text-yellow-400 font-bold uppercase tracking-wider"></span>
+            </div>
             <div class="grid grid-cols-2 gap-2 text-[11px]">
-                <button type="button" id="preset-zero" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
+                <button type="button" id="preset-zero" data-preset="zero" class="equip-preset-btn p-2.5 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
                     <span class="block text-yellow-400 font-bold">🏠 Zero Equipment</span>
                     <span class="text-[9px] text-gray-400 block">Floor, Wall, Chair / Travel</span>
                 </button>
-                <button type="button" id="preset-home" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
+                <button type="button" id="preset-home" data-preset="home" class="equip-preset-btn p-2.5 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
                     <span class="block text-yellow-400 font-bold">🏋️‍♂️ Home Gym</span>
                     <span class="text-[9px] text-gray-400 block">Dumbbells & Bench</span>
                 </button>
-                <button type="button" id="preset-condo" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
+                <button type="button" id="preset-condo" data-preset="condo" class="equip-preset-btn p-2.5 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
                     <span class="block text-yellow-400 font-bold">🏢 Condo / Hotel</span>
                     <span class="text-[9px] text-gray-400 block">DBs, Cables, Treadmill, Bike</span>
                 </button>
-                <button type="button" id="preset-commercial" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-yellow-500/80 bg-yellow-500/10 text-left transition-all">
+                <button type="button" id="preset-commercial" data-preset="commercial" class="equip-preset-btn p-2.5 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
                     <span class="block text-yellow-400 font-bold">🏢 Commercial Gym</span>
                     <span class="text-[9px] text-gray-400 block">Crunch, GoodLife, Movati (Full Suite)</span>
                 </button>

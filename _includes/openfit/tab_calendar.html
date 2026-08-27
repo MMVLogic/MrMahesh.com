@@ -44,12 +44,18 @@
         </div>
 
         <!-- Selected Day Quick Overview Card -->
-        <div class="p-3.5 bg-[#111827] rounded-xl border border-gray-800 space-y-2 font-mono text-xs">
+        <div class="p-3.5 bg-[#111827] rounded-xl border border-gray-800 space-y-3 font-mono text-xs">
             <div class="flex justify-between items-center">
                 <span id="plan-day-tag" class="text-yellow-400 font-bold uppercase text-[10px]">Day 1 • Upper + Cardio</span>
                 <span id="plan-day-ex-count" class="text-gray-400 text-[10px]">6 Exercises</span>
             </div>
             <p id="plan-day-title" class="text-sm font-bold text-gray-100">Upper Body Strength + Incline Cardio Finisher</p>
+            
+            <!-- Live Exercise Routine List -->
+            <div id="plan-day-exercise-list" class="space-y-1.5 pt-1">
+                <!-- Populated dynamically by JS -->
+            </div>
+
             <button id="btn-start-selected-workout" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-lg transition-all text-xs active:scale-95 shadow-md">
                 Start This Workout &rarr;
             </button>

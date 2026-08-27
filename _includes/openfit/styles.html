@@ -1,26 +1,51 @@
 <style>
 /* ── OpenFit Protocol: Retro LED Dot-Matrix & App Styles ───────────── */
 
+/* 2-Phase Cycle (Legacy fallback) */
 @keyframes led-rep-cycle-1 {
-    0%, 49.9% {
-        opacity: 1;
-        display: inline;
-    }
-    50%, 100% {
-        opacity: 0;
-        display: none;
-    }
+    0%, 49.9% { opacity: 1; display: inline; }
+    50%, 100% { opacity: 0; display: none; }
+}
+@keyframes led-rep-cycle-2 {
+    0%, 49.9% { opacity: 0; display: none; }
+    50%, 100% { opacity: 1; display: inline; }
+}
+.led-anim-frame-1 {
+    animation: led-rep-cycle-1 1.4s infinite;
+}
+.led-anim-frame-2 {
+    animation: led-rep-cycle-2 1.4s infinite;
 }
 
-@keyframes led-rep-cycle-2 {
-    0%, 49.9% {
-        opacity: 0;
-        display: none;
-    }
-    50%, 100% {
-        opacity: 1;
-        display: inline;
-    }
+/* 4-Phase Fluid Arcade Cycle (Setup -> Descent -> Bottom Touch -> Ascent) */
+@keyframes led-cycle-4p-1 {
+    0%, 24.9% { opacity: 1; display: inline; }
+    25%, 100% { opacity: 0; display: none; }
+}
+@keyframes led-cycle-4p-2 {
+    25%, 49.9% { opacity: 1; display: inline; }
+    0%, 24.9%, 50%, 100% { opacity: 0; display: none; }
+}
+@keyframes led-cycle-4p-3 {
+    50%, 74.9% { opacity: 1; display: inline; }
+    0%, 49.9%, 75%, 100% { opacity: 0; display: none; }
+}
+@keyframes led-cycle-4p-4 {
+    75%, 99.9% { opacity: 1; display: inline; }
+    0%, 74.9%, 100% { opacity: 0; display: none; }
+}
+
+.led-frame-4p-1 {
+    animation: led-cycle-4p-1 2.2s infinite;
+}
+.led-frame-4p-2 {
+    animation: led-cycle-4p-2 2.2s infinite;
+}
+.led-frame-4p-3 {
+    animation: led-cycle-4p-3 2.2s infinite;
+}
+.led-frame-4p-4 {
+    animation: led-cycle-4p-4 2.2s infinite;
 }
 
 .led-on {
@@ -53,14 +78,6 @@
     stroke: #2b303c;
     stroke-width: 3;
     rx: 14;
-}
-
-.led-anim-frame-1 {
-    animation: led-rep-cycle-1 1.4s infinite;
-}
-
-.led-anim-frame-2 {
-    animation: led-rep-cycle-2 1.4s infinite;
 }
 
 @keyframes led-marquee {

@@ -23,6 +23,11 @@
     let restTimeRemaining = 90;
     let restTimerRunning = false;
     let completedSets = {};
+    let userPrefs = {
+        availableEquipment: ["machine", "cable", "dumbbell", "bench", "treadmill", "bike", "bodyweight"],
+        shieldJoints: true,
+        userWeightKg: 135
+    };
 
     function loadAppState() {
         try {
@@ -35,6 +40,18 @@
                 if (s.todayWater !== undefined) todayWater = s.todayWater;
             }
         } catch (e) {}
+
+        try {
+            const rawPrefs = localStorage.getItem('mrmahesh_openfit_prefs');
+            if (rawPrefs) {
+                userPrefs = Object.assign(userPrefs, JSON.parse(rawPrefs));
+            }
+        } catch (e) {}
+
+        if (window.OpenFitData?.generateCustomSplit) {
+            userPrefs.userWeightKg = baselineStartWeight;
+            window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
+        }
     }
 
     function saveAppState() {
@@ -475,12 +492,100 @@
         });
     }
 
+    // ── Blueprint Customization Controls ─────────────────────────
+    function syncBlueprintUI() {
+        const equipList = userPrefs.availableEquipment || [];
+        const equipIds = ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'];
+        equipIds.forEach(id => {
+            const el = document.getElementById(`equip-${id}`);
+            if (el) el.checked = equipList.includes(id);
+        });
+        const shieldEl = document.getElementById('pref-shield-joints');
+        if (shieldEl) shieldEl.checked = userPrefs.shieldJoints !== false;
+    }
+
+    function initBlueprintControls() {
+        syncBlueprintUI();
+
+        const setEquip = (list) => {
+            ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'].forEach(id => {
+                const el = document.getElementById(`equip-${id}`);
+                if (el) el.checked = list.includes(id);
+            });
+        };
+
+        // Presets
+        document.getElementById('preset-zero')?.addEventListener('click', () => {
+            setEquip(['bodyweight']);
+        });
+        document.getElementById('preset-home')?.addEventListener('click', () => {
+            setEquip(['dumbbell', 'bench', 'bodyweight']);
+        });
+        document.getElementById('preset-condo')?.addEventListener('click', () => {
+            setEquip(['dumbbell', 'bench', 'cable', 'treadmill', 'bike', 'bodyweight']);
+        });
+        document.getElementById('preset-commercial')?.addEventListener('click', () => {
+            setEquip(['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight']);
+        });
+
+        // Generate and Apply Button
+        document.getElementById('btn-generate-workout')?.addEventListener('click', () => {
+            const selected = [];
+            ['machine', 'cable', 'dumbbell', 'bench', 'treadmill', 'bike', 'barbell', 'bodyweight'].forEach(id => {
+                const el = document.getElementById(`equip-${id}`);
+                if (el && el.checked) selected.push(id);
+            });
+            if (selected.length === 0) {
+                selected.push('bodyweight');
+                const bw = document.getElementById('equip-bodyweight');
+                if (bw) bw.checked = true;
+            }
+
+            const shieldEl = document.getElementById('pref-shield-joints');
+            userPrefs.availableEquipment = selected;
+            userPrefs.shieldJoints = shieldEl ? shieldEl.checked : true;
+            userPrefs.userWeightKg = baselineStartWeight;
+
+            try {
+                localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify(userPrefs));
+            } catch (e) {}
+
+            if (window.OpenFitData?.generateCustomSplit) {
+                window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
+            }
+
+            activeExerciseIndex = 0;
+            renderActiveExercise();
+
+            // Refresh Calendar Tab Display
+            const split = window.OpenFitData?.WORKOUT_SPLIT || {};
+            const dData = split[activeDay] || split[1];
+            if (dData) {
+                const tag = document.getElementById('plan-day-tag');
+                const count = document.getElementById('plan-day-ex-count');
+                const title = document.getElementById('plan-day-title');
+                if (tag) tag.textContent = dData.shortTag;
+                if (count) count.textContent = `${dData.exercises.length} Exercises`;
+                if (title) title.textContent = dData.title;
+            }
+
+            // Show Toast Notification
+            const toast = document.getElementById('blueprint-status-toast');
+            if (toast) {
+                toast.textContent = `✓ Protocol calibrated! Active routine updated with ${selected.length} equipment types.`;
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 4000);
+            }
+        });
+    }
+
     // ── DOM Initialization Runner ────────────────────────────────
     function startApp() {
         initTabElements();
         loadAppState();
         updateUnitUI();
         updateWaterDisplay();
+        initBlueprintControls();
         renderActiveExercise();
         renderDotMatrixGrid();
         renderLogsTable();

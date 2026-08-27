@@ -1,9 +1,9 @@
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- TAB 4: SUSTAINABLE BLUEPRINT & JOINT SAFETY RULES               -->
+<!-- TAB 4: SUSTAINABLE BLUEPRINT & PROTOCOL CALIBRATOR                -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <div id="tab-panel-guide" class="hidden space-y-4">
     
-    <!-- Baseline Card -->
+    <!-- 1. Baseline Card -->
     <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-3 font-mono">
         <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-gray-200">14–18 Month Target Blueprint</span>
@@ -23,7 +23,107 @@
         </div>
     </div>
 
-    <!-- Joint Safety Protocol -->
+    <!-- 2. Personal Protocol Calibrator (Equipment & Machine Customizer) -->
+    <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-yellow-500/60 space-y-4 font-mono">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-[10px] font-bold text-yellow-400 tracking-widest uppercase">
+                    PROTOCOL_ENGINE: DYNAMIC_CALIBRATOR_
+                </p>
+                <h3 class="text-sm md:text-base font-bold text-gray-100 mt-0.5">
+                    ⚙️ Gym Setup & Equipment Customizer
+                </h3>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 text-[10px] border border-yellow-500/30">
+                Live Filter
+            </span>
+        </div>
+
+        <!-- One-Click Environment Presets -->
+        <div class="space-y-1.5">
+            <label class="text-[11px] font-bold text-gray-300 block">Quick Environment Presets:</label>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <button type="button" id="preset-zero" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
+                    <span class="block text-yellow-400 font-bold">🏠 Zero Equipment</span>
+                    <span class="text-[9px] text-gray-400 block">Floor, Wall, Chair / Travel</span>
+                </button>
+                <button type="button" id="preset-home" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
+                    <span class="block text-yellow-400 font-bold">🏋️‍♂️ Home Gym</span>
+                    <span class="text-[9px] text-gray-400 block">Dumbbells & Bench</span>
+                </button>
+                <button type="button" id="preset-condo" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-gray-700 hover:border-yellow-500 text-left transition-all">
+                    <span class="block text-yellow-400 font-bold">🏢 Condo / Hotel</span>
+                    <span class="text-[9px] text-gray-400 block">DBs, Cables, Treadmill, Bike</span>
+                </button>
+                <button type="button" id="preset-commercial" class="equip-preset-btn p-2 rounded-xl bg-[#111827] border border-yellow-500/80 bg-yellow-500/10 text-left transition-all">
+                    <span class="block text-yellow-400 font-bold">🏢 Commercial Gym</span>
+                    <span class="text-[9px] text-gray-400 block">Crunch, GoodLife, Movati (Full Suite)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Detailed Machine & Equipment Checklist -->
+        <div class="space-y-2 pt-1 border-t border-gray-800">
+            <label class="text-[11px] font-bold text-gray-300 block">Available Machines & Tools:</label>
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-200">
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-machine" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Pin Machines</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-cable" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Cable Stack</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-dumbbell" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Dumbbells</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-bench" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Bench / Box</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-treadmill" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Incline Treadmill</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-bike" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Stationary Bike</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-barbell" class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Barbell & Rack</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 rounded-lg bg-[#111827] border border-gray-800 cursor-pointer">
+                    <input type="checkbox" id="equip-bodyweight" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0">
+                    <span>Bodyweight / Mat</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Joint Protection Switch -->
+        <div class="bg-[#111827] p-3 rounded-xl border border-gray-800 space-y-1">
+            <label class="flex items-center justify-between cursor-pointer">
+                <div>
+                    <span class="text-xs font-bold text-gray-200 block">🛡️ Shield Joints & Cartilage</span>
+                    <span class="text-[10px] text-gray-400 block">Restricts exercise list to JIS 1 & 2 (No jumping, deep knee shear)</span>
+                </div>
+                <input type="checkbox" id="pref-shield-joints" checked class="rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0 w-4 h-4">
+            </label>
+        </div>
+
+        <!-- Generator Action Button -->
+        <div class="pt-1 space-y-2">
+            <button type="button" id="btn-generate-workout" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono text-xs rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                <span>⚡</span> Generate & Apply Custom Workout Protocol
+            </button>
+            <p id="blueprint-status-toast" class="text-[10px] text-center text-green-400 font-bold hidden">
+                ✓ Workout routine dynamically calibrated and loaded!
+            </p>
+        </div>
+    </div>
+
+    <!-- 3. Joint Safety Protocol Guidelines -->
     <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-red-500/40 space-y-2.5 font-mono text-xs">
         <p class="font-bold text-red-400 flex items-center gap-1.5">
             <span>🛡️</span> Joint Protection Rules (130kg+)

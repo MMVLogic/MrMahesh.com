@@ -24,7 +24,7 @@
     let restTimerRunning = false;
     let completedSets = {};
     let userPrefs = {
-        availableEquipment: ["machine", "cable", "dumbbell", "bench", "treadmill", "bike", "bodyweight"],
+        availableEquipment: ["machine", "cable", "dumbbell", "bench", "treadmill", "bike", "barbell", "bodyweight"],
         shieldJoints: true,
         userWeightKg: 135
     };
@@ -219,8 +219,15 @@
 
         if (tabKey === 'workout') {
             renderActiveExercise();
+        } else if (tabKey === 'plan') {
+            renderCalendarDayOverview();
+            renderDotMatrixGrid();
         } else if (tabKey === 'log') {
-            setTimeout(renderMultiMetricGraph, 50);
+            renderLogsTable();
+            setTimeout(renderMultiMetricGraph, 60);
+        } else if (tabKey === 'guide') {
+            renderBaselineMetrics();
+            syncBlueprintUI();
         }
     }
 
@@ -413,56 +420,105 @@
             ];
         }
 
-        const padding = { top: 20, right: 25, bottom: 25, left: 35 };
+        const padding = { top: 25, right: 25, bottom: 25, left: 42 };
         const graphWidth = width - padding.left - padding.right;
         const graphHeight = height - padding.top - padding.bottom;
 
-        // Draw grid lines
+        // Calculate min & max for weight
+        const weights = logs.map(l => isLbs ? (l.weight * 2.20462) : l.weight);
+        const minW = Math.floor(Math.min(...weights) - 1.5);
+        const maxW = Math.ceil(Math.max(...weights) + 1.5);
+        const rangeW = Math.max(1, maxW - minW);
+
+        // Draw horizontal grid lines & Y-axis labels
         ctx.strokeStyle = '#1e293b';
         ctx.lineWidth = 1;
-        for (let i = 0; i <= 4; i++) {
-            const y = padding.top + (graphHeight / 4) * i;
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'right';
+
+        const gridSteps = 4;
+        for (let i = 0; i <= gridSteps; i++) {
+            const y = padding.top + (graphHeight / gridSteps) * i;
             ctx.beginPath();
             ctx.moveTo(padding.left, y);
             ctx.lineTo(width - padding.right, y);
             ctx.stroke();
+
+            // Y-axis weight label
+            const val = maxW - (rangeW / gridSteps) * i;
+            ctx.fillText(val.toFixed(0), padding.left - 6, y + 3);
         }
 
-        const weights = logs.map(l => isLbs ? l.weight * 2.20462 : l.weight);
-        const minW = Math.min(...weights) - 2;
-        const maxW = Math.max(...weights) + 2;
-
+        // Map data points
+        const numPoints = Math.max(1, logs.length - 1);
         const points = logs.map((l, i) => {
-            const x = padding.left + (graphWidth / Math.max(1, logs.length - 1)) * i;
-            const w = isLbs ? l.weight * 2.20462 : l.weight;
-            const y = padding.top + graphHeight - ((w - minW) / Math.max(1, maxW - minW)) * graphHeight;
-            return { x, y, log: l };
+            const x = padding.left + (graphWidth / numPoints) * i;
+            const w = isLbs ? (l.weight * 2.20462) : l.weight;
+            const yWeight = padding.top + graphHeight - ((w - minW) / rangeW) * graphHeight;
+            
+            // Steps normalized to 0-12,000 steps
+            const s = l.steps || 0;
+            const ySteps = padding.top + graphHeight - (Math.min(12000, s) / 12000) * graphHeight;
+
+            // Water normalized to 0-4.0 L
+            const wt = l.water || 0;
+            const yWater = padding.top + graphHeight - (Math.min(4.0, wt) / 4.0) * graphHeight;
+
+            return { x, yWeight, ySteps, yWater, log: l };
         });
 
-        // Draw Weight Line (Amber)
+        // 1. Draw Steps Line (Green Dashed)
+        ctx.strokeStyle = 'rgba(34, 197, 94, 0.45)';
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        points.forEach((pt, i) => {
+            if (i === 0) ctx.moveTo(pt.x, pt.ySteps);
+            else ctx.lineTo(pt.x, pt.ySteps);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 2. Draw Water Line (Blue Dotted)
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        points.forEach((pt, i) => {
+            if (i === 0) ctx.moveTo(pt.x, pt.yWater);
+            else ctx.lineTo(pt.x, pt.yWater);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 3. Draw Weight Line (Amber Solid)
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         points.forEach((pt, i) => {
-            if (i === 0) ctx.moveTo(pt.x, pt.y);
-            else ctx.lineTo(pt.x, pt.y);
+            if (i === 0) ctx.moveTo(pt.x, pt.yWeight);
+            else ctx.lineTo(pt.x, pt.yWeight);
         });
         ctx.stroke();
 
-        // Draw Points & Workout Dots
+        // 4. Draw Point Markers & Workout Badges
         points.forEach(pt => {
+            // Weight marker
             ctx.fillStyle = '#f59e0b';
             ctx.beginPath();
-            ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+            ctx.arc(pt.x, pt.yWeight, 3.5, 0, Math.PI * 2);
             ctx.fill();
 
+            // Workout badge at top of column
             if (pt.log.workout) {
                 ctx.fillStyle = '#22c55e';
                 ctx.beginPath();
-                ctx.arc(pt.x, padding.top + 5, 3.5, 0, Math.PI * 2);
+                ctx.arc(pt.x, padding.top - 8, 3.5, 0, Math.PI * 2);
                 ctx.fill();
             }
 
+            // Date label
             ctx.fillStyle = '#64748b';
             ctx.font = '9px monospace';
             ctx.textAlign = 'center';
@@ -476,23 +532,48 @@
         if (!grid) return;
         grid.innerHTML = '';
 
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const todayDate = now.getDate();
+
+        // Update header month title if element exists
+        const monthTitle = document.getElementById('calendar-month-title');
+        if (monthTitle) {
+            monthTitle.textContent = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+        }
+
         const logs = getLogs();
+        const monthStr = String(month + 1).padStart(2, '0');
         const loggedDates = new Set(logs.map(l => l.date));
 
-        for (let d = 1; d <= 31; d++) {
-            const dateStr = `08/${String(d).padStart(2, '0')}`;
+        // Calculate days in month and starting day of week (Monday-based: Mon=0, ..., Sun=6)
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startDayOfWeek = (new Date(year, month, 1).getDay() + 6) % 7;
+
+        // Render empty offset cells for alignment
+        for (let i = 0; i < startDayOfWeek; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'w-7 h-7';
+            grid.appendChild(emptyCell);
+        }
+
+        // Render day cells
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${monthStr}/${String(d).padStart(2, '0')}`;
             const isLogged = loggedDates.has(dateStr);
-            const isToday = (d === 25);
+            const isToday = (d === todayDate);
 
             const dot = document.createElement('div');
             dot.className = `w-7 h-7 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold transition-all ${
                 isLogged
                     ? 'bg-green-500 text-gray-900 shadow-[0_0_6px_rgba(34,197,94,0.4)]'
                     : isToday
-                    ? 'bg-yellow-500 text-gray-900 border border-yellow-300'
+                    ? 'bg-yellow-500 text-gray-900 border border-yellow-300 font-extrabold shadow-[0_0_8px_rgba(234,179,8,0.5)]'
                     : 'bg-[#111827] text-gray-500 border border-gray-800'
             }`;
             dot.textContent = d;
+            dot.title = isLogged ? `${dateStr}: Activity Logged ✓` : isToday ? `${dateStr}: Today` : dateStr;
             grid.appendChild(dot);
         }
     }
@@ -523,7 +604,7 @@
 
         tbody.querySelectorAll('.btn-del-log').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = e.target.dataset.id;
+                const id = e.currentTarget.dataset.id || e.target.dataset.id;
                 saveLogs(getLogs().filter(l => l.id !== id));
                 renderLogsTable();
                 renderMultiMetricGraph();
@@ -590,6 +671,15 @@
         const split = window.OpenFitData?.WORKOUT_SPLIT || {};
         const dData = split[activeDay] || split[1];
         if (!dData) return;
+
+        // Sync day buttons in Calendar Tab
+        document.querySelectorAll('.day-select-btn').forEach(b => {
+            if (parseInt(b.dataset.day, 10) === activeDay) {
+                b.className = 'day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937] shadow-sm';
+            } else {
+                b.className = 'day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400 hover:border-gray-600';
+            }
+        });
 
         const tag = document.getElementById('plan-day-tag');
         const count = document.getElementById('plan-day-ex-count');
@@ -822,10 +912,20 @@
             const weightInput = document.getElementById('log-weight');
             const stepsInput = document.getElementById('log-steps');
             const workoutDone = document.getElementById('log-workout-done');
+            const toast = document.getElementById('log-status-toast');
+
+            const showToast = (msg, isErr = false) => {
+                if (toast) {
+                    toast.textContent = msg;
+                    toast.className = `text-[10px] text-center font-bold font-mono pt-1 ${isErr ? 'text-red-400' : 'text-green-400'}`;
+                    toast.classList.remove('hidden');
+                    setTimeout(() => toast.classList.add('hidden'), 3500);
+                }
+            };
 
             const rawW = parseFloat(weightInput?.value);
             if (isNaN(rawW) || rawW < 30) {
-                alert('Please enter a valid weight.');
+                showToast('⚠️ Please enter a valid weight (minimum 30 kg / 66 lbs).', true);
                 return;
             }
 
@@ -853,7 +953,7 @@
             renderLogsTable();
             renderMultiMetricGraph();
             renderDotMatrixGrid();
-            alert('✓ Telemetry logged and plotted!');
+            showToast('✓ Telemetry logged and plotted!');
         });
 
         // Edit Baseline Button
@@ -862,8 +962,20 @@
             const input = prompt(`Enter starting baseline weight in ${isLbs ? 'lbs' : 'kg'}:`, currentVal);
             if (input !== null && !isNaN(parseFloat(input)) && parseFloat(input) > 30) {
                 baselineStartWeight = isLbs ? parseFloat(input) / 2.20462 : parseFloat(input);
+                userPrefs.userWeightKg = baselineStartWeight;
+
+                try {
+                    localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify(userPrefs));
+                } catch (e) {}
+
+                if (window.OpenFitData?.generateCustomSplit) {
+                    window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
+                }
+
                 saveAppState();
                 renderBaselineMetrics();
+                renderActiveExercise();
+                renderCalendarDayOverview();
                 renderLogsTable();
                 renderMultiMetricGraph();
             }

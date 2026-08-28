@@ -805,8 +805,8 @@
                 shortTag: "Day 3 • Active Recovery",
                 exercises: [
                     cardioEx,
-                    { name: "Cat-Cow & Spine Rotations", sets: "3 sets × 10 cycles", totalSets: 3, model: "rdl", cue: "Gentle spinal mobilization without joint pressure." },
-                    { name: "Standing Hamstring & Hip Stretch", sets: "3 sets × 30s / leg", totalSets: 3, model: "pull", cue: "Hold gentle static stretch. Breathe deeply into tight tissues." }
+                    { name: "Cat-Cow & Spine Rotations", equipment: ["bodyweight"], jointImpact: 1, sets: "3 sets × 10 cycles", totalSets: 3, model: "rdl", cue: "Gentle spinal mobilization without joint pressure." },
+                    { name: "Standing Hamstring & Hip Stretch", equipment: ["bodyweight"], jointImpact: 1, sets: "3 sets × 30s / leg", totalSets: 3, model: "pull", cue: "Hold gentle static stretch. Breathe deeply into tight tissues." }
                 ]
             },
             4: {
@@ -832,7 +832,7 @@
                 title: "Complete Rest & Cellular Recovery",
                 shortTag: "Day 7 • Rest & Recharge",
                 exercises: [
-                    { name: "Full Body Mobility & Light Walk", sets: "20–30 mins easy pace", totalSets: 1, model: "walk", cue: "Low intensity leisurely walk. Focus on hydration and restorative sleep." }
+                    { name: "Full Body Mobility & Light Walk", equipment: ["bodyweight"], jointImpact: 1, sets: "20–30 mins easy pace", totalSets: 1, model: "walk", cue: "Low intensity leisurely walk. Focus on hydration and restorative sleep." }
                 ]
             }
         };

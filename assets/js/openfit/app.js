@@ -217,50 +217,90 @@
             }
         });
 
-        if (tabKey === 'log') {
+        if (tabKey === 'workout') {
+            renderActiveExercise();
+        } else if (tabKey === 'log') {
             setTimeout(renderMultiMetricGraph, 50);
         }
+    }
+
+    function updateWorkoutDayPills() {
+        document.querySelectorAll('.workout-day-pill').forEach(btn => {
+            const d = parseInt(btn.dataset.day, 10);
+            if (d === activeDay) {
+                btn.className = 'workout-day-pill px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold border transition-all shrink-0 bg-yellow-500 text-[#1f2937] border-yellow-500 shadow-sm';
+            } else {
+                btn.className = 'workout-day-pill px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold border transition-all shrink-0 bg-[#111827] text-gray-400 border-gray-800 hover:border-gray-700';
+            }
+        });
     }
 
     // ── Active Exercise Renderer ─────────────────────────────────
     function renderActiveExercise() {
         const split = window.OpenFitData?.WORKOUT_SPLIT || {};
         const dayData = split[activeDay] || split[1];
-        if (!dayData) return;
+        if (!dayData || !dayData.exercises || dayData.exercises.length === 0) return;
+
+        // Clamp index to prevent out-of-bounds errors when changing days
+        if (activeExerciseIndex < 0 || activeExerciseIndex >= dayData.exercises.length) {
+            activeExerciseIndex = 0;
+        }
 
         const ex = dayData.exercises[activeExerciseIndex];
         if (!ex) return;
+
+        updateWorkoutDayPills();
 
         const dayBadge = document.getElementById('active-day-badge');
         const stepper = document.getElementById('active-ex-stepper');
         const title = document.getElementById('active-ex-title');
         const volume = document.getElementById('active-ex-volume');
+        const jisBadge = document.getElementById('active-ex-jis');
+        const musclesEl = document.getElementById('active-ex-muscles');
         const board = document.getElementById('led-board-container');
         const ticker1 = document.getElementById('ex-ticker-text-1');
         const ticker2 = document.getElementById('ex-ticker-text-2');
 
         if (dayBadge) dayBadge.textContent = `Day ${activeDay}`;
         if (stepper) stepper.textContent = `Exercise ${activeExerciseIndex + 1} of ${dayData.exercises.length}`;
-        if (title) title.textContent = ex.name;
-        if (volume) volume.textContent = ex.sets;
+        if (title) title.textContent = ex.name || 'Exercise';
+        if (volume) volume.textContent = ex.sets || '3 sets × 10–12 reps';
 
-        if (ticker1) ticker1.textContent = `• HOW-TO: ${ex.cue.toUpperCase()} •`;
-        if (ticker2) ticker2.textContent = `• HOW-TO: ${ex.cue.toUpperCase()} •`;
+        if (jisBadge) {
+            const jis = ex.jointImpact || 1;
+            jisBadge.textContent = `JIS ${jis} • ${jis <= 2 ? 'Joint Safe' : 'Moderate Stress'}`;
+            jisBadge.className = jis <= 2
+                ? 'px-2 py-0.5 rounded bg-green-500/15 text-green-400 border border-green-500/30 text-[10px] font-mono font-bold'
+                : 'px-2 py-0.5 rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 text-[10px] font-mono font-bold';
+        }
+
+        if (musclesEl) {
+            if (ex.primaryMuscles && ex.primaryMuscles.length > 0) {
+                const targetText = ex.primaryMuscles.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ');
+                musclesEl.textContent = `Targets: ${targetText}`;
+            } else {
+                musclesEl.textContent = '';
+            }
+        }
+
+        const cueText = ex.cue ? `• HOW-TO: ${ex.cue.toUpperCase()} •` : '• MAINTAIN STABLE CORE AND CONTROLLED TEMPO •';
+        if (ticker1) ticker1.textContent = cueText;
+        if (ticker2) ticker2.textContent = cueText;
 
         if (board) {
             const models = window.OpenFitModels?.LED_MODELS || {};
             const svgTemplate = models[ex.model] || models.squat;
             if (svgTemplate) {
-                // Dynamically sync exercise title inside LED banner
+                const safeName = (ex.name || 'EXERCISE').toUpperCase().replace(/&/g, '&amp;');
                 const formattedSvg = svgTemplate.replace(
                     /• EXERCISE: [^•]+ •/,
-                    `• EXERCISE: ${ex.name.toUpperCase()} •`
+                    `• EXERCISE: ${safeName} •`
                 );
                 board.innerHTML = formattedSvg;
             }
         }
 
-        renderSetPills(ex.totalSets);
+        renderSetPills(ex.totalSets || 3);
     }
 
     // ── Interactive Set Pills ────────────────────────────────────
@@ -696,6 +736,26 @@
             renderActiveExercise();
         });
 
+        // Day Selector in Workout Tab
+        document.querySelectorAll('.workout-day-pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const d = parseInt(btn.dataset.day, 10);
+                activeDay = d;
+                activeExerciseIndex = 0;
+                renderActiveExercise();
+                renderCalendarDayOverview();
+
+                // Sync Calendar Tab day buttons
+                document.querySelectorAll('.day-select-btn').forEach(b => {
+                    if (parseInt(b.dataset.day, 10) === d) {
+                        b.className = 'day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]';
+                    } else {
+                        b.className = 'day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400';
+                    }
+                });
+            });
+        });
+
         // Day Selector in Calendar Tab
         document.querySelectorAll('.day-select-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -707,6 +767,7 @@
                 const d = parseInt(btn.dataset.day, 10);
                 activeDay = d;
                 renderCalendarDayOverview();
+                updateWorkoutDayPills();
             });
         });
 

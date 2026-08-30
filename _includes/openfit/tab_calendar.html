@@ -1,30 +1,123 @@
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- TAB 2: CALENDAR & 5-DAY SCHEDULE SELECTOR                       -->
+<!-- TAB 2: CALENDAR, TELEMETRY LOGGING & HISTORICAL SUMMARY        -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<div id="tab-panel-plan" class="hidden space-y-4">
+<div id="tab-panel-plan" class="hidden space-y-4 font-mono">
     
-    <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-4">
+    <div class="bg-[#1a202c] p-4 sm:p-5 rounded-2xl border-2 border-yellow-500/80 shadow-xl space-y-4">
         
-        <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-            <span class="font-bold text-gray-200 font-mono text-sm flex items-center gap-1.5">
-                <span>📅</span> <span id="calendar-month-title">August 2026</span> Activity Matrix
-            </span>
-            <div class="flex items-center gap-2 text-[10px] font-mono text-gray-400">
-                <span class="inline-block w-2 h-2 rounded-full bg-green-400 shadow-[0_0_4px_#2ecc71]"></span>
-                <span>Logged</span>
-                <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 ml-1"></span>
-                <span>Today</span>
+        <!-- Header & Dot Matrix Activity Grid -->
+        <div class="space-y-3">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                <span class="font-bold text-gray-200 text-sm flex items-center gap-1.5">
+                    <span>📅</span> <span id="calendar-month-title">August 2026</span> Activity Matrix
+                </span>
+                <div class="flex items-center gap-2 text-[10px] text-gray-400">
+                    <span class="inline-block w-2 h-2 rounded-full bg-green-400 shadow-[0_0_4px_#2ecc71]"></span>
+                    <span>Logged</span>
+                    <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 ml-1"></span>
+                    <span>Today</span>
+                </div>
+            </div>
+
+            <!-- 7x5 Interactive Dot Matrix Grid -->
+            <div class="space-y-2">
+                <div class="grid grid-cols-7 text-center text-[10px] font-bold text-gray-500">
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                </div>
+                <div id="dot-matrix-grid" class="grid grid-cols-7 gap-y-2 gap-x-1.5 place-items-center">
+                    <!-- Populated by JS -->
+                </div>
             </div>
         </div>
 
-        <!-- 7x5 Dot Matrix Grid -->
-        <div class="space-y-2">
-            <div class="grid grid-cols-7 text-center font-mono text-[10px] font-bold text-gray-500">
-                <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- QUICK METRIC ENTRY (TODAY) CARD                                 -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                <span class="font-bold text-yellow-400 text-xs flex items-center gap-1.5">
+                    <span>⚡</span> Quick Metric Entry (Today)
+                </span>
+                <span id="log-status-toast" class="text-[10px] text-green-400 font-bold hidden">
+                    ✓ Logged!
+                </span>
             </div>
-            <div id="dot-matrix-grid" class="grid grid-cols-7 gap-y-2 gap-x-1.5 place-items-center">
-                <!-- Populated by JS -->
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Morning Weight -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-400 block">
+                        Morning Weight (<span class="unit-label">kg</span>)
+                    </label>
+                    <input type="number" id="log-weight" step="0.1" placeholder="e.g. 134.2" class="w-full bg-[#0d1117] border border-gray-800 rounded-lg p-2 text-yellow-400 font-bold text-xs focus:border-yellow-500 focus:outline-none">
+                </div>
+
+                <!-- Steps -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-400 block">
+                        Steps (Goal: 8,000)
+                    </label>
+                    <input type="number" id="log-steps" placeholder="e.g. 8500" class="w-full bg-[#0d1117] border border-gray-800 rounded-lg p-2 text-green-400 font-bold text-xs focus:border-yellow-500 focus:outline-none">
+                </div>
+
+                <!-- Water Intake -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[10px] font-bold text-gray-400 block">Water Intake</label>
+                        <button type="button" id="btn-reset-water" class="text-[9px] text-gray-500 hover:text-gray-300">↺ Reset</button>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span id="water-intake-display" class="font-bold text-blue-400 text-xs bg-[#0d1117] border border-gray-800 rounded-lg py-2 px-2.5 flex-1 text-center">0.0 / 3.5 L</span>
+                        <button type="button" id="btn-add-water" class="py-2 px-2.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/40 rounded-lg font-bold text-xs active:scale-95 transition-all shrink-0 cursor-pointer">
+                            + 250ml 💧
+                        </button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Submit Button & Workout Checkbox -->
+            <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-800/80">
+                <label class="flex items-center gap-2 text-gray-300 cursor-pointer text-[11px]">
+                    <input type="checkbox" id="log-workout-done" class="rounded bg-gray-800 border-gray-700 text-yellow-500">
+                    <span>Workout Completed Today</span>
+                </label>
+                <button type="button" id="btn-save-log" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold rounded-lg transition-all shadow-md active:scale-95 text-xs cursor-pointer">
+                    + Save Telemetry
+                </button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- SELECTED DATE HISTORICAL TELEMETRY SUMMARY CARD                 -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="calendar-date-summary-card" class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                <span id="summary-card-date-title" class="font-bold text-gray-200 text-xs flex items-center gap-1.5">
+                    <span>📊</span> Historical Summary • <span class="text-yellow-400">Today</span>
+                </span>
+                <span id="summary-card-workout-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/40 uppercase">
+                    Workout Completed
+                </span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
+                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Weight Logged</span>
+                    <span id="summary-card-weight" class="font-bold text-yellow-400 text-xs sm:text-sm">134.2 kg</span>
+                </div>
+                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
+                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Steps Logged</span>
+                    <span id="summary-card-steps" class="font-bold text-green-400 text-xs sm:text-sm">8,500 / 8,000</span>
+                </div>
+                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
+                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Water Intake</span>
+                    <span id="summary-card-water" class="font-bold text-blue-400 text-xs sm:text-sm">3.5 / 3.5 L</span>
+                </div>
+            </div>
+
+            <p id="summary-card-workout-desc" class="text-[11px] text-gray-400 text-center pt-0.5">
+                Day 1 • Upper Body Strength & Cardio Finisher
+            </p>
         </div>
 
         <!-- Day Selector Carousel -->

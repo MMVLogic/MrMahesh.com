@@ -681,144 +681,70 @@
 
     // ── Hydration Display ────────────────────────────────────────
     function updateWaterDisplay() {
-        const el = document.getElementById('water-display');
-        if (el) el.textContent = `${todayWater.toFixed(1)} / 3.5 L`;
+        const el1 = document.getElementById('water-display');
+        const el2 = document.getElementById('water-intake-display');
+        const el3 = document.getElementById('summary-card-water');
+        const text = `${todayWater.toFixed(1)} / 3.5 L`;
+        if (el1) el1.textContent = text;
+        if (el2) el2.textContent = text;
+        if (el3) el3.textContent = text;
     }
 
-    // ── Multi-Metric Canvas Graph ────────────────────────────────
-    function renderMultiMetricGraph() {
-        const canvas = document.getElementById('multi-metric-canvas');
-        if (!canvas) return;
+    // ── Historical Date Telemetry Summary Engine ───────────────────
+    function renderDateTelemetrySummary(targetDateStr, targetDayNum) {
+        const titleEl = document.getElementById('summary-card-date-title');
+        const badgeEl = document.getElementById('summary-card-workout-badge');
+        const weightEl = document.getElementById('summary-card-weight');
+        const stepsEl = document.getElementById('summary-card-steps');
+        const waterEl = document.getElementById('summary-card-water');
+        const descEl = document.getElementById('summary-card-workout-desc');
 
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        
-        if (rect.width === 0 || rect.height === 0) return;
+        if (!titleEl) return;
 
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.scale(dpr, dpr);
+        const now = new Date();
+        const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+        const todayDateStr = `${monthStr}/${String(now.getDate()).padStart(2, '0')}`;
+        const isToday = (!targetDateStr || targetDateStr === todayDateStr);
 
-        const width = rect.width;
-        const height = rect.height;
+        const logs = getLogs();
+        const matchingLog = logs.slice().reverse().find(l => l.date === targetDateStr) || (isToday ? logs.slice().reverse().find(l => l.date === todayDateStr) : null);
 
-        ctx.clearRect(0, 0, width, height);
-
-        let logs = getLogs();
-        if (logs.length === 0) {
-            logs = [
-                { date: '08/01', weight: 135.0, water: 2.5, steps: 6000, workout: true },
-                { date: '08/08', weight: 133.8, water: 3.0, steps: 7500, workout: true },
-                { date: '08/15', weight: 132.5, water: 3.5, steps: 8200, workout: true },
-                { date: '08/22', weight: 131.2, water: 3.5, steps: 9000, workout: true }
-            ];
+        if (titleEl) {
+            titleEl.innerHTML = `<span>📊</span> Historical Summary • <span class="text-yellow-400">${isToday ? 'Today (' + todayDateStr + ')' : targetDateStr}</span>`;
         }
 
-        const padding = { top: 25, right: 25, bottom: 25, left: 42 };
-        const graphWidth = width - padding.left - padding.right;
-        const graphHeight = height - padding.top - padding.bottom;
+        const split = window.OpenFitData?.WORKOUT_SPLIT || {};
+        const dayIdx = targetDayNum || (isToday ? getTodayDayOfWeek() : 1);
+        const dayData = split[dayIdx] || split[1];
 
-        // Calculate min & max for weight
-        const weights = logs.map(l => isLbs ? (l.weight * 2.20462) : l.weight);
-        const minW = Math.floor(Math.min(...weights) - 1.5);
-        const maxW = Math.ceil(Math.max(...weights) + 1.5);
-        const rangeW = Math.max(1, maxW - minW);
-
-        // Draw horizontal grid lines & Y-axis labels
-        ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = 1;
-        ctx.fillStyle = '#64748b';
-        ctx.font = '9px monospace';
-        ctx.textAlign = 'right';
-
-        const gridSteps = 4;
-        for (let i = 0; i <= gridSteps; i++) {
-            const y = padding.top + (graphHeight / gridSteps) * i;
-            ctx.beginPath();
-            ctx.moveTo(padding.left, y);
-            ctx.lineTo(width - padding.right, y);
-            ctx.stroke();
-
-            // Y-axis weight label
-            const val = maxW - (rangeW / gridSteps) * i;
-            ctx.fillText(val.toFixed(0), padding.left - 6, y + 3);
-        }
-
-        // Map data points
-        const numPoints = Math.max(1, logs.length - 1);
-        const points = logs.map((l, i) => {
-            const x = padding.left + (graphWidth / numPoints) * i;
-            const w = isLbs ? (l.weight * 2.20462) : l.weight;
-            const yWeight = padding.top + graphHeight - ((w - minW) / rangeW) * graphHeight;
+        if (matchingLog) {
+            if (weightEl) weightEl.textContent = matchingLog.weight ? formatWeight(matchingLog.weight) : 'Not recorded';
+            if (stepsEl) stepsEl.textContent = matchingLog.steps ? `${matchingLog.steps.toLocaleString()} / 8,000` : 'Not recorded';
+            if (waterEl) waterEl.textContent = matchingLog.water !== undefined ? `${matchingLog.water.toFixed(1)} / 3.5 L` : `${todayWater.toFixed(1)} / 3.5 L`;
             
-            // Steps normalized to 0-12,000 steps
-            const s = l.steps || 0;
-            const ySteps = padding.top + graphHeight - (Math.min(12000, s) / 12000) * graphHeight;
-
-            // Water normalized to 0-4.0 L
-            const wt = l.water || 0;
-            const yWater = padding.top + graphHeight - (Math.min(4.0, wt) / 4.0) * graphHeight;
-
-            return { x, yWeight, ySteps, yWater, log: l };
-        });
-
-        // 1. Draw Steps Line (Green Dashed)
-        ctx.strokeStyle = 'rgba(34, 197, 94, 0.45)';
-        ctx.lineWidth = 1.8;
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        points.forEach((pt, i) => {
-            if (i === 0) ctx.moveTo(pt.x, pt.ySteps);
-            else ctx.lineTo(pt.x, pt.ySteps);
-        });
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // 2. Draw Water Line (Blue Dotted)
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
-        ctx.lineWidth = 1.8;
-        ctx.setLineDash([2, 2]);
-        ctx.beginPath();
-        points.forEach((pt, i) => {
-            if (i === 0) ctx.moveTo(pt.x, pt.yWater);
-            else ctx.lineTo(pt.x, pt.yWater);
-        });
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // 3. Draw Weight Line (Amber Solid)
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        points.forEach((pt, i) => {
-            if (i === 0) ctx.moveTo(pt.x, pt.yWeight);
-            else ctx.lineTo(pt.x, pt.yWeight);
-        });
-        ctx.stroke();
-
-        // 4. Draw Point Markers & Workout Badges
-        points.forEach(pt => {
-            // Weight marker
-            ctx.fillStyle = '#f59e0b';
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.yWeight, 3.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Workout badge at top of column
-            if (pt.log.workout) {
-                ctx.fillStyle = '#22c55e';
-                ctx.beginPath();
-                ctx.arc(pt.x, padding.top - 8, 3.5, 0, Math.PI * 2);
-                ctx.fill();
+            const isDone = matchingLog.workout || false;
+            if (badgeEl) {
+                if (isDone) {
+                    badgeEl.textContent = 'Workout Completed ✓';
+                    badgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/40 uppercase';
+                } else {
+                    badgeEl.textContent = 'Rest / Unlogged';
+                    badgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-gray-800 text-gray-400 border border-gray-700 uppercase';
+                }
             }
+        } else {
+            if (weightEl) weightEl.textContent = isToday ? (baselineStartWeight ? formatWeight(baselineStartWeight) : 'Not recorded') : 'Not recorded';
+            if (stepsEl) stepsEl.textContent = 'Not recorded';
+            if (waterEl) waterEl.textContent = isToday ? `${todayWater.toFixed(1)} / 3.5 L` : '0.0 / 3.5 L';
+            if (badgeEl) {
+                badgeEl.textContent = 'Rest / Unlogged';
+                badgeEl.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-gray-800 text-gray-400 border border-gray-700 uppercase';
+            }
+        }
 
-            // Date label
-            ctx.fillStyle = '#64748b';
-            ctx.font = '9px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText(pt.log.date, pt.x, height - 8);
-        });
+        if (descEl && dayData) {
+            descEl.textContent = `Day ${dayIdx} • ${dayData.title || 'Training Routine'} (${dayData.exercises?.length || 0} Exercises)`;
+        }
     }
 
     // ── Dot Matrix Calendar Grid ─────────────────────────────────
@@ -832,7 +758,6 @@
         const month = now.getMonth();
         const todayDate = now.getDate();
 
-        // Update header month title if element exists
         const monthTitle = document.getElementById('calendar-month-title');
         if (monthTitle) {
             monthTitle.textContent = now.toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -842,70 +767,42 @@
         const monthStr = String(month + 1).padStart(2, '0');
         const loggedDates = new Set(logs.map(l => l.date));
 
-        // Calculate days in month and starting day of week (Monday-based: Mon=0, ..., Sun=6)
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const startDayOfWeek = (new Date(year, month, 1).getDay() + 6) % 7;
 
-        // Render empty offset cells for alignment
         for (let i = 0; i < startDayOfWeek; i++) {
             const emptyCell = document.createElement('div');
             emptyCell.className = 'w-7 h-7';
             grid.appendChild(emptyCell);
         }
 
-        // Render day cells
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${monthStr}/${String(d).padStart(2, '0')}`;
             const isLogged = loggedDates.has(dateStr);
             const isToday = (d === todayDate);
 
             const dot = document.createElement('div');
-            dot.className = `w-7 h-7 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold transition-all ${
+            dot.className = `w-7 h-7 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold transition-all cursor-pointer ${
                 isLogged
-                    ? 'bg-green-500 text-gray-900 shadow-[0_0_6px_rgba(34,197,94,0.4)]'
+                    ? 'bg-green-500 text-gray-900 shadow-[0_0_6px_rgba(34,197,94,0.4)] hover:scale-110'
                     : isToday
-                    ? 'bg-yellow-500 text-gray-900 border border-yellow-300 font-extrabold shadow-[0_0_8px_rgba(234,179,8,0.5)]'
-                    : 'bg-[#111827] text-gray-500 border border-gray-800'
+                    ? 'bg-yellow-500 text-gray-900 border border-yellow-300 font-extrabold shadow-[0_0_8px_rgba(234,179,8,0.5)] hover:scale-110'
+                    : 'bg-[#111827] text-gray-500 border border-gray-800 hover:border-gray-600 hover:text-gray-300'
             }`;
             dot.textContent = d;
-            dot.title = isLogged ? `${dateStr}: Activity Logged ✓` : isToday ? `${dateStr}: Today` : dateStr;
+            dot.title = isLogged ? `${dateStr}: Activity Logged ✓ (Click for Summary)` : isToday ? `${dateStr}: Today (Click for Summary)` : `${dateStr} (Click for Summary)`;
+
+            const cellDayOfWeek = (new Date(year, month, d).getDay() + 6) % 7 + 1;
+            dot.addEventListener('click', () => {
+                renderDateTelemetrySummary(dateStr, cellDayOfWeek);
+            });
+
             grid.appendChild(dot);
         }
-    }
 
-    // ── Logs Table ───────────────────────────────────────────────
-    function renderLogsTable() {
-        const tbody = document.getElementById('logs-table-body');
-        if (!tbody) return;
-        const logs = getLogs();
-
-        if (logs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-gray-500">No telemetry recorded yet.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = logs.slice(-8).reverse().map(l => `
-            <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
-                <td class="py-2 text-gray-300">${l.date}</td>
-                <td class="py-2 text-yellow-400 font-bold">${formatWeight(l.weight)}</td>
-                <td class="py-2 text-blue-400">${l.water || '0.0'} L</td>
-                <td class="py-2 text-green-400">${l.steps || '0'}</td>
-                <td class="py-2 text-center">${l.workout ? '✅' : '—'}</td>
-                <td class="py-2 text-center">
-                    <button class="btn-del-log text-red-400 hover:text-red-300" data-id="${l.id}">✕</button>
-                </td>
-            </tr>
-        `).join('');
-
-        tbody.querySelectorAll('.btn-del-log').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.currentTarget.dataset.id || e.target.dataset.id;
-                saveLogs(getLogs().filter(l => l.id !== id));
-                renderLogsTable();
-                renderMultiMetricGraph();
-                renderDotMatrixGrid();
-            });
-        });
+        // Render initial summary for today
+        const todayDateStr = `${monthStr}/${String(todayDate).padStart(2, '0')}`;
+        renderDateTelemetrySummary(todayDateStr, getTodayDayOfWeek());
     }
 
     // ── Blueprint Customization Controls ─────────────────────────
@@ -1507,10 +1404,9 @@
             if (weightInput) weightInput.value = '';
             if (stepsInput) stepsInput.value = '';
 
-            renderLogsTable();
-            renderMultiMetricGraph();
             renderDotMatrixGrid();
-            showToast('✓ Telemetry logged and plotted!');
+            renderDateTelemetrySummary(dateStr, getTodayDayOfWeek());
+            showToast('✓ Telemetry saved & updated!');
         });
 
         // Edit Baseline Button

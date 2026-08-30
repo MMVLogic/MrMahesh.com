@@ -131,8 +131,7 @@
         }
 
         renderBaselineMetrics();
-        renderLogsTable();
-        renderMultiMetricGraph();
+        renderDotMatrixGrid();
     }
 
     // ── Access Gate Verification ─────────────────────────────────
@@ -176,7 +175,7 @@
             gateLocked?.classList.add('hidden');
             gateUnlocked?.classList.remove('hidden');
             renderActiveExercise();
-            renderMultiMetricGraph();
+            renderDotMatrixGrid();
         } else {
             gateUnlocked?.classList.add('hidden');
             gateLocked?.classList.remove('hidden');
@@ -253,9 +252,6 @@
         } else if (tabKey === 'plan') {
             renderCalendarDayOverview();
             renderDotMatrixGrid();
-        } else if (tabKey === 'log') {
-            renderLogsTable();
-            setTimeout(renderMultiMetricGraph, 60);
         } else if (tabKey === 'guide') {
             renderBaselineMetrics();
             syncBlueprintUI();
@@ -1269,12 +1265,10 @@
         renderActiveExercise();
         renderCalendarDayOverview();
         renderDotMatrixGrid();
-        renderLogsTable();
 
         // Tab Navigation Listeners
         TAB_BUTTONS.workout?.addEventListener('click', () => switchTab('workout'));
         TAB_BUTTONS.plan?.addEventListener('click', () => switchTab('plan'));
-        TAB_BUTTONS.log?.addEventListener('click', () => switchTab('log'));
         TAB_BUTTONS.guide?.addEventListener('click', () => switchTab('guide'));
 
         // Stepper Navigation
@@ -1311,7 +1305,6 @@
                 const d = parseInt(btn.dataset.day, 10);
                 activeDay = d;
                 renderCalendarDayOverview();
-                updateWorkoutDayPills();
             });
         });
 
@@ -1429,8 +1422,7 @@
                 renderBaselineMetrics();
                 renderActiveExercise();
                 renderCalendarDayOverview();
-                renderLogsTable();
-                renderMultiMetricGraph();
+                renderDotMatrixGrid();
             }
         });
 
@@ -1448,8 +1440,8 @@
         });
 
         window.addEventListener('resize', () => {
-            if (!document.getElementById('tab-panel-log')?.classList.contains('hidden')) {
-                renderMultiMetricGraph();
+            if (!document.getElementById('tab-panel-plan')?.classList.contains('hidden')) {
+                renderDotMatrixGrid();
             }
         });
 

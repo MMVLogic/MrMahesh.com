@@ -1072,6 +1072,23 @@
             applyBlueprintSettings();
         });
 
+        // Biomechanical Guardrails Dismiss Handler
+        const guardrailsCard = document.getElementById('blueprint-guardrails-card');
+        try {
+            if (localStorage.getItem('mrmahesh_openfit_hide_guardrails') === 'true') {
+                if (guardrailsCard) guardrailsCard.classList.add('hidden');
+            }
+        } catch (e) {}
+
+        document.getElementById('btn-dismiss-guardrails')?.addEventListener('click', () => {
+            if (guardrailsCard) {
+                guardrailsCard.classList.add('hidden');
+                try {
+                    localStorage.setItem('mrmahesh_openfit_hide_guardrails', 'true');
+                } catch (e) {}
+            }
+        });
+
         // Initialize Day Split Customizer
         initDaySplitCustomizer();
     }

@@ -27,6 +27,7 @@
     let restTimeRemaining = 90;
     let restTimerRunning = false;
     let completedSets = {};
+    let completedSetsData = {};
     let customSplitOverrides = {};
     let activeBlueprintDay = 1;
     let activeBlueprintSegment = 'all';
@@ -44,6 +45,7 @@
                 if (s.isLbs !== undefined) isLbs = s.isLbs;
                 if (s.baselineStartWeight) baselineStartWeight = s.baselineStartWeight;
                 if (s.completedSets) completedSets = s.completedSets;
+                if (s.completedSetsData) completedSetsData = s.completedSetsData;
                 if (s.todayWater !== undefined) todayWater = s.todayWater;
             }
         } catch (e) {}
@@ -88,6 +90,7 @@
                 isLbs: isLbs,
                 baselineStartWeight: baselineStartWeight,
                 completedSets: completedSets,
+                completedSetsData: completedSetsData,
                 todayWater: todayWater
             }));
         } catch (e) {}
@@ -334,43 +337,308 @@
             }
         }
 
-        renderSetPills(ex.totalSets || 3);
+        renderExerciseSetTracker();
     }
 
-    // ── Interactive Set Pills ────────────────────────────────────
-    function renderSetPills(total) {
-        const container = document.getElementById('set-pills-container');
+    // ── Historical PR Lookup Engine ────────────────────────────────
+    function getExercisePR(exName, setIdx) {
+        let bestW = 0;
+        let bestR = 10;
+        let found = false;
+
+        try {
+            const raw = localStorage.getItem('mrmahesh_openfit_v6');
+            if (raw) {
+                const s = JSON.parse(raw);
+                if (s.completedSetsData && s.completedSetsData[exName]) {
+                    const exData = s.completedSetsData[exName];
+                    if (exData.sets && exData.sets[setIdx]) {
+                        const setItem = exData.sets[setIdx];
+                        if (setItem.weight && setItem.weight > 0 && setItem.done) {
+                            bestW = setItem.weight;
+                            bestR = setItem.reps || 10;
+                            found = true;
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+
+        const logs = getLogs();
+        logs.forEach(l => {
+            if (l.exerciseData && l.exerciseData[exName] && l.exerciseData[exName].sets) {
+                const setItem = l.exerciseData[exName].sets[setIdx];
+                if (setItem && setItem.weight > bestW && setItem.done) {
+                    bestW = setItem.weight;
+                    bestR = setItem.reps || 10;
+                    found = true;
+                }
+            }
+        });
+
+        if (found && bestW > 0) {
+            return { weight: bestW, reps: bestR };
+        }
+        return null;
+    }
+
+    // ── Interactive Set-by-Set Telemetry Tracker ──────────────────
+    function renderExerciseSetTracker() {
+        const split = window.OpenFitData?.WORKOUT_SPLIT || {};
+        const dayData = split[activeDay] || split[1];
+        if (!dayData || !dayData.exercises) return;
+        const ex = dayData.exercises[activeExerciseIndex];
+        if (!ex) return;
+
+        const exName = ex.name || 'Exercise';
+        const defaultTotal = ex.totalSets || 3;
+        const defaultW = isLbs ? 35.0 / 2.20462 : 15.0;
+
+        if (!completedSetsData[exName]) {
+            completedSetsData[exName] = {
+                totalSets: defaultTotal,
+                sets: Array.from({ length: defaultTotal }, () => ({
+                    reps: 10,
+                    weight: defaultW,
+                    done: false
+                }))
+            };
+        }
+
+        const exData = completedSetsData[exName];
+        while (exData.sets.length < exData.totalSets) {
+            const lastW = exData.sets.length > 0 ? exData.sets[exData.sets.length - 1].weight : defaultW;
+            const lastR = exData.sets.length > 0 ? exData.sets[exData.sets.length - 1].reps : 10;
+            exData.sets.push({ reps: lastR, weight: lastW, done: false });
+        }
+        if (exData.sets.length > exData.totalSets) {
+            exData.sets = exData.sets.slice(0, exData.totalSets);
+        }
+
+        const countDisplay = document.getElementById('active-set-count-display');
+        if (countDisplay) countDisplay.textContent = exData.totalSets;
+
+        const container = document.getElementById('set-cards-container');
         if (!container) return;
-        container.innerHTML = '';
 
-        const setKey = `d${activeDay}_e${activeExerciseIndex}`;
-        const doneCount = completedSets[setKey] || 0;
+        container.innerHTML = exData.sets.map((setObj, setIdx) => {
+            const isDone = !!setObj.done;
+            const pr = getExercisePR(exName, setIdx);
+            const prText = pr 
+                ? `🏆 PR: ${formatWeight(pr.weight)} × ${pr.reps}`
+                : `🏆 PR: Baseline Target`;
 
-        for (let s = 1; s <= total; s++) {
-            const isDone = s <= doneCount;
-            const btn = document.createElement('button');
-            btn.className = `min-h-[44px] py-2 px-3 rounded-xl font-bold font-mono text-xs transition-all border flex items-center justify-between active:scale-95 ${
-                isDone
-                    ? 'bg-green-500/20 border-green-500/80 text-green-300 shadow-[0_0_10px_rgba(34,197,94,0.2)]'
-                    : 'bg-[#111827] border-gray-700 text-gray-400 hover:border-gray-600'
-            }`;
-            btn.innerHTML = `<span>Set ${s}</span><span>${isDone ? '✓' : '○'}</span>`;
-            btn.addEventListener('click', () => toggleSet(s, total));
-            container.appendChild(btn);
-        }
+            const displayW = isLbs ? (setObj.weight * 2.20462) : setObj.weight;
+
+            return `
+                <div class="p-3.5 rounded-2xl border transition-all ${
+                    isDone 
+                        ? 'bg-green-500/10 border-green-500/50 shadow-[0_0_12px_rgba(34,197,94,0.15)]' 
+                        : 'bg-[#111827] border-gray-800'
+                } space-y-3 font-mono">
+                    
+                    <!-- Card Header: Set #, Ghost PR readout, Status Badge -->
+                    <div class="flex justify-between items-center flex-wrap gap-1 border-b border-gray-800/80 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${
+                                isDone 
+                                    ? 'bg-green-500 text-gray-900 shadow-sm' 
+                                    : 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30'
+                            }">SET ${setIdx + 1}</span>
+                            
+                            <!-- Greyed-out Historical PR Ghost Readout -->
+                            <span class="text-[10px] text-gray-500 font-mono font-bold tracking-tight opacity-75">
+                                ${prText}
+                            </span>
+                        </div>
+
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider ${isDone ? 'text-green-400' : 'text-gray-500'}">
+                            ${isDone ? '✓ COMPLETED' : 'PENDING'}
+                        </span>
+                    </div>
+
+                    <!-- Input Steppers & Quick Chips -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        
+                        <!-- Reps Stepper & Preset Chips -->
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-[10px] font-bold text-gray-400">
+                                <span>Reps Target:</span>
+                                <div class="flex items-center gap-1 text-[9px]">
+                                    <button type="button" class="btn-rep-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-val="8">8</button>
+                                    <button type="button" class="btn-rep-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-val="10">10</button>
+                                    <button type="button" class="btn-rep-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-val="12">12</button>
+                                    <button type="button" class="btn-rep-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-val="15">15</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 bg-[#0d1117] p-1 rounded-xl border border-gray-800">
+                                <button type="button" class="btn-dec-reps w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold flex items-center justify-center text-sm active:scale-95 cursor-pointer" data-set="${setIdx}">−</button>
+                                <span class="flex-1 text-center font-bold text-xs sm:text-sm text-yellow-400">${setObj.reps} reps</span>
+                                <button type="button" class="btn-inc-reps w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold flex items-center justify-center text-sm active:scale-95 cursor-pointer" data-set="${setIdx}">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Weight Stepper & Quick Delta Chips -->
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-[10px] font-bold text-gray-400">
+                                <span>Weight (${isLbs ? 'lbs' : 'kg'}):</span>
+                                <div class="flex items-center gap-1 text-[9px]">
+                                    <button type="button" class="btn-w-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-delta="-2.5">-2.5</button>
+                                    <button type="button" class="btn-w-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-delta="2.5">+2.5</button>
+                                    <button type="button" class="btn-w-chip px-1.5 py-0.5 rounded bg-[#0d1117] text-gray-400 hover:text-yellow-400 border border-gray-800 cursor-pointer" data-set="${setIdx}" data-delta="5.0">+5</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 bg-[#0d1117] p-1 rounded-xl border border-gray-800">
+                                <button type="button" class="btn-dec-w w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold flex items-center justify-center text-sm active:scale-95 cursor-pointer" data-set="${setIdx}">−</button>
+                                <input type="number" step="0.5" class="set-w-input flex-1 text-center font-bold text-xs sm:text-sm bg-transparent text-yellow-400 focus:outline-none" data-set="${setIdx}" value="${displayW.toFixed(1)}">
+                                <button type="button" class="btn-inc-w w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold flex items-center justify-center text-sm active:scale-95 cursor-pointer" data-set="${setIdx}">+</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Log Action Button -->
+                    <button type="button" class="btn-log-set w-full py-2.5 rounded-xl font-bold text-xs font-mono transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
+                        isDone 
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/40 hover:bg-green-500/30' 
+                            : 'bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] shadow-md'
+                    }" data-set="${setIdx}">
+                        ${isDone ? '✓ Set ' + (setIdx + 1) + ' Logged (Tap to Toggle)' : '⚡ Log Set ' + (setIdx + 1) + ' & Start Rest Timer'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        // Attach event listeners for steppers, chips, inputs & buttons
+        container.querySelectorAll('.btn-dec-reps').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                if (exData.sets[idx] && exData.sets[idx].reps > 1) {
+                    exData.sets[idx].reps--;
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-inc-reps').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                if (exData.sets[idx]) {
+                    exData.sets[idx].reps++;
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-rep-chip').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                const val = parseInt(e.currentTarget.dataset.val, 10);
+                if (exData.sets[idx]) {
+                    exData.sets[idx].reps = val;
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-dec-w').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                if (exData.sets[idx]) {
+                    const stepKg = isLbs ? (2.5 / 2.20462) : 1.0;
+                    exData.sets[idx].weight = Math.max(0, exData.sets[idx].weight - stepKg);
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-inc-w').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                if (exData.sets[idx]) {
+                    const stepKg = isLbs ? (2.5 / 2.20462) : 1.0;
+                    exData.sets[idx].weight += stepKg;
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-w-chip').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                const delta = parseFloat(e.currentTarget.dataset.delta);
+                if (exData.sets[idx]) {
+                    const deltaKg = isLbs ? (delta / 2.20462) : delta;
+                    exData.sets[idx].weight = Math.max(0, exData.sets[idx].weight + deltaKg);
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.set-w-input').forEach(inp => {
+            inp.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.dataset.set, 10);
+                const val = parseFloat(e.target.value);
+                if (exData.sets[idx] && !isNaN(val) && val >= 0) {
+                    exData.sets[idx].weight = isLbs ? (val / 2.20462) : val;
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-log-set').forEach(b => {
+            b.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.set, 10);
+                if (exData.sets[idx]) {
+                    const wasDone = exData.sets[idx].done;
+                    exData.sets[idx].done = !wasDone;
+                    if (!wasDone) {
+                        triggerRestTimer(90);
+                    }
+                    saveAppState();
+                    renderExerciseSetTracker();
+                }
+            });
+        });
     }
 
-    function toggleSet(setNumber, total) {
-        const setKey = `d${activeDay}_e${activeExerciseIndex}`;
-        const current = completedSets[setKey] || 0;
-        if (current >= setNumber) {
-            completedSets[setKey] = setNumber - 1;
-        } else {
-            completedSets[setKey] = setNumber;
-            triggerRestTimer(90);
-        }
-        saveAppState();
-        renderSetPills(total);
+    function initSetTrackerControls() {
+        document.getElementById('btn-dec-sets')?.addEventListener('click', () => {
+            const split = window.OpenFitData?.WORKOUT_SPLIT || {};
+            const dayData = split[activeDay] || split[1];
+            if (!dayData || !dayData.exercises) return;
+            const ex = dayData.exercises[activeExerciseIndex];
+            if (!ex) return;
+            const exName = ex.name;
+
+            if (completedSetsData[exName] && completedSetsData[exName].totalSets > 1) {
+                completedSetsData[exName].totalSets--;
+                saveAppState();
+                renderExerciseSetTracker();
+            }
+        });
+
+        document.getElementById('btn-inc-sets')?.addEventListener('click', () => {
+            const split = window.OpenFitData?.WORKOUT_SPLIT || {};
+            const dayData = split[activeDay] || split[1];
+            if (!dayData || !dayData.exercises) return;
+            const ex = dayData.exercises[activeExerciseIndex];
+            if (!ex) return;
+            const exName = ex.name;
+
+            if (completedSetsData[exName] && completedSetsData[exName].totalSets < 6) {
+                completedSetsData[exName].totalSets++;
+                saveAppState();
+                renderExerciseSetTracker();
+            }
+        });
     }
 
     // ── Rest Stopwatch Timer ─────────────────────────────────────
@@ -1100,6 +1368,7 @@
         updateUnitUI();
         updateWaterDisplay();
         initBlueprintControls();
+        initSetTrackerControls();
         renderActiveExercise();
         renderCalendarDayOverview();
         renderDotMatrixGrid();

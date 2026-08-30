@@ -23,6 +23,9 @@
     let restTimeRemaining = 90;
     let restTimerRunning = false;
     let completedSets = {};
+    let customSplitOverrides = {};
+    let activeBlueprintDay = 1;
+    let activeBlueprintSegment = 'all';
     let userPrefs = {
         availableEquipment: ["machine", "cable", "dumbbell", "bench", "treadmill", "bike", "barbell", "bodyweight"],
         shieldJoints: true,
@@ -48,10 +51,31 @@
             }
         } catch (e) {}
 
+        try {
+            const rawCustom = localStorage.getItem('mrmahesh_openfit_custom_split');
+            if (rawCustom) {
+                customSplitOverrides = JSON.parse(rawCustom);
+            }
+        } catch (e) {}
+
         if (window.OpenFitData?.generateCustomSplit) {
             userPrefs.userWeightKg = baselineStartWeight;
-            window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
+            const autoSplit = window.OpenFitData.generateCustomSplit(userPrefs);
+            // Apply custom overrides if user customized any day
+            Object.keys(customSplitOverrides).forEach(d => {
+                if (autoSplit[d] && customSplitOverrides[d]?.exercises?.length > 0) {
+                    autoSplit[d].exercises = customSplitOverrides[d].exercises;
+                    if (customSplitOverrides[d].title) autoSplit[d].title = customSplitOverrides[d].title;
+                }
+            });
+            window.OpenFitData.WORKOUT_SPLIT = autoSplit;
         }
+    }
+
+    function saveCustomSplitOverrides() {
+        try {
+            localStorage.setItem('mrmahesh_openfit_custom_split', JSON.stringify(customSplitOverrides));
+        } catch (e) {}
     }
 
     function saveAppState() {
@@ -228,6 +252,9 @@
         } else if (tabKey === 'guide') {
             renderBaselineMetrics();
             syncBlueprintUI();
+            if (typeof renderBlueprintExerciseChecklist === 'function') {
+                renderBlueprintExerciseChecklist();
+            }
         }
     }
 
@@ -735,10 +762,19 @@
         } catch (e) {}
 
         if (window.OpenFitData?.generateCustomSplit) {
-            window.OpenFitData.WORKOUT_SPLIT = window.OpenFitData.generateCustomSplit(userPrefs);
+            const autoSplit = window.OpenFitData.generateCustomSplit(userPrefs);
+            // Re-apply any custom overrides
+            Object.keys(customSplitOverrides).forEach(d => {
+                if (autoSplit[d] && customSplitOverrides[d]?.exercises?.length > 0) {
+                    autoSplit[d].exercises = customSplitOverrides[d].exercises;
+                    if (customSplitOverrides[d].title) autoSplit[d].title = customSplitOverrides[d].title;
+                }
+            });
+            window.OpenFitData.WORKOUT_SPLIT = autoSplit;
         }
 
         updatePresetButtonsUI(presetKey || determineActivePreset());
+        renderBlueprintExerciseChecklist();
 
         // Live update active exercise on Workout Tab
         activeExerciseIndex = 0;
@@ -755,6 +791,258 @@
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3500);
         }
+    }
+
+    // ── Blueprint Day-by-Day Routine Builder & Customizer ────────
+    function initDaySplitCustomizer() {
+        // 1. Day Selector Pills
+        document.querySelectorAll('.bp-day-pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+                activeBlueprintDay = parseInt(btn.dataset.day, 10);
+                updateBlueprintDayPillsUI();
+                renderBlueprintExerciseChecklist();
+            });
+        });
+
+        // 2. Segment Filter Chips
+        document.querySelectorAll('.bp-segment-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                activeBlueprintSegment = chip.dataset.segment;
+                updateBlueprintSegmentChipsUI();
+                renderBlueprintExerciseChecklist();
+            });
+        });
+
+        // 3. Reset Day to Recommended Button
+        document.getElementById('btn-reset-bp-day')?.addEventListener('click', () => {
+            delete customSplitOverrides[activeBlueprintDay];
+            saveCustomSplitOverrides();
+
+            if (window.OpenFitData?.generateCustomSplit) {
+                const fresh = window.OpenFitData.generateCustomSplit(userPrefs);
+                if (fresh[activeBlueprintDay]) {
+                    window.OpenFitData.WORKOUT_SPLIT[activeBlueprintDay] = fresh[activeBlueprintDay];
+                }
+            }
+
+            renderBlueprintExerciseChecklist();
+            renderActiveExercise();
+            renderCalendarDayOverview();
+
+            showBlueprintDayToast(`✓ Day ${activeBlueprintDay} reset to recommended split!`);
+        });
+
+        updateBlueprintDayPillsUI();
+        updateBlueprintSegmentChipsUI();
+        renderBlueprintExerciseChecklist();
+    }
+
+    function updateBlueprintDayPillsUI() {
+        document.querySelectorAll('.bp-day-pill').forEach(btn => {
+            const d = parseInt(btn.dataset.day, 10);
+            const isCustom = !!(customSplitOverrides[d]?.exercises?.length);
+            if (d === activeBlueprintDay) {
+                btn.className = 'bp-day-pill p-2 rounded-xl border-2 border-yellow-500 bg-yellow-500/20 text-yellow-400 font-bold text-center transition-all shadow-sm ring-1 ring-yellow-500/40';
+            } else {
+                btn.className = `bp-day-pill p-2 rounded-xl border text-center transition-all font-bold ${
+                    isCustom 
+                        ? 'border-yellow-500/40 bg-[#111827] text-yellow-300 hover:border-yellow-500' 
+                        : 'border-gray-800 bg-[#111827] text-gray-400 hover:border-gray-700'
+                }`;
+            }
+        });
+    }
+
+    function updateBlueprintSegmentChipsUI() {
+        const segLabels = {
+            all: 'All Movements',
+            upper: 'Upper Body',
+            push: 'Push (Chest/Shoulders/Tri)',
+            pull: 'Pull (Back/Lats/Bi)',
+            lower: 'Lower (Quads/Glutes/Ham)',
+            core: 'Core & Stability',
+            cardio: 'Cardio & Conditioning'
+        };
+
+        const indicator = document.getElementById('bp-segment-indicator');
+        if (indicator) {
+            indicator.textContent = segLabels[activeBlueprintSegment] || 'All Movements';
+        }
+
+        document.querySelectorAll('.bp-segment-chip').forEach(chip => {
+            const s = chip.dataset.segment;
+            if (s === activeBlueprintSegment) {
+                chip.className = 'bp-segment-chip px-2.5 py-1.5 rounded-lg border-2 border-yellow-500 bg-yellow-500 text-[#1f2937] font-bold text-xs shrink-0 shadow-sm';
+            } else {
+                chip.className = 'bp-segment-chip px-2.5 py-1.5 rounded-lg border border-gray-700 bg-[#111827] text-gray-300 hover:border-yellow-500 text-xs shrink-0 font-bold';
+            }
+        });
+    }
+
+    function renderBlueprintExerciseChecklist() {
+        const container = document.getElementById('bp-exercise-checklist-container');
+        if (!container) return;
+
+        updateBlueprintDayPillsUI();
+
+        // Get currently scheduled exercises for activeBlueprintDay
+        const currentSplit = window.OpenFitData?.WORKOUT_SPLIT || {};
+        const dayData = currentSplit[activeBlueprintDay] || currentSplit[1];
+        const currentExercises = dayData?.exercises || [];
+        const scheduledNames = new Set(currentExercises.map(e => e.name));
+
+        // Get all matching exercises for this segment + active equipment + joint shield
+        let eligible = [];
+        if (window.OpenFitData?.getExercisesBySegment) {
+            eligible = window.OpenFitData.getExercisesBySegment(
+                activeBlueprintSegment,
+                userPrefs.availableEquipment,
+                userPrefs.shieldJoints,
+                userPrefs.userWeightKg
+            );
+        } else {
+            eligible = (window.OpenFitData?.EXERCISE_CATALOG || []).filter(e => {
+                if (activeBlueprintSegment !== 'all' && e.category !== activeBlueprintSegment) return false;
+                return true;
+            });
+        }
+
+        // Sort: scheduled exercises first, then alphabetical
+        const sorted = eligible.slice().sort((a, b) => {
+            const aIn = scheduledNames.has(a.name) ? 0 : 1;
+            const bIn = scheduledNames.has(b.name) ? 0 : 1;
+            if (aIn !== bIn) return aIn - bIn;
+            return a.name.localeCompare(b.name);
+        });
+
+        // Update scheduled counter
+        const countEl = document.getElementById('bp-day-scheduled-count');
+        if (countEl) {
+            countEl.textContent = `${scheduledNames.size} Scheduled for Day ${activeBlueprintDay}`;
+        }
+
+        // Update badge
+        const badge = document.getElementById('bp-editor-mode-badge');
+        if (badge) {
+            const isCustom = !!(customSplitOverrides[activeBlueprintDay]?.exercises?.length);
+            if (isCustom) {
+                badge.textContent = `Customized (Day ${activeBlueprintDay})`;
+                badge.className = 'px-2 py-0.5 rounded bg-yellow-500/15 text-yellow-400 text-[10px] border border-yellow-500/40 font-bold';
+            } else {
+                badge.textContent = `Recommended (Day ${activeBlueprintDay})`;
+                badge.className = 'px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-[10px] border border-green-500/30';
+            }
+        }
+
+        if (sorted.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-6 text-xs text-gray-400 bg-[#111827] rounded-xl border border-gray-800 p-4">
+                    <p class="text-yellow-400 font-bold mb-1">No exercises matching filter</p>
+                    <p class="text-[10px] text-gray-500">Try selecting "All Movements" or enabling more equipment in the gym customizer above.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = sorted.map(ex => {
+            const isChecked = scheduledNames.has(ex.name);
+            const equipBadges = ex.equipment.map(eq => `<span class="px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 text-[9px] uppercase font-mono">${eq}</span>`).join(' ');
+            const muscles = ex.primaryMuscles?.join(', ') || ex.category;
+            const jisClass = ex.jointImpact <= 1 
+                ? 'bg-green-500/15 text-green-400 border-green-500/30' 
+                : ex.jointImpact === 2 
+                ? 'bg-blue-500/15 text-blue-400 border-blue-500/30' 
+                : 'bg-red-500/15 text-red-400 border-red-500/30';
+
+            return `
+                <label class="flex items-start gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none ${
+                    isChecked 
+                        ? 'bg-yellow-500/10 border-yellow-500/60 shadow-sm' 
+                        : 'bg-[#111827] border-gray-800/80 hover:border-gray-700'
+                }">
+                    <input type="checkbox" class="bp-ex-checkbox mt-1 rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-0 w-4 h-4 cursor-pointer" 
+                        data-name="${ex.name}" ${isChecked ? 'checked' : ''}>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1 flex-wrap">
+                            <span class="font-bold text-xs ${isChecked ? 'text-yellow-400' : 'text-gray-200'}">${ex.name}</span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border ${jisClass}">JIS ${ex.jointImpact}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-[10px] text-gray-400 mt-1 flex-wrap">
+                            <span>🎯 <strong class="text-gray-300">${muscles}</strong></span>
+                            <span>•</span>
+                            <div class="inline-flex gap-1">${equipBadges}</div>
+                        </div>
+                        <div class="text-[10px] text-yellow-500/90 font-mono mt-1">
+                            ${ex.sets}
+                        </div>
+                    </div>
+                </label>
+            `;
+        }).join('');
+
+        // Attach checkbox change event listeners
+        container.querySelectorAll('.bp-ex-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const exName = e.target.dataset.name;
+                const isNowChecked = e.target.checked;
+                toggleExerciseForActiveDay(exName, isNowChecked);
+            });
+        });
+    }
+
+    function toggleExerciseForActiveDay(exName, isChecked) {
+        const catalog = window.OpenFitData?.EXERCISE_CATALOG || [];
+        const targetEx = catalog.find(e => e.name === exName);
+        if (!targetEx) return;
+
+        const currentSplit = window.OpenFitData?.WORKOUT_SPLIT || {};
+        if (!currentSplit[activeBlueprintDay]) return;
+
+        let dayExercises = [...(currentSplit[activeBlueprintDay].exercises || [])];
+
+        if (isChecked) {
+            // Add if not already present
+            if (!dayExercises.some(e => e.name === exName)) {
+                dayExercises.push(targetEx);
+            }
+        } else {
+            // Remove
+            if (dayExercises.length <= 1) {
+                showBlueprintDayToast('⚠️ A day must have at least 1 exercise.', true);
+                renderBlueprintExerciseChecklist();
+                return;
+            }
+            dayExercises = dayExercises.filter(e => e.name !== exName);
+        }
+
+        // Save override
+        currentSplit[activeBlueprintDay].exercises = dayExercises;
+        customSplitOverrides[activeBlueprintDay] = {
+            exercises: dayExercises,
+            title: currentSplit[activeBlueprintDay].title
+        };
+        saveCustomSplitOverrides();
+
+        // Re-render UI
+        renderBlueprintExerciseChecklist();
+        if (activeDay === activeBlueprintDay) {
+            if (activeExerciseIndex >= dayExercises.length) {
+                activeExerciseIndex = Math.max(0, dayExercises.length - 1);
+            }
+            renderActiveExercise();
+        }
+        renderCalendarDayOverview();
+
+        showBlueprintDayToast(`✓ Day ${activeBlueprintDay} updated: ${dayExercises.length} exercises scheduled!`);
+    }
+
+    function showBlueprintDayToast(msg, isErr = false) {
+        const toast = document.getElementById('bp-day-toast');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.className = `text-[10px] font-bold ${isErr ? 'text-red-400' : 'text-green-400'}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3500);
     }
 
     function initBlueprintControls() {
@@ -783,6 +1071,9 @@
         document.getElementById('btn-generate-workout')?.addEventListener('click', () => {
             applyBlueprintSettings();
         });
+
+        // Initialize Day Split Customizer
+        initDaySplitCustomizer();
     }
 
     // ── DOM Initialization Runner ────────────────────────────────

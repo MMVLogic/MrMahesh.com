@@ -838,6 +838,33 @@
         };
     }
 
+    function getExercisesBySegment(segment = "all", availableEquipment = null, shieldJoints = false, userWeightKg = 0) {
+        return EXERCISE_CATALOG.filter(ex => {
+            // Segment filter
+            if (segment && segment !== "all") {
+                if (segment === "upper") {
+                    if (ex.category !== "push" && ex.category !== "pull") return false;
+                } else if (ex.category !== segment) {
+                    return false;
+                }
+            }
+
+            // Joint shield filter (if shieldJoints is true, restrict to JIS <= 2)
+            if (shieldJoints && ex.jointImpact > 2) return false;
+
+            // Safe weight ceiling filter
+            if (userWeightKg && ex.maxUserWeightKg && userWeightKg > ex.maxUserWeightKg) return false;
+
+            // Available equipment filter (if availableEquipment array is provided)
+            if (Array.isArray(availableEquipment) && availableEquipment.length > 0) {
+                const hasEquip = ex.equipment.every(eq => availableEquipment.includes(eq));
+                if (!hasEquip) return false;
+            }
+
+            return true;
+        });
+    }
+
     // Default split for instant startup
     const DEFAULT_SPLIT = generateCustomSplit();
 
@@ -845,6 +872,7 @@
     window.OpenFitData = {
         EXERCISE_CATALOG: EXERCISE_CATALOG,
         generateCustomSplit: generateCustomSplit,
+        getExercisesBySegment: getExercisesBySegment,
         WORKOUT_SPLIT: DEFAULT_SPLIT
     };
 

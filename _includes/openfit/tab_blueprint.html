@@ -126,7 +126,105 @@
         </div>
     </div>
 
-    <!-- 3. Joint Safety Protocol Guidelines -->
+    <!-- 3. Weekly Split & Exercise Customizer (Day & Body Segment Editor) -->
+    <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-yellow-500/60 space-y-4 font-mono">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-[10px] font-bold text-yellow-400 tracking-widest uppercase">
+                    ROUTINE_BUILDER: DAY_BY_DAY_CUSTOMIZER_
+                </p>
+                <h3 class="text-sm md:text-base font-bold text-gray-100 mt-0.5">
+                    🎯 Weekly Split & Exercise Customizer
+                </h3>
+            </div>
+            <span id="bp-editor-mode-badge" class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-[10px] border border-green-500/30">
+                Auto-Synced
+            </span>
+        </div>
+
+        <!-- 1. Select Day of Week -->
+        <div class="space-y-1.5">
+            <label class="text-[11px] font-bold text-gray-300 block">1. Select Day to Customize:</label>
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 text-[11px]">
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="1">
+                    <span>Mon</span><br><span class="text-[9px] font-normal text-gray-400">Day 1</span>
+                </button>
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="2">
+                    <span>Tue</span><br><span class="text-[9px] font-normal text-gray-400">Day 2</span>
+                </button>
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="3">
+                    <span>Wed</span><br><span class="text-[9px] font-normal text-gray-400">Day 3</span>
+                </button>
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="4">
+                    <span>Thu</span><br><span class="text-[9px] font-normal text-gray-400">Day 4</span>
+                </button>
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="5">
+                    <span>Fri</span><br><span class="text-[9px] font-normal text-gray-400">Day 5</span>
+                </button>
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="6">
+                    <span>Sat</span><br><span class="text-[9px] font-normal text-gray-400">Day 6</span>
+                </button>
+                <button type="button" class="bp-day-pill p-2 rounded-xl border text-center transition-all font-bold" data-day="7">
+                    <span>Sun</span><br><span class="text-[9px] font-normal text-gray-400">Day 7</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Select Body Segment / Muscle Group Focus -->
+        <div class="space-y-1.5 pt-2 border-t border-gray-800">
+            <div class="flex justify-between items-center">
+                <label class="text-[11px] font-bold text-gray-300 block">2. Filter by Body Segment:</label>
+                <span id="bp-segment-indicator" class="text-[10px] text-yellow-400 font-bold uppercase">All Movements</span>
+            </div>
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px]">
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="all">
+                    🏋️ All
+                </button>
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="upper">
+                    🦾 Upper Body
+                </button>
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="push">
+                    💥 Push (Chest/Shoulders/Tri)
+                </button>
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="pull">
+                    🧗 Pull (Back/Lats/Bi)
+                </button>
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="lower">
+                    🦵 Lower (Quads/Glutes/Ham)
+                </button>
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="core">
+                    🛡️ Core
+                </button>
+                <button type="button" class="bp-segment-chip px-2.5 py-1.5 rounded-lg border transition-all shrink-0 font-bold" data-segment="cardio">
+                    🏃 Cardio
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Interactive Exercise Checklist -->
+        <div class="space-y-2 pt-2 border-t border-gray-800">
+            <div class="flex justify-between items-center">
+                <label class="text-[11px] font-bold text-gray-300 block">3. Curate Exercises (Check on/off):</label>
+                <span id="bp-day-scheduled-count" class="text-[10px] text-yellow-400 font-bold">0 Scheduled</span>
+            </div>
+
+            <div id="bp-exercise-checklist-container" class="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                <!-- Populated dynamically by JS -->
+            </div>
+        </div>
+
+        <!-- Reset Day & Feedback Toast -->
+        <div class="pt-2 border-t border-gray-800 flex items-center justify-between gap-2">
+            <button type="button" id="btn-reset-bp-day" class="px-3 py-2 bg-[#111827] hover:bg-gray-800 text-gray-300 hover:text-white border border-gray-700 rounded-xl text-[11px] font-bold transition-all active:scale-95 flex items-center gap-1.5">
+                <span>↺</span> Reset Day to Recommended
+            </button>
+            <span id="bp-day-toast" class="text-[10px] text-green-400 font-bold hidden">
+                ✓ Day routine updated!
+            </span>
+        </div>
+    </div>
+
+    <!-- 4. Joint Safety Protocol Guidelines -->
     <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-red-500/40 space-y-2.5 font-mono text-xs">
         <p class="font-bold text-red-400 flex items-center gap-1.5">
             <span>🛡️</span> Joint Protection Rules (130kg+)

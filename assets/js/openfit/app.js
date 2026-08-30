@@ -14,9 +14,13 @@
     }
 
     // ── State Variables ─────────────────────────────────────────
+    function getTodayDayOfWeek() {
+        return (new Date().getDay() + 6) % 7 + 1; // 1=Mon, ..., 7=Sun
+    }
+
     let isLbs = false;
     let baselineStartWeight = 135.0; // kg
-    let activeDay = 1;
+    let activeDay = getTodayDayOfWeek();
     let activeExerciseIndex = 0;
     let todayWater = 0;
     let restTimerInterval = null;
@@ -258,17 +262,6 @@
         }
     }
 
-    function updateWorkoutDayPills() {
-        document.querySelectorAll('.workout-day-pill').forEach(btn => {
-            const d = parseInt(btn.dataset.day, 10);
-            if (d === activeDay) {
-                btn.className = 'workout-day-pill px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold border transition-all shrink-0 bg-yellow-500 text-[#1f2937] border-yellow-500 shadow-sm';
-            } else {
-                btn.className = 'workout-day-pill px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold border transition-all shrink-0 bg-[#111827] text-gray-400 border-gray-800 hover:border-gray-700';
-            }
-        });
-    }
-
     // ── Active Exercise Renderer ─────────────────────────────────
     function renderActiveExercise() {
         const split = window.OpenFitData?.WORKOUT_SPLIT || {};
@@ -283,8 +276,6 @@
         const ex = dayData.exercises[activeExerciseIndex];
         if (!ex) return;
 
-        updateWorkoutDayPills();
-
         const dayBadge = document.getElementById('active-day-badge');
         const stepper = document.getElementById('active-ex-stepper');
         const title = document.getElementById('active-ex-title');
@@ -295,7 +286,16 @@
         const ticker1 = document.getElementById('ex-ticker-text-1');
         const ticker2 = document.getElementById('ex-ticker-text-2');
 
-        if (dayBadge) dayBadge.textContent = `Day ${activeDay}`;
+        if (dayBadge) {
+            const todayDay = getTodayDayOfWeek();
+            if (activeDay === todayDay) {
+                dayBadge.textContent = `TODAY • Day ${activeDay}`;
+                dayBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 uppercase shadow-sm';
+            } else {
+                dayBadge.textContent = `Day ${activeDay} (Calendar Target)`;
+                dayBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40 uppercase';
+            }
+        }
         if (stepper) stepper.textContent = `Exercise ${activeExerciseIndex + 1} of ${dayData.exercises.length}`;
         if (title) title.textContent = ex.name || 'Exercise';
         if (volume) volume.textContent = ex.sets || '3 sets × 10–12 reps';
@@ -1132,26 +1132,6 @@
                 activeExerciseIndex = 0;
             }
             renderActiveExercise();
-        });
-
-        // Day Selector in Workout Tab
-        document.querySelectorAll('.workout-day-pill').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const d = parseInt(btn.dataset.day, 10);
-                activeDay = d;
-                activeExerciseIndex = 0;
-                renderActiveExercise();
-                renderCalendarDayOverview();
-
-                // Sync Calendar Tab day buttons
-                document.querySelectorAll('.day-select-btn').forEach(b => {
-                    if (parseInt(b.dataset.day, 10) === d) {
-                        b.className = 'day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]';
-                    } else {
-                        b.className = 'day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400';
-                    }
-                });
-            });
         });
 
         // Day Selector in Calendar Tab

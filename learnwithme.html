@@ -330,6 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let reasoningText = lesson.reasoning || '';
             let howText = lesson.how || '';
 
+            let isConceptHtml = false;
+            let isReasoningHtml = false;
+            let isHowHtml = false;
+
             if ((!conceptText || !reasoningText || !howText) && lesson.content) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = lesson.content;
@@ -361,26 +365,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     return wrapper.innerHTML.trim();
                 };
 
-                if (sections['why'].length > 0) conceptText = getHtml(sections['why']);
-                if (sections['reasoning'].length > 0) reasoningText = getHtml(sections['reasoning']);
-                if (sections['how'].length > 0) howText = getHtml(sections['how']);
+                if (sections['why'].length > 0) { conceptText = getHtml(sections['why']); isConceptHtml = true; }
+                if (sections['reasoning'].length > 0) { reasoningText = getHtml(sections['reasoning']); isReasoningHtml = true; }
+                if (sections['how'].length > 0) { howText = getHtml(sections['how']); isHowHtml = true; }
                 
                 if (!conceptText && !reasoningText && !howText) {
                     conceptText = lesson.content;
+                    isConceptHtml = true;
                 }
             }
 
-            // Clean string formatting helper for HTML presentation
-            const formatMarkdown = (text) => {
+            // Safe HTML escaping helper
+            const escapeHtml = (str) => {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            };
+
+            const formatMarkdown = (text, isHtml = false) => {
                 if (!text) return '';
-                // If it already contains HTML tags (parsed from content), return it directly
-                if (/<[a-z][\s\S]*>/i.test(text)) {
-                    return text;
-                }
-                return text
+                let output = isHtml ? text : escapeHtml(text);
+                return output
                     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/`(.*?)`/g, '<code class="bg-[#111827] text-orange-400 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-800">$1</code>')
+                    .replace(/`([^`]+)`/g, '<code class="bg-[#111827] text-orange-400 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-800">$1</code>')
                     .replace(/\n\n/g, '<br><br>')
                     .replace(/\n/g, '<br>');
             };
@@ -399,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="text-xs text-gray-400 font-mono">${lesson.date}</span>
                             </div>
                             <h2 class="text-lg md:text-xl font-bold text-gray-100 font-mono tracking-tight flex items-center gap-2">
-                                <span>${lesson.title}</span>
+                                <span>${escapeHtml(lesson.title)}</span>
                             </h2>
                             <div class="flex flex-wrap gap-1.5 pt-1">${tagsHtml}</div>
                         </div>
@@ -420,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="mr-2 text-lg">💡</span> WHY (The Concept)
                             </h3>
                             <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
-                                ${formatMarkdown(conceptText)}
+                                ${formatMarkdown(conceptText, isConceptHtml)}
                             </div>
                         </div>
                         ` : ''}
@@ -432,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="mr-2 text-lg">⚖️</span> THE LOGICAL DECISION
                             </h3>
                             <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
-                                ${formatMarkdown(reasoningText)}
+                                ${formatMarkdown(reasoningText, isReasoningHtml)}
                             </div>
                         </div>
                         ` : ''}
@@ -444,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="mr-2 text-lg">⚙️</span> HOW (Implementation Code)
                             </h3>
                             <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
-                                <div class="how-md font-mono">${howText.includes('```') ? renderCodeBlock(howText) : formatMarkdown(howText)}</div>
+                                <div class="how-md font-mono">${howText.includes('```') ? renderCodeBlock(howText) : formatMarkdown(howText, isHowHtml)}</div>
                             </div>
                         </div>
                         ` : ''}
@@ -458,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span id="icon-${lesson.id}">[+] Expand</span>
                             </button>
                             <div id="recall-${lesson.id}" class="hidden bg-[#111827] border-t border-gray-800 p-4 space-y-4 text-xs md:text-sm">
-                                <p class="text-gray-300 leading-relaxed">${formatMarkdown(lesson.challenge)}</p>
+                                <p class="text-gray-300 leading-relaxed">${formatMarkdown(lesson.challenge, false)}</p>
                                 
                                 <button onclick="toggleAnswer('${lesson.id}')"
                                         class="px-3 py-1.5 bg-yellow-500 text-[#1f2937] font-bold rounded font-mono hover:bg-yellow-400 transition-colors duration-200">
@@ -466,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                                 
                                 <div id="answer-${lesson.id}" class="hidden p-3 bg-gray-900 border-l-4 border-[#2ecc71] font-mono text-gray-300">
-                                    ${formatMarkdown(lesson.answer)}
+                                    ${formatMarkdown(lesson.answer, false)}
                                 </div>
                             </div>
                         </div>

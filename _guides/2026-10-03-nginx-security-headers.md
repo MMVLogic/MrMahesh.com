@@ -7,7 +7,7 @@ tags:
   - nginx
   - security
 status: "Published"
-challenge: "What header prevents your website from being embedded in an external `<iframe>` to block clickjacking?"
+challenge: "What header prevents your website from being embedded in an external `&lt;iframe&gt;` to block clickjacking?"
 answer: "`X-Frame-Options: SAMEORIGIN` (or `frame-ancestors 'self'` in CSP)."
 ---
 

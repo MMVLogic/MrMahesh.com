@@ -32,17 +32,43 @@ permalink: /learnwithme/
             </span>
             <input type="text" id="search-bar" 
                    class="w-full bg-[#111827] border border-gray-700 rounded-lg pl-24 pr-4 py-3 text-sm font-mono text-gray-200 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all duration-200" 
-                   placeholder="type terms (e.g. ssh, docker)...">
+                   placeholder="type terms (e.g. ssh, docker, zfs, k8s)...">
         </div>
 
-        <!-- Filter Tags -->
+        <!-- Filter Categories -->
         <div class="flex flex-wrap gap-2 items-center text-xs font-mono">
-            <span class="text-gray-400 font-bold mr-1">Filter by category:</span>
-            <button class="filter-btn active px-3 py-1 rounded bg-yellow-500 text-[#1f2937] font-bold transition-all duration-200" data-category="All">All</button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="DevOps">DevOps</button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="CNC & Math">CNC & Math</button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Homelab">Homelab</button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Cybersecurity">Cybersecurity</button>
+            <span class="text-gray-400 font-bold mr-1">Category:</span>
+            <button class="filter-btn active px-3 py-1 rounded bg-yellow-500 text-[#1f2937] font-bold transition-all duration-200" data-category="All">All <span id="count-all" class="text-[10px] opacity-80">(0)</span></button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="DevOps">DevOps <span id="count-devops" class="text-[10px] opacity-80">(0)</span></button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Homelab">Homelab <span id="count-homelab" class="text-[10px] opacity-80">(0)</span></button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Cybersecurity">Cybersecurity <span id="count-cybersecurity" class="text-[10px] opacity-80">(0)</span></button>
+            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="CNC & Math">CNC & Math <span id="count-cnc" class="text-[10px] opacity-80">(0)</span></button>
+        </div>
+
+        <!-- Automated Smart Keyword Tag Cloud -->
+        <div class="pt-3 border-t border-gray-700/70 space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-gray-400 font-bold flex items-center gap-2">
+                    <span>⚡ Quick Keywords:</span>
+                    <span id="active-tag-indicator" class="hidden px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 text-[10px] items-center gap-1">
+                        Active: <span id="active-tag-name" class="font-bold"></span>
+                        <button onclick="clearActiveTag(event)" class="ml-1 text-yellow-300 hover:text-white font-bold text-xs leading-none">&times;</button>
+                    </span>
+                </span>
+                <button id="toggle-more-tags-btn" onclick="toggleTagDrawer()" class="text-yellow-500 hover:text-yellow-400 text-[11px] underline cursor-pointer">
+                    + Show All Tags
+                </button>
+            </div>
+            
+            <!-- Top / Visible Tags Container -->
+            <div id="quick-tags-container" class="flex flex-wrap gap-1.5 items-center">
+                <!-- Dynamically generated from data -->
+            </div>
+
+            <!-- Expandable Drawer for All Remaining Niche Tags -->
+            <div id="more-tags-container" class="hidden flex flex-wrap gap-1.5 items-center pt-2 border-t border-gray-800">
+                <!-- Dynamically populated with all other tags alphabetically -->
+            </div>
         </div>
     </div>
 
@@ -68,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allLessons = [];
     let currentFilter = 'All';
     let currentQuery = '';
+    let activeTag = '';
     let currentPage = 1;
     const PAGE_SIZE = 10;
     let filteredLessons = [];
@@ -78,6 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             allLessons = data;
             statCount.textContent = allLessons.length;
+            buildAutomatedTags();
+            updateCategoryCounts();
             filterAndRender(true);
         })
         .catch(err => {
@@ -90,17 +119,120 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
+    // Update dynamic category badge numbers
+    function updateCategoryCounts() {
+        const counts = { 'All': allLessons.length, 'DevOps': 0, 'Homelab': 0, 'Cybersecurity': 0, 'CNC & Math': 0 };
+        allLessons.forEach(l => {
+            if (counts[l.category] !== undefined) counts[l.category]++;
+        });
+        const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = `(${val})`; };
+        setTxt('count-all', counts['All']);
+        setTxt('count-devops', counts['DevOps']);
+        setTxt('count-homelab', counts['Homelab']);
+        setTxt('count-cybersecurity', counts['Cybersecurity']);
+        setTxt('count-cnc', counts['CNC & Math']);
+    }
+
+    // Automatically extract, rank, and render tags
+    function buildAutomatedTags() {
+        const tagCounts = {};
+        allLessons.forEach(lesson => {
+            (lesson.tags || []).forEach(tag => {
+                const t = tag.trim().toLowerCase();
+                if (t) tagCounts[t] = (tagCounts[t] || 0) + 1;
+            });
+        });
+
+        const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+        const TOP_TAG_LIMIT = 14;
+        const topTags = sortedTags.slice(0, TOP_TAG_LIMIT);
+        const remainingTags = sortedTags.slice(TOP_TAG_LIMIT).sort((a, b) => a[0].localeCompare(b[0]));
+
+        const renderChip = ([tag, count]) => `
+            <button onclick="handleTagClick('${tag}')" 
+                    id="tag-chip-${tag}"
+                    class="tag-chip px-2.5 py-1 rounded bg-[#111827] text-gray-300 text-[11px] font-mono border border-gray-700 hover:border-yellow-500 hover:text-yellow-400 transition-all duration-200 flex items-center gap-1 select-none">
+                <span>#${tag}</span>
+                <span class="text-[10px] text-gray-500 font-bold">(${count})</span>
+            </button>
+        `;
+
+        const topContainer = document.getElementById('quick-tags-container');
+        const moreContainer = document.getElementById('more-tags-container');
+        const toggleBtn = document.getElementById('toggle-more-tags-btn');
+
+        if (topContainer) topContainer.innerHTML = topTags.map(renderChip).join('');
+        if (moreContainer) moreContainer.innerHTML = remainingTags.map(renderChip).join('');
+        if (toggleBtn) toggleBtn.textContent = `+ Show All (${sortedTags.length}) Tags`;
+    }
+
+    // Expose tag handler to global scope
+    window.handleTagClick = function(tag) {
+        if (activeTag === tag) {
+            activeTag = '';
+        } else {
+            activeTag = tag;
+        }
+        updateTagUI();
+        filterAndRender(true);
+    };
+
+    window.clearActiveTag = function(e) {
+        if (e) e.stopPropagation();
+        activeTag = '';
+        updateTagUI();
+        filterAndRender(true);
+    };
+
+    window.toggleTagDrawer = function() {
+        const drawer = document.getElementById('more-tags-container');
+        const btn = document.getElementById('toggle-more-tags-btn');
+        if (!drawer || !btn) return;
+        const isHidden = drawer.classList.contains('hidden');
+        if (isHidden) {
+            drawer.classList.remove('hidden');
+            btn.textContent = '- Show Less';
+        } else {
+            drawer.classList.add('hidden');
+            btn.textContent = '+ Show All Tags';
+        }
+    };
+
+    function updateTagUI() {
+        const indicator = document.getElementById('active-tag-indicator');
+        const activeName = document.getElementById('active-tag-name');
+        
+        if (activeTag) {
+            if (indicator) indicator.classList.remove('hidden');
+            if (activeName) activeName.textContent = '#' + activeTag;
+        } else {
+            if (indicator) indicator.classList.add('hidden');
+        }
+
+        document.querySelectorAll('.tag-chip').forEach(chip => {
+            const chipTag = chip.id.replace('tag-chip-', '');
+            if (chipTag === activeTag) {
+                chip.classList.add('bg-yellow-500', 'text-[#1f2937]', 'border-yellow-500', 'font-bold');
+                chip.classList.remove('bg-[#111827]', 'text-gray-300', 'border-gray-700');
+            } else {
+                chip.classList.remove('bg-yellow-500', 'text-[#1f2937]', 'border-yellow-500', 'font-bold');
+                chip.classList.add('bg-[#111827]', 'text-gray-300', 'border-gray-700');
+            }
+        });
+    }
+
     // Filtering & Pagination handler
     function filterAndRender(resetPage = true) {
         if (resetPage) currentPage = 1;
 
         filteredLessons = allLessons.filter(lesson => {
             const matchesCategory = currentFilter === 'All' || lesson.category === currentFilter;
+            const matchesTag = !activeTag || (lesson.tags && lesson.tags.some(t => t.toLowerCase() === activeTag.toLowerCase()));
             const matchesSearch = currentQuery === '' || 
                 lesson.title.toLowerCase().includes(currentQuery) ||
                 (lesson.content && lesson.content.toLowerCase().includes(currentQuery)) ||
                 (lesson.tags && lesson.tags.some(tag => tag.toLowerCase().includes(currentQuery)));
-            return matchesCategory && matchesSearch;
+            return matchesCategory && matchesTag && matchesSearch;
         });
 
         const totalPages = Math.ceil(filteredLessons.length / PAGE_SIZE) || 1;

@@ -57,7 +57,7 @@ git clone git@github.com:MMVLogic/MrMahesh.com.git
 I was back online in minutes. But because the CMS was in an early, raw prototype state when it was wiped, I decided not to just restore it, but to rebuild it from the ground up to be more secure, robust, and structured.
 
 <figure class="project-post-figure">
-  <img src="/assets/Screenshot01.png" alt="A macOS desktop showing the Custom CMS Markdown editor on the left and a terminal window with a Gemini plan on the right.">
+  <img src="/assets/Screenshot01.jpg" alt="A macOS desktop showing the Custom CMS Markdown editor on the left and a terminal window with a Gemini plan on the right.">
   <figcaption>
     My local development workspace: editing the custom CMS backend on the left, with the AI-generated project logs open in the terminal on the right.
   </figcaption>

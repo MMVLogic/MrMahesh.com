@@ -62,7 +62,7 @@ Welcome back to the homelab chronicles! This marks "Day 0" of an ambitious sprin
 
 My goal was clear: establish a multi-node Linux cluster with an automation-first mindset. After manually installing Ubuntu on my collection of consumer hardware, I immediately turned to Ansible. I wrote a foundational playbook to configure all nodes, ensuring they were ready for cluster duty. This included crucial tweaks to `/etc/systemd/logind.conf` to prevent the laptop nodes from sleeping when the lid is closed—a small but vital step in turning laptops into reliable servers. After overcoming initial hardware and UEFI bootloader issues, the three nodes were online, reachable via SSH, and consistently configured via code. The foundation was laid.
 <figure class="project-post-figure">
-  <img src="/assets/Screenshot03.png"
+  <img src="/assets/Screenshot03.jpg"
        alt="A physical view of the homelab Battle-Station. A stack of three laptops—an HP ProBook and a Dell Latitude — sits next to a black desktop PC tower (the H97M-XA). A monitor above the stack displays an Ansible terminal output, confirming that all three nodes are online and Ready.">
  <figcaption>
 The 'Frankenstein' Cluster: A stack consisting of an HP ProBook, a Dell Latitude, and my H97M-XA desktop. It’s not a shiny data center rack, but with Ansible running on my Control Plane Mac, these three old machines are working together as a single distributed brain.

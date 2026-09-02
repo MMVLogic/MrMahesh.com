@@ -43,7 +43,7 @@ Instead of renting expensive, public cloud space, my cluster runs entirely on re
 Using **Ansible**, I automated the baseline server configuration (such as disabling laptop lid sleep settings) and deployed **MicroK8s** to run containerized services. To prevent a "split-brain" disaster, all three nodes act as masters to maintain **Quorum**—ensuring the cluster stays online even if one laptop is suddenly shut down or unplugged.
 
 <figure class="project-post-figure">
-  <img src="/assets/Screenshot03.png" alt="A physical view of the homelab Battle-Station with HP ProBook and Dell Latitude laptops sitting next to the desktop tower.">
+  <img src="/assets/Screenshot03.jpg" alt="A physical view of the homelab Battle-Station with HP ProBook and Dell Latitude laptops sitting next to the desktop tower.">
   <figcaption>
     The "Frankenstein" Cluster: HP ProBook, Dell Latitude, and H97M-XA desktop. Recycled consumer hardware turned into a high-availability Kubernetes cluster.
   </figcaption>

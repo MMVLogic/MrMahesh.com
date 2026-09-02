@@ -8,28 +8,49 @@ pagination:
 
 <div class="flex flex-col space-y-8">
 
-    <!-- Search Section -->
-    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-500">
-        <p class="text-xl md:text-2xl font-bold text-gray-200 mb-4 flex items-center">
-            <span class="mr-2 text-yellow-400 text-3xl">🔎</span> &gt; SEARCH_ARCHIVES_
+    <!-- Header -->
+    <div>
+        <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-4 leading-tight">Project Archives</h1>
+        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+            A comprehensive log of my homelab deployments, mechanical engineering builds, and software engineering projects.
         </p>
-        <input type="text" id="search-input" placeholder="Type to search posts and projects..." class="w-full bg-[#2c3e50] text-gray-100 p-3 rounded-lg border-2 border-gray-600 focus:border-[#3498db] focus:outline-none">
+    </div>
+
+    <!-- Search Section -->
+    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600 space-y-4">
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-yellow-500 font-bold font-mono select-none">
+                $ search_archives_
+            </span>
+            <input type="text" id="search-input" 
+                   class="w-full bg-[#111827] border border-gray-700 rounded-lg pl-44 pr-4 py-3 text-sm font-mono text-gray-200 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all duration-200" 
+                   placeholder="type terms (e.g. homelab, python, docker)...">
+        </div>
         <div id="results-container" class="mt-4"></div>
     </div>
 
     <!-- Project Listing -->
-    <div class="space-y-6">
+    <div class="grid grid-cols-1 gap-6">
         {% for project in paginator.posts %}
-        <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
-            <h2 class="text-2xl font-bold text-gray-200 mb-2">
-                <a href="{{ project.url | relative_url }}" class="text-[#3498db] hover:underline">{{ project.title }}</a>
-            </h2>
-            <p class="text-sm text-gray-500 mb-4">{{ project.date | date: "%B %d, %Y" }}</p>
-            <div class="text-gray-300">
-                {{ project.excerpt }}
+        <a href="{{ project.url | relative_url }}" class="group block bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-600 hover:border-yellow-500 hover:bg-[#2d3748] hover:shadow-[0_0_15px_rgba(234,179,8,0.15)] transition-all duration-200">
+            <div class="flex items-start space-x-4">
+                <div class="text-4xl text-yellow-500 group-hover:scale-110 transition-transform duration-200 hidden md:block">
+                    📁
+                </div>
+                <div class="space-y-2 flex-grow">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-100 group-hover:text-yellow-500 transition-colors duration-200">
+                        {{ project.title }}
+                    </h2>
+                    <p class="text-[10px] md:text-xs font-mono text-gray-500">{{ project.date | date: "%B %d, %Y" }}</p>
+                    <p class="text-xs md:text-sm text-gray-400 leading-relaxed mt-2">
+                        {{ project.excerpt | strip_html | truncatewords: 30 }}
+                    </p>
+                    <span class="inline-flex items-center text-xs font-bold text-yellow-500 group-hover:underline mt-2">
+                        View Project &rarr;
+                    </span>
+                </div>
             </div>
-            <a href="{{ project.url | relative_url }}" class="text-[#2ecc71] hover:underline mt-4 inline-block">View Project &rarr;</a>
-        </div>
+        </a>
         {% else %}
         <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-gray-700">
             <p class="text-center text-gray-400">No projects found. Check back soon!</p>
@@ -40,7 +61,7 @@ pagination:
     <!-- Pagination links -->
     <div class="flex justify-between items-center mt-8 text-lg">
         {% if paginator.previous_page %}
-            <a href="{{ paginator.previous_page_path | relative_url }}" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f2937] transition-all duration-300">&larr; Newer Projects</a>
+            <a href="{{ paginator.previous_page_path | relative_url }}" class="px-4 py-2 rounded-full border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-[#1f2937] transition-all duration-300">&larr; Newer Projects</a>
         {% else %}
             <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">&larr; Newer Projects</span>
         {% endif %}
@@ -48,7 +69,7 @@ pagination:
         <span class="text-gray-400">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
 
         {% if paginator.next_page %}
-            <a href="{{ paginator.next_page_path | relative_url }}" class="px-4 py-2 rounded-full border-2 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-[#1f29-37] transition-all duration-300">Older Projects &rarr;</a>
+            <a href="{{ paginator.next_page_path | relative_url }}" class="px-4 py-2 rounded-full border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-[#1f2937] transition-all duration-300">Older Projects &rarr;</a>
         {% else %}
             <span class="px-4 py-2 rounded-full border-2 border-gray-600 text-gray-600 cursor-not-allowed">Older Projects &rarr;</span>
         {% endif %}

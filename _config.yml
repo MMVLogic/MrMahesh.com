@@ -43,7 +43,7 @@ collections:
 # You can edit these settings, especially 'per_page'.
 pagination:
   enabled: true
-  per_page: 3 # Number of posts to show per page
+  per_page: 10 # Number of posts to show per page
   permalink: '/page/:num/' # The URL structure for paginated pages
   collection: 'projects' # The collection to paginate
   sort_field: 'date'

@@ -19,6 +19,7 @@ answer: "`actions/cache` stores package directories keyed by a hash of your lock
 Cache dependencies to speed up deployments and prevent rate-limiting from package registries.
 
 ### ⚙️ HOW (Implementation Code)
+{% raw %}
 ```yaml
 - name: Cache Node modules
   uses: actions/cache@v4
@@ -28,3 +29,4 @@ Cache dependencies to speed up deployments and prevent rate-limiting from packag
     restore-keys: |
       ${{ runner.os }}-node-
 ```
+{% endraw %}

@@ -87,13 +87,20 @@
 
     function saveAppState() {
         try {
-            localStorage.setItem('mrmahesh_openfit_v6', JSON.stringify({
+            const telemetry = {
                 isLbs: isLbs,
                 baselineStartWeight: baselineStartWeight,
                 completedSets: completedSets,
                 completedSetsData: completedSetsData,
                 todayWater: todayWater
-            }));
+            };
+            localStorage.setItem('mrmahesh_openfit_v6', JSON.stringify(telemetry));
+            if (window.MrMaheshAuth && window.MrMaheshAuth.supabase) {
+                const user = window.MrMaheshAuth.getUser();
+                if (user && user.id) {
+                    window.MrMaheshAuth.supabase.from('openfit_profiles').update({ telemetry: telemetry }).eq('user_id', user.id).then(()=>{}).catch(()=>{});
+                }
+            }
         } catch (e) {}
     }
 
@@ -103,8 +110,15 @@
     }
 
     function saveLogs(logs) {
-        try { localStorage.setItem('mrmahesh_openfit_logs', JSON.stringify(logs)); }
-        catch (e) {}
+        try { 
+            localStorage.setItem('mrmahesh_openfit_logs', JSON.stringify(logs)); 
+            if (window.MrMaheshAuth && window.MrMaheshAuth.supabase) {
+                const user = window.MrMaheshAuth.getUser();
+                if (user && user.id) {
+                    window.MrMaheshAuth.supabase.from('openfit_profiles').update({ logs: logs }).eq('user_id', user.id).then(()=>{}).catch(()=>{});
+                }
+            }
+        } catch (e) {}
     }
 
     function formatWeight(kg) {
@@ -168,6 +182,53 @@
             gateLocked?.classList.add('hidden');
             gateUnlocked?.classList.remove('hidden');
             
+            // Sync from cloud if authorized
+            if (!window._hasSyncedOpenFitCloud && window.MrMaheshAuth && window.MrMaheshAuth.supabase && user?.id) {
+                window._hasSyncedOpenFitCloud = true;
+                try {
+                    const { data: profile } = await window.MrMaheshAuth.supabase
+                        .from('openfit_profiles')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .single();
+                    if (profile) {
+                        if (profile.logs && Object.keys(profile.logs).length > 0 || Array.isArray(profile.logs) && profile.logs.length > 0) {
+                            localStorage.setItem('mrmahesh_openfit_logs', JSON.stringify(profile.logs));
+                        }
+                        if (profile.telemetry && Object.keys(profile.telemetry).length > 0) {
+                            localStorage.setItem('mrmahesh_openfit_v6', JSON.stringify(profile.telemetry));
+                        }
+                        if (profile.regimen && Object.keys(profile.regimen).length > 0) {
+                            localStorage.setItem('mrmahesh_openfit_custom_split', JSON.stringify(profile.regimen));
+                        }
+                        if (profile.equipment) {
+                            localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify({ availableEquipment: profile.equipment, userWeightKg: profile.current_weight_kg }));
+                        }
+                        if (profile.onboarding_completed) {
+                            localStorage.setItem('openfit_onboarding_done', 'true');
+                        } else {
+                            localStorage.removeItem('openfit_onboarding_done');
+                        }
+                        // Refresh in-memory state
+                        loadAppState();
+                        updateUnitUI();
+                        updateWaterDisplay();
+                        try {
+                            const rp = localStorage.getItem('mrmahesh_openfit_prefs');
+                            if (rp) {
+                                const p = JSON.parse(rp);
+                                if (p.availableEquipment) userPrefs.availableEquipment = p.availableEquipment;
+                                if (p.userWeightKg) userPrefs.userWeightKg = p.userWeightKg;
+                            }
+                            const rs = localStorage.getItem('mrmahesh_openfit_custom_split');
+                            if (rs) window.OpenFitData.WORKOUT_SPLIT = JSON.parse(rs);
+                        } catch(e) {}
+                    }
+                } catch (err) {
+                    console.warn("Could not sync cloud profile:", err);
+                }
+            }
+
             // Check if onboarding is completed
             const obDone = localStorage.getItem('openfit_onboarding_done');
             if (!obDone && typeof window.showOnboardingOverlay === 'function') {

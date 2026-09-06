@@ -1,0 +1,122 @@
+<!-- First Time Onboarding Overlay -->
+<div id="onboarding-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#111827] text-gray-200 font-mono">
+    <div id="onboarding-container" class="w-full max-w-lg bg-[#1a202c] border border-gray-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        
+        <!-- Header -->
+        <div class="p-4 border-b border-gray-800 bg-[#111827] text-center">
+            <h2 class="text-xl font-bold text-yellow-500 flex items-center justify-center gap-2">
+                🚀 Welcome to OpenFit
+            </h2>
+            <p class="text-xs text-gray-400 mt-1">Let's configure your custom protocol.</p>
+        </div>
+
+        <!-- Step 1: Goal -->
+        <div id="onboarding-step-1" class="onboarding-step p-6 space-y-4">
+            <h3 class="text-lg font-bold text-gray-200">1. What is your primary goal?</h3>
+            <div class="grid grid-cols-1 gap-3 mt-4">
+                <button class="ob-goal-btn w-full p-4 text-left border-2 border-gray-700 rounded-xl hover:border-yellow-500 transition-all focus:outline-none" data-goal="fat_loss">
+                    <span class="text-xl block mb-1">🔥 Fat Loss</span>
+                    <span class="text-xs text-gray-400">Reduce body fat while preserving joint safety.</span>
+                </button>
+                <button class="ob-goal-btn w-full p-4 text-left border-2 border-gray-700 rounded-xl hover:border-yellow-500 transition-all focus:outline-none" data-goal="muscle_build">
+                    <span class="text-xl block mb-1">💪 Build Muscle</span>
+                    <span class="text-xs text-gray-400">Progressive overload and hypertrophy focus.</span>
+                </button>
+                <button class="ob-goal-btn w-full p-4 text-left border-2 border-gray-700 rounded-xl hover:border-yellow-500 transition-all focus:outline-none" data-goal="recomp">
+                    <span class="text-xl block mb-1">⚖️ Recomposition</span>
+                    <span class="text-xs text-gray-400">Balance of strength gains and gradual fat loss.</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Body Metrics -->
+        <div id="onboarding-step-2" class="onboarding-step p-6 space-y-4 hidden">
+            <h3 class="text-lg font-bold text-gray-200">2. Current Body Metrics</h3>
+            <div class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Height (cm)</label>
+                    <input type="number" id="ob-height" placeholder="e.g. 175" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-3 text-lg font-bold text-gray-100 focus:outline-none focus:border-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Current Weight (kg)</label>
+                    <input type="number" id="ob-weight" placeholder="e.g. 90" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-3 text-lg font-bold text-gray-100 focus:outline-none focus:border-yellow-500">
+                </div>
+                <button onclick="nextOnboardingStep(3)" class="w-full p-4 bg-yellow-500 text-[#1f2937] font-bold rounded-xl mt-4 hover:bg-yellow-400 transition-colors">
+                    Continue &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Target Weight -->
+        <div id="onboarding-step-3" class="onboarding-step p-6 space-y-4 hidden">
+            <h3 class="text-lg font-bold text-gray-200">3. Target Weight</h3>
+            <p class="text-xs text-gray-400">Set a milestone. We can calculate a realistic initial milestone based on a healthy BMI (24.9).</p>
+            <div class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">Target Weight (kg)</label>
+                    <input type="number" id="ob-target" placeholder="e.g. 75" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-3 text-lg font-bold text-gray-100 focus:outline-none focus:border-yellow-500">
+                </div>
+                <button id="btn-suggest-bmi" class="w-full p-2 border-2 border-dashed border-gray-600 text-gray-300 text-sm font-bold rounded-lg hover:border-yellow-500 hover:text-yellow-500 transition-colors">
+                    💡 Auto-Suggest via BMI Target
+                </button>
+                <div class="flex gap-2 pt-4">
+                    <button onclick="prevOnboardingStep(2)" class="flex-1 p-4 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-700 transition-colors">
+                        &larr; Back
+                    </button>
+                    <button onclick="nextOnboardingStep(4)" class="flex-1 p-4 bg-yellow-500 text-[#1f2937] font-bold rounded-xl hover:bg-yellow-400 transition-colors">
+                        Continue &rarr;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Equipment -->
+        <div id="onboarding-step-4" class="onboarding-step p-6 space-y-4 hidden">
+            <h3 class="text-lg font-bold text-gray-200">4. Available Equipment</h3>
+            <p class="text-xs text-gray-400">Select what you have access to. Your regimen will be procedurally generated.</p>
+            <div class="grid grid-cols-2 gap-3 mt-4 text-sm" id="ob-equipment-list">
+                <label class="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500">
+                    <input type="checkbox" value="dumbbell" class="form-checkbox text-yellow-500" checked>
+                    <span>Dumbbells</span>
+                </label>
+                <label class="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500">
+                    <input type="checkbox" value="barbell" class="form-checkbox text-yellow-500">
+                    <span>Barbell</span>
+                </label>
+                <label class="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500">
+                    <input type="checkbox" value="bench" class="form-checkbox text-yellow-500" checked>
+                    <span>Bench</span>
+                </label>
+                <label class="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500">
+                    <input type="checkbox" value="machine" class="form-checkbox text-yellow-500">
+                    <span>Machines (Gym)</span>
+                </label>
+                <label class="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500">
+                    <input type="checkbox" value="cable" class="form-checkbox text-yellow-500">
+                    <span>Cables</span>
+                </label>
+                <label class="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg cursor-pointer hover:border-yellow-500">
+                    <input type="checkbox" value="pullup" class="form-checkbox text-yellow-500">
+                    <span>Pullup Bar</span>
+                </label>
+            </div>
+            <div class="flex gap-2 pt-4">
+                <button onclick="prevOnboardingStep(3)" class="flex-1 p-3 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-700 transition-colors">
+                    &larr; Back
+                </button>
+                <button onclick="finishOnboarding()" class="flex-2 p-3 bg-[#2ecc71] text-[#1f2937] font-bold rounded-xl hover:bg-green-500 transition-colors">
+                    Generate Protocol
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 5: Loading -->
+        <div id="onboarding-step-5" class="onboarding-step p-10 flex flex-col items-center justify-center space-y-6 hidden">
+            <div class="w-16 h-16 border-4 border-gray-700 border-t-yellow-500 rounded-full animate-spin"></div>
+            <p class="text-sm text-yellow-500 font-bold" id="ob-loading-text">Generating custom regimen...</p>
+            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mt-4">
+                <div id="ob-progress-bar" class="bg-yellow-500 h-full w-0 transition-all duration-[2000ms] ease-out"></div>
+            </div>
+        </div>
+    </div>
+</div>

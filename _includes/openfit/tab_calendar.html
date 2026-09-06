@@ -31,6 +31,72 @@
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- Day Selector Carousel -->
+        <div class="space-y-2 pt-2 border-t border-gray-800">
+            <span class="text-[10px] font-mono text-gray-400 font-bold uppercase tracking-wider block">
+                Select Split Day:
+            </span>
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 text-[11px] font-mono font-bold">
+                <button class="day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]" data-day="1">Mon<br><span class="text-[9px] font-normal">Upper</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="2">Tue<br><span class="text-[9px] font-normal">Lower</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="3">Wed<br><span class="text-[9px] font-normal">Walk</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="4">Thu<br><span class="text-[9px] font-normal">Push/Pull</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="5">Fri<br><span class="text-[9px] font-normal">Legs</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="6">Sat<br><span class="text-[9px] font-normal">Mobility</span></button>
+                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="7">Sun<br><span class="text-[9px] font-normal">Rest</span></button>
+            </div>
+        </div>
+
+        <!-- Selected Day Quick Overview Card -->
+        <div class="p-3.5 bg-[#111827] rounded-xl border border-gray-800 space-y-3 font-mono text-xs">
+            <div class="flex justify-between items-center">
+                <span id="plan-day-tag" class="text-yellow-400 font-bold uppercase text-[10px]">Day 1 • Upper + Cardio</span>
+                <span id="plan-day-ex-count" class="text-gray-400 text-[10px]">6 Exercises</span>
+            </div>
+            <p id="plan-day-title" class="text-sm font-bold text-gray-100">Upper Body Strength + Incline Cardio Finisher</p>
+            
+            <!-- Live Exercise Routine List -->
+            <div id="plan-day-exercise-list" class="space-y-1.5 pt-1">
+                <!-- Populated dynamically by JS -->
+            </div>
+
+            <button id="btn-start-selected-workout" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-lg transition-all text-xs active:scale-95 shadow-md">
+                Start This Workout &rarr;
+            </button>
+        </div>
+
+    <!-- SELECTED DATE HISTORICAL TELEMETRY SUMMARY CARD                 -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="calendar-date-summary-card" class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                <span id="summary-card-date-title" class="font-bold text-gray-200 text-xs flex items-center gap-1.5">
+                    <span>📊</span> Historical Summary • <span class="text-yellow-400">Today</span>
+                </span>
+                <span id="summary-card-workout-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/40 uppercase">
+                    Workout Completed
+                </span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
+                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Weight Logged</span>
+                    <span id="summary-card-weight" class="font-bold text-yellow-400 text-xs sm:text-sm">134.2 kg</span>
+                </div>
+                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
+                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Steps Logged</span>
+                    <span id="summary-card-steps" class="font-bold text-green-400 text-xs sm:text-sm">8,500 / 8,000</span>
+                </div>
+                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
+                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Water Intake</span>
+                    <span id="summary-card-water" class="font-bold text-blue-400 text-xs sm:text-sm">3.5 / 3.5 L</span>
+                </div>
+            </div>
+
+            <p id="summary-card-workout-desc" class="text-[11px] text-gray-400 text-center pt-0.5">
+                Day 1 • Upper Body Strength & Cardio Finisher
+            </p>
+        </div>
+
         <!-- QUICK METRIC ENTRY (TODAY) CARD                                 -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <div class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
@@ -88,72 +154,6 @@
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- SELECTED DATE HISTORICAL TELEMETRY SUMMARY CARD                 -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <div id="calendar-date-summary-card" class="bg-[#111827] p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-                <span id="summary-card-date-title" class="font-bold text-gray-200 text-xs flex items-center gap-1.5">
-                    <span>📊</span> Historical Summary • <span class="text-yellow-400">Today</span>
-                </span>
-                <span id="summary-card-workout-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/40 uppercase">
-                    Workout Completed
-                </span>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
-                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Weight Logged</span>
-                    <span id="summary-card-weight" class="font-bold text-yellow-400 text-xs sm:text-sm">134.2 kg</span>
-                </div>
-                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
-                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Steps Logged</span>
-                    <span id="summary-card-steps" class="font-bold text-green-400 text-xs sm:text-sm">8,500 / 8,000</span>
-                </div>
-                <div class="bg-[#0d1117] p-2.5 rounded-lg border border-gray-800 space-y-0.5">
-                    <span class="text-[9px] text-gray-400 uppercase font-bold block">Water Intake</span>
-                    <span id="summary-card-water" class="font-bold text-blue-400 text-xs sm:text-sm">3.5 / 3.5 L</span>
-                </div>
-            </div>
-
-            <p id="summary-card-workout-desc" class="text-[11px] text-gray-400 text-center pt-0.5">
-                Day 1 • Upper Body Strength & Cardio Finisher
-            </p>
         </div>
-
-        <!-- Day Selector Carousel -->
-        <div class="space-y-2 pt-2 border-t border-gray-800">
-            <span class="text-[10px] font-mono text-gray-400 font-bold uppercase tracking-wider block">
-                Select Split Day:
-            </span>
-            <div class="grid grid-cols-4 sm:grid-cols-7 gap-1 text-[11px] font-mono font-bold">
-                <button class="day-select-btn p-2 rounded-lg border border-yellow-500 bg-yellow-500 text-[#1f2937]" data-day="1">Mon<br><span class="text-[9px] font-normal">Upper</span></button>
-                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="2">Tue<br><span class="text-[9px] font-normal">Lower</span></button>
-                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="3">Wed<br><span class="text-[9px] font-normal">Walk</span></button>
-                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="4">Thu<br><span class="text-[9px] font-normal">Push/Pull</span></button>
-                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="5">Fri<br><span class="text-[9px] font-normal">Legs</span></button>
-                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="6">Sat<br><span class="text-[9px] font-normal">Mobility</span></button>
-                <button class="day-select-btn p-2 rounded-lg border border-gray-700 bg-[#111827] text-gray-400" data-day="7">Sun<br><span class="text-[9px] font-normal">Rest</span></button>
-            </div>
-        </div>
-
-        <!-- Selected Day Quick Overview Card -->
-        <div class="p-3.5 bg-[#111827] rounded-xl border border-gray-800 space-y-3 font-mono text-xs">
-            <div class="flex justify-between items-center">
-                <span id="plan-day-tag" class="text-yellow-400 font-bold uppercase text-[10px]">Day 1 • Upper + Cardio</span>
-                <span id="plan-day-ex-count" class="text-gray-400 text-[10px]">6 Exercises</span>
-            </div>
-            <p id="plan-day-title" class="text-sm font-bold text-gray-100">Upper Body Strength + Incline Cardio Finisher</p>
-            
-            <!-- Live Exercise Routine List -->
-            <div id="plan-day-exercise-list" class="space-y-1.5 pt-1">
-                <!-- Populated dynamically by JS -->
-            </div>
-
-            <button id="btn-start-selected-workout" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-[#1f2937] font-bold font-mono rounded-lg transition-all text-xs active:scale-95 shadow-md">
-                Start This Workout &rarr;
-            </button>
-        </div>
-
-    </div>
 
 </div>

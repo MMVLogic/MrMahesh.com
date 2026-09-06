@@ -174,8 +174,18 @@
         if (isAuthorized) {
             gateLocked?.classList.add('hidden');
             gateUnlocked?.classList.remove('hidden');
-            renderActiveExercise();
-            renderDotMatrixGrid();
+            
+            // Check if onboarding is completed
+            const obDone = localStorage.getItem('openfit_onboarding_done');
+            if (!obDone && typeof window.showOnboardingOverlay === 'function') {
+                window.showOnboardingOverlay();
+            } else {
+                renderActiveExercise();
+                renderDotMatrixGrid();
+                renderBlueprintExerciseChecklist();
+                renderCalendarDayOverview();
+                updateCalendarTelemetryView();
+            }
         } else {
             gateUnlocked?.classList.add('hidden');
             gateLocked?.classList.remove('hidden');
@@ -262,6 +272,98 @@
     }
 
     // ── Active Exercise Renderer ─────────────────────────────────
+    
+    // ── Exercise Output Line Graph (Chart.js) ─────────────────────
+    let exerciseChart = null;
+
+    function renderExerciseGraph(exName) {
+        const ctx = document.getElementById('exercise-output-chart');
+        if (!ctx) return;
+        
+        // Generate mock historical data (4 previous sessions) + current session
+        const dates = [];
+        const outputs = [];
+        
+        const now = new Date();
+        for (let i = 4; i >= 1; i--) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - (i * 3));
+            dates.push(`${d.getMonth()+1}/${d.getDate()}`);
+            // Mock output between 1500 and 3000
+            outputs.push(Math.floor(1500 + Math.random() * 1000 + (4 - i) * 150)); 
+        }
+        
+        // Calculate today's output from active sets
+        dates.push('Today');
+        let todayOutput = 0;
+        if (completedSetsData[exName] && completedSetsData[exName].sets) {
+            completedSetsData[exName].sets.forEach(s => {
+                if (s.done) {
+                    todayOutput += (s.weight * s.reps);
+                }
+            });
+        }
+        
+        if (todayOutput === 0) {
+            // If nothing done today, just carry over last session + small random
+            todayOutput = outputs[outputs.length-1] + 50;
+        }
+        outputs.push(todayOutput);
+
+        if (exerciseChart) {
+            exerciseChart.destroy();
+        }
+
+        exerciseChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Volume Output (kg)',
+                    data: outputs,
+                    borderColor: '#eab308', // yellow-500
+                    backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#eab308',
+                    pointBorderColor: '#111827',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` Output: ${context.parsed.y} kg`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(75, 85, 99, 0.2)', drawBorder: false },
+                        ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    }
+
     function renderActiveExercise() {
         const split = window.OpenFitData?.WORKOUT_SPLIT || {};
         const dayData = split[activeDay] || split[1];
@@ -387,6 +489,7 @@
         if (!ex) return;
 
         const exName = ex.name || 'Exercise';
+        setTimeout(() => renderExerciseGraph(exName), 100);
         const defaultTotal = ex.totalSets || 3;
         const defaultW = isLbs ? 35.0 / 2.20462 : 15.0;
 
@@ -513,6 +616,7 @@
                     exData.sets[idx].reps--;
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -524,6 +628,7 @@
                     exData.sets[idx].reps++;
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -536,6 +641,7 @@
                     exData.sets[idx].reps = val;
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -548,6 +654,7 @@
                     exData.sets[idx].weight = Math.max(0, exData.sets[idx].weight - stepKg);
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -560,6 +667,7 @@
                     exData.sets[idx].weight += stepKg;
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -573,6 +681,7 @@
                     exData.sets[idx].weight = Math.max(0, exData.sets[idx].weight + deltaKg);
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -585,6 +694,7 @@
                     exData.sets[idx].weight = isLbs ? (val / 2.20462) : val;
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -600,6 +710,7 @@
                     }
                     saveAppState();
                     renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
                 }
             });
         });
@@ -618,6 +729,7 @@
                 completedSetsData[exName].totalSets--;
                 saveAppState();
                 renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
             }
         });
 
@@ -633,6 +745,7 @@
                 completedSetsData[exName].totalSets++;
                 saveAppState();
                 renderExerciseSetTracker();
+                setTimeout(() => renderExerciseGraph(exName), 50);
             }
         });
     }

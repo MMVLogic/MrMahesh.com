@@ -1,7 +1,12 @@
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- TAB 4: SUSTAINABLE BLUEPRINT & PROTOCOL CALIBRATOR                -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<div id="tab-panel-guide" class="hidden space-y-4">
+<div id="blueprint-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="relative w-full max-w-lg bg-[#1a202c] border border-gray-700 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto space-y-4 p-4">
+        <div class="flex justify-between items-center mb-4 sticky top-0 bg-[#1a202c] py-2 border-b border-gray-800 z-10">
+            <h2 class="text-lg font-bold text-yellow-500 font-mono">⚙️ Settings & Blueprint</h2>
+            <button onclick="closeBlueprintModal()" class="text-gray-400 hover:text-white font-bold text-xl">&times;</button>
+        </div>
     
     <!-- 1. Baseline Card -->
     <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-gray-700 space-y-3 font-mono">
@@ -269,4 +274,6 @@
         </div>
     </div>
 
+</div>
+    </div>
 </div>

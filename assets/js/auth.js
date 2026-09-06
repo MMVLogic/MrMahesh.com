@@ -373,6 +373,18 @@ function switchAuthTab(tab) {
     const authFeedback = document.getElementById('auth-feedback');
     if (authFeedback) authFeedback.classList.add('hidden');
 
+    const formRecovery = document.getElementById('auth-form-recovery');
+    if (formRecovery) formRecovery.classList.add('hidden');
+    formSignIn?.classList.add('hidden');
+    formSignUp?.classList.add('hidden');
+
+    if (tab === 'recovery') {
+        if (formRecovery) formRecovery.classList.remove('hidden');
+        if (tabSignIn) tabSignIn.className = 'flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold focus:outline-none text-center transition-all';
+        if (tabSignUp) tabSignUp.className = 'flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold focus:outline-none text-center transition-all';
+        return;
+    }
+
     if (tab === 'signin') {
         if (tabSignIn) {
             tabSignIn.className = 'flex-1 pb-2 border-b-2 border-yellow-500 text-yellow-500 font-bold focus:outline-none text-center transition-all';
@@ -396,4 +408,17 @@ function switchAuthTab(tab) {
 
 document.addEventListener('DOMContentLoaded', () => {
     window.MrMaheshAuth.init();
+    
+    // Check for password recovery hash
+    if (window.location.hash.includes('type=recovery')) {
+        setTimeout(() => {
+            openAuthModal('recovery');
+            const fb = document.getElementById('auth-feedback');
+            if (fb) {
+                fb.className = 'p-3 rounded-lg text-xs bg-yellow-900 border border-yellow-500 text-yellow-200';
+                fb.textContent = 'Please enter your new password.';
+                fb.classList.remove('hidden');
+            }
+        }, 500);
+    }
 });

@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ── Shift Slots ──────────────────────────────────── */
     function buildPickers(pfx, hr, min, ampm) {
         const hrO  = Array.from({length:12},(_,i)=>i+1).map(h=>`<option value="${h}" class="bg-[#111827]" ${h==hr?'selected':''}>${h}</option>`).join('');
-        const minO = Array.from({length:12},(_,i)=>(i*5).toString().padStart(2,'0')).map(m=>`<option value="${m}" class="bg-[#111827]" ${m==min?'selected':''}>${m}</option>`).join('');
+        const minO = Array.from({length:60},(_,i)=>(i).toString().padStart(2,'0')).map(m=>`<option value="${m}" class="bg-[#111827]" ${m==min?'selected':''}>${m}</option>`).join('');
         const cls  = 'bg-[#111827] border-b border-gray-700 text-gray-200 font-mono text-xs focus:outline-none focus:border-yellow-500 py-0.5 cursor-pointer';
         return `<div class="flex items-center gap-1">
             <select id="${pfx}-hr"   class="${cls} w-9">${hrO}</select>

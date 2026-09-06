@@ -86,12 +86,20 @@ window.MrMaheshAuth = (() => {
 
         if (currentUser) {
             const displayName = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'Member';
-            authBtn.innerHTML = `<span class="text-green-400 font-bold">🟢 ${displayName}</span>`;
+            authBtn.textContent = '';
+            const span = document.createElement('span');
+            span.className = 'text-green-400 font-bold';
+            span.textContent = `🟢 ${displayName}`;
+            authBtn.appendChild(span);
             authBtn.classList.remove('border-yellow-500', 'text-yellow-500');
             authBtn.classList.add('border-green-500', 'bg-gray-900');
             if (authUserLabel) authUserLabel.textContent = displayName;
         } else {
-            authBtn.innerHTML = `<span class="font-bold">👤 Login</span>`;
+            authBtn.textContent = '';
+            const span = document.createElement('span');
+            span.className = 'font-bold';
+            span.textContent = '👤 Login';
+            authBtn.appendChild(span);
             authBtn.classList.add('border-yellow-500', 'text-yellow-500');
             authBtn.classList.remove('border-green-500', 'bg-gray-900');
             if (authUserLabel) authUserLabel.textContent = 'Guest';

@@ -275,6 +275,34 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ACCOUNT SETTINGS                                                -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="bg-[#1a202c] p-5 rounded-2xl border border-gray-700 space-y-3 font-mono mt-8">
+        <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-gray-200 uppercase tracking-wider">🔐 Account Settings</span>
+        </div>
+        <p class="text-xs text-gray-400">Update your account password. You will be asked to sign in again after changing it.</p>
+        
+        <button id="btn-initiate-password-reset" onclick="document.getElementById('pwd-reset-container').classList.remove('hidden'); this.classList.add('hidden');" class="w-full p-2.5 bg-[#111827] text-gray-300 border border-gray-700 font-bold rounded-xl hover:text-white transition-all text-xs mt-2">
+            Change Password
+        </button>
+
+        <div id="pwd-reset-container" class="hidden space-y-3 pt-3 border-t border-gray-800 mt-3">
+            <input type="password" id="pwd-reset-new" placeholder="New Password" class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-2.5 text-gray-200 text-xs focus:outline-none focus:border-yellow-500">
+            
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('pwd-reset-container').classList.add('hidden'); document.getElementById('btn-initiate-password-reset').classList.remove('hidden');" class="flex-1 p-2.5 bg-gray-800 text-gray-300 rounded-lg text-xs font-bold hover:bg-gray-700 transition-colors">
+                    Cancel
+                </button>
+                <button onclick="updateUserPassword()" class="flex-1 p-2.5 bg-yellow-600 text-white rounded-lg text-xs font-bold hover:bg-yellow-500 transition-colors">
+                    Update Password
+                </button>
+            </div>
+            <p id="pwd-reset-msg" class="text-[10px] hidden"></p>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- DANGER ZONE: RESET DATA                                         -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="bg-[#1a202c] p-5 rounded-2xl border-2 border-dashed border-red-500/50 space-y-3 font-mono mt-8">

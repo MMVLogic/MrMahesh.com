@@ -215,3 +215,37 @@ window.showOnboardingOverlay = showOnboardingOverlay;
 window.nextOnboardingStep = nextOnboardingStep;
 window.prevOnboardingStep = prevOnboardingStep;
 window.finishOnboarding = finishOnboarding;
+
+window.updateUserPassword = async function() {
+    const pwd = document.getElementById('pwd-reset-new').value;
+    const msgEl = document.getElementById('pwd-reset-msg');
+    
+    if (!pwd || pwd.length < 6) {
+        msgEl.textContent = 'Password must be at least 6 characters.';
+        msgEl.className = 'text-[10px] text-red-400';
+        msgEl.classList.remove('hidden');
+        return;
+    }
+    
+    msgEl.textContent = 'Updating...';
+    msgEl.className = 'text-[10px] text-gray-400';
+    msgEl.classList.remove('hidden');
+    
+    if (window.MrMaheshAuth && window.MrMaheshAuth.supabase) {
+        const { data, error } = await window.MrMaheshAuth.supabase.auth.updateUser({
+            password: pwd
+        });
+        
+        if (error) {
+            msgEl.textContent = error.message;
+            msgEl.className = 'text-[10px] text-red-400';
+        } else {
+            msgEl.textContent = 'Password updated successfully! Please log in again.';
+            msgEl.className = 'text-[10px] text-green-400';
+            setTimeout(() => {
+                window.MrMaheshAuth.signOut();
+                window.location.reload();
+            }, 2000);
+        }
+    }
+}

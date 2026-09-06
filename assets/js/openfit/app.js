@@ -19,6 +19,7 @@
     }
 
     let isLbs = false;
+    let calendarOffsetMonths = 0;
     let baselineStartWeight = 135.0; // kg
     let activeDay = getTodayDayOfWeek();
     let activeExerciseIndex = 0;
@@ -156,20 +157,12 @@
         }
 
         const userEmail = (user?.email || '').trim().toLowerCase();
-        let isAuthorized = false;
-
-        if (userEmail) {
-            try {
-                const hash = await sha256(userEmail);
-                if (hash === AUTHORIZED_LEAD_HASH) {
-                    isAuthorized = true;
-                }
-            } catch (e) {}
-        }
+        let isAuthorized = !!userEmail;
 
         const gateLocked = document.getElementById('access-gate-locked');
         const gateUnlocked = document.getElementById('access-gate-unlocked');
         const gateEmailLabel = document.getElementById('gate-user-email');
+        const headerEmailLabel = document.getElementById('header-user-email');
 
         if (isAuthorized) {
             gateLocked?.classList.add('hidden');
@@ -863,9 +856,13 @@
         grid.innerHTML = '';
 
         const now = new Date();
+        now.setMonth(now.getMonth() + calendarOffsetMonths);
         const year = now.getFullYear();
         const month = now.getMonth();
-        const todayDate = now.getDate();
+        
+        const realNow = new Date();
+        const isCurrentMonth = (year === realNow.getFullYear() && month === realNow.getMonth());
+        const todayDate = realNow.getDate();
 
         const monthTitle = document.getElementById('calendar-month-title');
         if (monthTitle) {
@@ -886,9 +883,9 @@
         }
 
         for (let d = 1; d <= daysInMonth; d++) {
-            const dateStr = `${monthStr}/${String(d).padStart(2, '0')}`;
-            const isLogged = loggedDates.has(dateStr);
-            const isToday = (d === todayDate);
+            const logDateStr = `${monthStr}/${String(d).padStart(2, '0')}`;
+            const isLogged = loggedDates.has(logDateStr);
+            const isToday = (isCurrentMonth && d === todayDate);
 
             const dot = document.createElement('div');
             dot.className = `w-7 h-7 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold transition-all cursor-pointer ${
@@ -899,19 +896,19 @@
                     : 'bg-[#111827] text-gray-500 border border-gray-800 hover:border-gray-600 hover:text-gray-300'
             }`;
             dot.textContent = d;
-            dot.title = isLogged ? `${dateStr}: Activity Logged ✓ (Click for Summary)` : isToday ? `${dateStr}: Today (Click for Summary)` : `${dateStr} (Click for Summary)`;
+            dot.title = isLogged ? `${logDateStr}: Activity Logged ✓ (Click for Summary)` : isToday ? `${logDateStr}: Today (Click for Summary)` : `${logDateStr} (Click for Summary)`;
 
             const cellDayOfWeek = (new Date(year, month, d).getDay() + 6) % 7 + 1;
             dot.addEventListener('click', () => {
-                renderDateTelemetrySummary(dateStr, cellDayOfWeek);
+                renderDateTelemetrySummary(logDateStr, cellDayOfWeek);
+                const targetBtn = document.querySelector(`.day-select-btn[data-day="${cellDayOfWeek}"]`);
+                if (targetBtn) {
+                    targetBtn.click();
+                }
             });
 
             grid.appendChild(dot);
         }
-
-        // Render initial summary for today
-        const todayDateStr = `${monthStr}/${String(todayDate).padStart(2, '0')}`;
-        renderDateTelemetrySummary(todayDateStr, getTodayDayOfWeek());
     }
 
     // ── Blueprint Customization Controls ─────────────────────────
@@ -1544,6 +1541,16 @@
             isLbs = false;
             saveAppState();
             updateUnitUI();
+        });
+
+        
+        document.getElementById('btn-cal-prev')?.addEventListener('click', () => {
+            calendarOffsetMonths--;
+            renderDotMatrixGrid();
+        });
+        document.getElementById('btn-cal-next')?.addEventListener('click', () => {
+            calendarOffsetMonths++;
+            renderDotMatrixGrid();
         });
 
         document.getElementById('btn-unit-lbs')?.addEventListener('click', () => {

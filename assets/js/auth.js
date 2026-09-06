@@ -101,6 +101,7 @@ window.MrMaheshAuth = (() => {
     return {
         init,
         getUser: () => currentUser,
+        supabase: supabaseClient,
         isLoggedIn: () => !!currentUser,
         isReady: () => authReady,
 
@@ -157,6 +158,28 @@ window.MrMaheshAuth = (() => {
                 updateNavUI();
                 notifyListeners();
                 return { user: currentUser };
+            }
+        },
+
+        async resetPassword(email) {
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname + "?reset=true"
+                });
+                if (error) throw error;
+                return data;
+            } else {
+                throw new Error("Cloud auth is not configured. Password reset disabled.");
+            }
+        },
+
+        async updatePassword(newPassword) {
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.auth.updateUser({ password: newPassword });
+                if (error) throw error;
+                return data;
+            } else {
+                throw new Error("Cloud auth is not configured. Cannot update password.");
             }
         },
 

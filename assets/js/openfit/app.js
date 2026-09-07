@@ -338,25 +338,12 @@
         const ctx = document.getElementById('exercise-output-chart');
         if (!ctx) return;
         
-        // Generate mock historical data (4 previous sessions) + current session
+        // Generate historical data + current session
         const dates = [];
         const outputs = [];
         const tooltipInfo = [];
         
-        const now = new Date();
-        for (let i = 4; i >= 1; i--) {
-            const d = new Date(now);
-            d.setDate(d.getDate() - (i * 3));
-            dates.push(`${d.getMonth()+1}/${d.getDate()}`);
-            
-            const mockWeight = Math.floor(40 + Math.random() * 20 + (4 - i) * 5);
-            const mockReps = 10;
-            const mockSets = 3;
-            const mockOutput = mockWeight * mockReps * mockSets;
-            
-            outputs.push(mockOutput);
-            tooltipInfo.push({ weight: mockWeight, reps: mockReps, sets: mockSets });
-        }
+        // (Historical tracking of individual sets across multiple days will be loaded here from cloud in a future update)
         
         // Calculate today's output from active sets
         dates.push('Today');
@@ -380,8 +367,8 @@
             }
         }
         
-        if (todayOutput === 0) {
-            todayOutput = outputs[outputs.length-1] + 50;
+        if (todayOutput === 0 && outputs.length > 0) {
+            todayOutput = outputs[outputs.length-1];
             const lastInfo = tooltipInfo[tooltipInfo.length-1];
             tooltipInfo.push({ weight: lastInfo.weight, reps: lastInfo.reps, sets: lastInfo.sets });
         } else {

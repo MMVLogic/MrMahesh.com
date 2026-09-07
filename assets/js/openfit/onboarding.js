@@ -32,6 +32,7 @@ window.openBlueprintModal = function() {
     
     // Show settings panel inline
     document.getElementById('blueprint-panel')?.classList.remove('hidden');
+    if (window.syncBlueprintUI) window.syncBlueprintUI();
 }
 
 window.closeBlueprintModal = function() {
@@ -196,7 +197,7 @@ async function finishOnboarding() {
     window.OpenFitData.WORKOUT_SPLIT = generatedSplit;
     
     // Also save as the active active custom split logic for the main app
-    localStorage.setItem('mrmahesh_openfit_custom_split', JSON.stringify(generatedSplit));
+    
     localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify({ availableEquipment: equipment, userWeightKg: currentWeight }));
     localStorage.setItem('openfit_onboarding_done', 'true');
 

@@ -234,6 +234,10 @@
             if (!obDone && typeof window.showOnboardingOverlay === 'function') {
                 window.showOnboardingOverlay();
             } else {
+                if (document.getElementById('onboarding-overlay')) {
+                    document.getElementById('onboarding-overlay').classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
                 renderActiveExercise();
                 renderDotMatrixGrid();
                 renderBlueprintExerciseChecklist();
@@ -1126,6 +1130,10 @@
         try {
             localStorage.setItem('mrmahesh_openfit_prefs', JSON.stringify(userPrefs));
         } catch (e) {}
+        
+        // Wipe overrides so new equipment selection applies cleanly without inheriting old exercises
+        customSplitOverrides = {};
+        try { localStorage.removeItem('mrmahesh_openfit_custom_split'); } catch(e) {}
 
         if (window.OpenFitData?.generateCustomSplit) {
             const autoSplit = window.OpenFitData.generateCustomSplit(userPrefs);

@@ -337,30 +337,51 @@
         // Generate mock historical data (4 previous sessions) + current session
         const dates = [];
         const outputs = [];
+        const tooltipInfo = [];
         
         const now = new Date();
         for (let i = 4; i >= 1; i--) {
             const d = new Date(now);
             d.setDate(d.getDate() - (i * 3));
             dates.push(`${d.getMonth()+1}/${d.getDate()}`);
-            // Mock output between 1500 and 3000
-            outputs.push(Math.floor(1500 + Math.random() * 1000 + (4 - i) * 150)); 
+            
+            const mockWeight = Math.floor(40 + Math.random() * 20 + (4 - i) * 5);
+            const mockReps = 10;
+            const mockSets = 3;
+            const mockOutput = mockWeight * mockReps * mockSets;
+            
+            outputs.push(mockOutput);
+            tooltipInfo.push({ weight: mockWeight, reps: mockReps, sets: mockSets });
         }
         
         // Calculate today's output from active sets
         dates.push('Today');
         let todayOutput = 0;
+        let todaySets = 0;
+        let todayRepsTotal = 0;
+        let todayWeightAvg = 0;
+        
         if (completedSetsData[exName] && completedSetsData[exName].sets) {
             completedSetsData[exName].sets.forEach(s => {
                 if (s.done) {
                     todayOutput += (s.weight * s.reps);
+                    todaySets++;
+                    todayRepsTotal += s.reps;
+                    todayWeightAvg += s.weight;
                 }
             });
+            if (todaySets > 0) {
+                todayWeightAvg = Math.round(todayWeightAvg / todaySets);
+                todayRepsTotal = Math.round(todayRepsTotal / todaySets);
+            }
         }
         
         if (todayOutput === 0) {
-            // If nothing done today, just carry over last session + small random
             todayOutput = outputs[outputs.length-1] + 50;
+            const lastInfo = tooltipInfo[tooltipInfo.length-1];
+            tooltipInfo.push({ weight: lastInfo.weight, reps: lastInfo.reps, sets: lastInfo.sets });
+        } else {
+            tooltipInfo.push({ weight: todayWeightAvg, reps: todayRepsTotal, sets: todaySets });
         }
         outputs.push(todayOutput);
 
@@ -394,26 +415,39 @@
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
+                            title: function() {
+                                return null; // Hide default title (which is just the date)
+                            },
                             label: function(context) {
-                                return ` Output: ${context.parsed.y} kg`;
+                                const idx = context.dataIndex;
+                                const info = tooltipInfo[idx];
+                                const dStr = dates[idx];
+                                return [
+                                    `Date: ${dStr}`,
+                                    `Output: ${context.parsed.y} kg`,
+                                    `Weight: ${info.weight} kg`,
+                                    `Reps: ${info.reps}`,
+                                    `Sets: ${info.sets}`
+                                ];
                             }
                         }
                     }
                 },
                 scales: {
                     x: {
-                        grid: { display: false, drawBorder: false },
-                        ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                        display: false
                     },
                     y: {
-                        grid: { color: 'rgba(75, 85, 99, 0.2)', drawBorder: false },
-                        ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                        display: false
                     }
+                },
+                layout: {
+                    padding: 0
                 },
                 interaction: {
                     intersect: false,
                     mode: 'index',
-                },
+                }
             }
         });
     }

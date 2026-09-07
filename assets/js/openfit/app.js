@@ -428,7 +428,6 @@
                                 const dStr = dates[idx];
                                 return [
                                     `Date: ${dStr}`,
-                                    `Output: ${context.parsed.y} kg`,
                                     `Weight: ${info.weight} kg`,
                                     `Reps: ${info.reps}`,
                                     `Sets: ${info.sets}`

@@ -1134,6 +1134,16 @@
         // Wipe overrides so new equipment selection applies cleanly without inheriting old exercises
         customSplitOverrides = {};
         try { localStorage.removeItem('mrmahesh_openfit_custom_split'); } catch(e) {}
+        
+        // Save to Supabase Cloud so cache clears don't revert to old equipment
+        if (window.MrMaheshAuth && window.MrMaheshAuth.supabase) {
+            const user = window.MrMaheshAuth.getUser();
+            if (user && user.id) {
+                window.MrMaheshAuth.supabase.from('openfit_profiles')
+                    .update({ equipment: userPrefs.availableEquipment })
+                    .eq('user_id', user.id).then(()=>{}).catch(()=>{});
+            }
+        }
 
         if (window.OpenFitData?.generateCustomSplit) {
             const autoSplit = window.OpenFitData.generateCustomSplit(userPrefs);
@@ -1145,6 +1155,15 @@
                 }
             });
             window.OpenFitData.WORKOUT_SPLIT = autoSplit;
+            
+            if (window.MrMaheshAuth && window.MrMaheshAuth.supabase) {
+                const user = window.MrMaheshAuth.getUser();
+                if (user && user.id) {
+                    window.MrMaheshAuth.supabase.from('openfit_profiles')
+                        .update({ regimen: autoSplit })
+                        .eq('user_id', user.id).then(()=>{}).catch(()=>{});
+                }
+            }
         }
 
         updatePresetButtonsUI(presetKey || determineActivePreset());

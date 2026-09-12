@@ -1,0 +1,58 @@
+<!-- Generic App Paywall / Access Gate -->
+<div id="paywall-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-md px-4">
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md text-center">
+        
+        <div class="mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        
+        <h2 id="paywall-title" class="text-2xl font-bold text-gray-100 mb-2">Lifetime Access Required</h2>
+        <p id="paywall-description" class="text-gray-400 text-sm mb-6">
+            Your 7-day free trial has expired. To continue generating custom protocols and tracking your progress, please upgrade your account.
+        </p>
+        
+        <div class="space-y-4">
+            <!-- App Specific Purchase -->
+            <button id="btn-paywall-checkout" class="w-full bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+                Unlock Lifetime Access - $29
+            </button>
+
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-gray-700"></div>
+                <span class="flex-shrink-0 mx-4 text-gray-500 text-xs uppercase tracking-wider">or</span>
+                <div class="flex-grow border-t border-gray-700"></div>
+            </div>
+
+            <!-- Bundle Upsell -->
+            <button id="btn-paywall-bundle" class="w-full bg-[#1f2937] hover:bg-[#374151] border border-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                <span>Get the Pro Bundle</span>
+                <span class="bg-yellow-500/20 text-yellow-500 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">Best Value</span>
+            </button>
+        </div>
+
+        <p class="mt-6 text-xs text-gray-500">
+            Secure checkout provided by <span class="font-semibold text-gray-400">Stripe</span>. If you have a promo code, you can apply it at checkout.
+        </p>
+
+    </div>
+</div>
+
+<script>
+window.showPaywall = function(appId) {
+    const user = window.MrMaheshAuth ? window.MrMaheshAuth.getUser() : null;
+    const userId = user ? user.id : '';
+    
+    // We append the client_reference_id to track who bought what
+    const openFitStripeLink = `https://buy.stripe.com/YOUR_OPENFIT_LINK_HERE?client_reference_id=${userId}`;
+    const bundleStripeLink = `https://buy.stripe.com/YOUR_BUNDLE_LINK_HERE?client_reference_id=${userId}`;
+    
+    document.getElementById('btn-paywall-checkout').onclick = () => window.location.href = openFitStripeLink;
+    document.getElementById('btn-paywall-bundle').onclick = () => window.location.href = bundleStripeLink;
+    
+    document.getElementById('paywall-overlay').classList.remove('hidden');
+    document.getElementById('paywall-overlay').classList.add('flex');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling in background
+};
+</script>

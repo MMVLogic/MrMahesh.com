@@ -20,7 +20,7 @@
 
     let isLbs = false;
     let calendarOffsetMonths = 0;
-    let baselineStartWeight = 135.0; // kg
+    let baselineStartWeight = 90.0; // kg
     let activeDay = getTodayDayOfWeek();
     let activeExerciseIndex = 0;
     let todayWater = 0;

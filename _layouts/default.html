@@ -306,12 +306,20 @@
             const email = document.getElementById('signup-email').value;
             const password = document.getElementById('signup-password').value;
             const fb = document.getElementById('auth-feedback');
+            
+            if (password.length < 6) {
+                fb.className = 'p-3 rounded-lg text-xs bg-red-900 border border-red-500 text-red-200';
+                fb.textContent = '✗ Password must be at least 6 characters long.';
+                fb.classList.remove('hidden');
+                return;
+            }
+            
             try {
                 const result = await window.MrMaheshAuth.signUp(email, password, name);
                 if (result && result.session === null) {
                     // Email confirmation is required by Supabase
                     fb.className = 'p-3 rounded-lg text-xs bg-yellow-900 border border-yellow-500 text-yellow-200';
-                    fb.textContent = '✓ Registered! Please check your email for a confirmation link to log in.';
+                    fb.textContent = '✓ Success! A confirmation link has been sent to your email. You must click it before you can log in.';
                     fb.classList.remove('hidden');
                 } else {
                     // Instant login

@@ -307,11 +307,19 @@
             const password = document.getElementById('signup-password').value;
             const fb = document.getElementById('auth-feedback');
             try {
-                await window.MrMaheshAuth.signUp(email, password, name);
-                fb.className = 'p-3 rounded-lg text-xs bg-green-900 border border-green-500 text-green-200';
-                fb.textContent = '✓ Account registered! Session linked.';
-                fb.classList.remove('hidden');
-                setTimeout(() => { closeAuthModal(); }, 1200);
+                const result = await window.MrMaheshAuth.signUp(email, password, name);
+                if (result && result.session === null) {
+                    // Email confirmation is required by Supabase
+                    fb.className = 'p-3 rounded-lg text-xs bg-yellow-900 border border-yellow-500 text-yellow-200';
+                    fb.textContent = '✓ Registered! Please check your email for a confirmation link to log in.';
+                    fb.classList.remove('hidden');
+                } else {
+                    // Instant login
+                    fb.className = 'p-3 rounded-lg text-xs bg-green-900 border border-green-500 text-green-200';
+                    fb.textContent = '✓ Account registered! Session linked.';
+                    fb.classList.remove('hidden');
+                    setTimeout(() => { closeAuthModal(); window.location.reload(); }, 1200);
+                }
             } catch (err) {
                 fb.className = 'p-3 rounded-lg text-xs bg-red-900 border border-red-500 text-red-200';
                 fb.textContent = '✗ ' + (err.message || 'Registration failed');

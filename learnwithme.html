@@ -17,6 +17,10 @@ permalink: /learnwithme/
         transform: translate(-150vw, 50px) rotate(-30deg) !important;
         opacity: 0;
     }
+        .swipe-card.swipe-down {
+        transform: translate(0, 150vh) rotate(0deg) !important;
+        opacity: 0;
+    }
     .swipe-card.swipe-right {
         transform: translate(150vw, 50px) rotate(30deg) !important;
         opacity: 0;
@@ -35,7 +39,7 @@ permalink: /learnwithme/
     <!-- Header -->
     <div class="mb-12 text-center z-10">
         <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">Learn</h1>
-        <p class="text-gray-400">Discover new articles. Swipe right to like, left to skip.</p>
+        <p class="text-gray-400">Swipe right to like, left to skip. <strong>Swipe Down to Reset Deck.</strong></p>
     </div>
 
     <!-- Deck Container -->
@@ -88,7 +92,12 @@ permalink: /learnwithme/
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        let deck = [...posts];
+        // Load history from localStorage (works for guests too!)
+        let likedGuides = JSON.parse(localStorage.getItem('mrmahesh_liked_guides') || '[]');
+        let dislikedGuides = JSON.parse(localStorage.getItem('mrmahesh_disliked_guides') || '[]');
+
+        // Filter out guides we've already interacted with
+        let deck = posts.filter(p => !likedGuides.includes(p.url) && !dislikedGuides.includes(p.url));
 
         // 2a. Randomly shuffle the array
         const shuffleArray = (array) => {
@@ -169,7 +178,6 @@ permalink: /learnwithme/
 
         const onDragMove = (e) => {
             if (!isDragging) return;
-            // Only prevent default on touch to avoid scrolling
             if (e.type.includes('touch')) e.preventDefault(); 
             
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
@@ -178,8 +186,9 @@ permalink: /learnwithme/
             currentX = clientX - startX;
             currentY = clientY - startY;
 
-            // Rotation based on drag distance (max 15 degrees)
-            const rotate = currentX * 0.05;
+            // If dragging mostly down, don't rotate. Otherwise, rotate.
+            const isMostlyDown = currentY > 50 && Math.abs(currentX) < 50;
+            const rotate = isMostlyDown ? 0 : currentX * 0.05;
             cardEl.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotate}deg)`;
         };
 
@@ -188,12 +197,13 @@ permalink: /learnwithme/
             isDragging = false;
             cardEl.classList.remove('dragging');
 
-            if (Math.abs(currentX) > SWIPE_THRESHOLD) {
-                // Swipe away
+            // Determine if swipe was down or horizontal
+            if (currentY > SWIPE_THRESHOLD && Math.abs(currentX) < SWIPE_THRESHOLD) {
+                handleSwipe('down');
+            } else if (Math.abs(currentX) > SWIPE_THRESHOLD) {
                 const direction = currentX > 0 ? 'right' : 'left';
                 handleSwipe(direction);
             } else {
-                // Snap back
                 cardEl.style.transform = '';
                 cardEl.classList.add('snap-back');
             }
@@ -202,16 +212,36 @@ permalink: /learnwithme/
         };
 
         const handleSwipe = (direction) => {
+            const currentPost = deck[currentIndex];
+
             if (direction === 'right') {
                 cardEl.classList.add('swipe-right');
-            } else {
+                if (currentPost) {
+                    likedGuides.push(currentPost.url);
+                    localStorage.setItem('mrmahesh_liked_guides', JSON.stringify(likedGuides));
+                }
+            } else if (direction === 'left') {
                 cardEl.classList.add('swipe-left');
+                if (currentPost) {
+                    dislikedGuides.push(currentPost.url);
+                    localStorage.setItem('mrmahesh_disliked_guides', JSON.stringify(dislikedGuides));
+                }
+            } else if (direction === 'down') {
+                cardEl.classList.add('swipe-down');
+                // Reset logic
+                likedGuides = [];
+                dislikedGuides = [];
+                localStorage.setItem('mrmahesh_liked_guides', '[]');
+                localStorage.setItem('mrmahesh_disliked_guides', '[]');
+                deck = [...posts]; // reset deck
+                shuffleArray(deck);
+                currentIndex = -1; // so ++ makes it 0
             }
 
             setTimeout(() => {
                 currentIndex++;
                 renderCard();
-            }, 300); // Wait for transition
+            }, 300);
         };
 
         // Event Listeners

@@ -4,569 +4,231 @@ title: Learn With Me
 permalink: /learnwithme/
 ---
 
-<div class="flex flex-col space-y-8">
+<style>
+    /* Card Animation Styles */
+    .swipe-card {
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        will-change: transform, opacity;
+    }
+    .swipe-card.dragging {
+        transition: none; /* Disable transition during drag */
+    }
+    .swipe-card.swipe-left {
+        transform: translate(-150vw, 50px) rotate(-30deg) !important;
+        opacity: 0;
+    }
+    .swipe-card.swipe-right {
+        transform: translate(150vw, 50px) rotate(30deg) !important;
+        opacity: 0;
+    }
+    .swipe-card.snap-back {
+        transform: translate(0, 0) rotate(0deg) !important;
+        opacity: 1;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-out; /* Bouncy snap back */
+    }
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+</style>
 
-    <!-- Header & Statistics Banner -->
-    <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
-        <div>
-            <h1 class="text-3xl md:text-5xl font-bold text-yellow-500 mb-4 leading-tight">Learn With Me</h1>
-            <p class="text-sm md:text-base text-gray-300 leading-relaxed">
-                An open-source interactive knowledge base detailing the **Why, When, and How** behind my coding, devops, and system architecture tasks.
-            </p>
-        </div>
-        <!-- Stats widget -->
-        <div class="bg-[#1a202c] p-4 rounded-xl border border-gray-700 font-mono text-xs text-gray-400 space-y-1.5 min-w-[200px]">
-            <p class="text-yellow-500 font-bold border-b border-gray-800 pb-1 mb-1">&gt; SYSTEM_STATUS_</p>
-            <p>• total_lessons: <span id="stat-count" class="text-[#2ecc71] font-bold">0</span></p>
-            <p>• sync_type: <span class="text-[#3498db]">Jamstack JSON</span></p>
-            <p>• last_sync: <span class="text-orange-500">Live Load</span></p>
-        </div>
+<div class="min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden" style="background-color: #1f2937;">
+    <!-- Header -->
+    <div class="mb-12 text-center z-10">
+        <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">Learn</h1>
+        <p class="text-gray-400">Discover new articles. Swipe right to like, left to skip.</p>
     </div>
 
-    <!-- Search & Filters Toolbar -->
-    <div class="bg-[#1a202c] p-6 rounded-xl border-2 border-dashed border-yellow-600 space-y-4">
-        <!-- Search -->
-        <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-yellow-500 font-bold font-mono select-none">
-                $ search_
-            </span>
-            <input type="text" id="search-bar" 
-                   class="w-full bg-[#111827] border border-gray-700 rounded-lg pl-24 pr-4 py-3 text-sm font-mono text-gray-200 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all duration-200" 
-                   placeholder="type terms (e.g. ssh, docker, zfs, k8s)...">
-        </div>
-
-        <!-- Filter Categories -->
-        <div class="flex flex-wrap gap-2 items-center text-xs font-mono">
-            <span class="text-gray-400 font-bold mr-1">Category:</span>
-            <button class="filter-btn active px-3 py-1 rounded bg-yellow-500 text-[#1f2937] font-bold transition-all duration-200" data-category="All">All <span id="count-all" class="text-[10px] opacity-80">(0)</span></button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="DevOps">DevOps <span id="count-devops" class="text-[10px] opacity-80">(0)</span></button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Homelab">Homelab <span id="count-homelab" class="text-[10px] opacity-80">(0)</span></button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="Cybersecurity">Cybersecurity <span id="count-cybersecurity" class="text-[10px] opacity-80">(0)</span></button>
-            <button class="filter-btn px-3 py-1 rounded bg-[#2c3e50] text-gray-300 font-bold hover:bg-gray-700 transition-all duration-200" data-category="CNC & Math">CNC & Math <span id="count-cnc" class="text-[10px] opacity-80">(0)</span></button>
-        </div>
-
-        <!-- Automated Smart Keyword Tag Cloud -->
-        <div class="pt-3 border-t border-gray-700/70 space-y-2">
-            <div class="flex items-center justify-between text-xs font-mono">
-                <span class="text-gray-400 font-bold flex items-center gap-2">
-                    <span>⚡ Quick Keywords:</span>
-                    <span id="active-tag-indicator" class="hidden px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 text-[10px] items-center gap-1">
-                        Active: <span id="active-tag-name" class="font-bold"></span>
-                        <button onclick="clearActiveTag(event)" class="ml-1 text-yellow-300 hover:text-white font-bold text-xs leading-none">&times;</button>
-                    </span>
-                </span>
-                <button id="toggle-more-tags-btn" onclick="toggleTagDrawer()" class="text-yellow-500 hover:text-yellow-400 text-[11px] underline cursor-pointer">
-                    + Show All Tags
-                </button>
+    <!-- Deck Container -->
+    <div class="relative w-full max-w-sm h-96 perspective-1000 z-10">
+        <!-- Active Card -->
+        <div id="active-card" class="swipe-card absolute inset-0 w-full h-full rounded-3xl shadow-2xl flex flex-col p-8 cursor-grab touch-none border border-gray-700/50" style="background-color: #2c3e50;">
+            <div class="flex-grow flex flex-col justify-center select-none pointer-events-none">
+                <h2 id="card-title" class="text-3xl font-bold text-white mb-4 leading-tight line-clamp-3">Loading...</h2>
+                <p id="card-excerpt" class="text-gray-300 text-lg leading-relaxed line-clamp-4 overflow-hidden mb-6">Please wait while we prepare your content.</p>
             </div>
-            
-            <!-- Top / Visible Tags Container -->
-            <div id="quick-tags-container" class="flex flex-wrap gap-1.5 items-center">
-                <!-- Dynamically generated from data -->
-            </div>
-
-            <!-- Expandable Drawer for All Remaining Niche Tags -->
-            <div id="more-tags-container" class="hidden flex flex-wrap gap-1.5 items-center pt-2 border-t border-gray-800">
-                <!-- Dynamically populated with all other tags alphabetically -->
+            <div class="mt-auto">
+                <a id="card-link" href="#" class="block w-full py-3 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-center rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl">
+                    Read More
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Feed Container (Index List) -->
-    <div id="learning-feed" class="space-y-4">
-        <!-- Rendered dynamically via JS -->
-        <div class="text-center py-12 text-gray-400 font-mono text-sm">&gt; LOADING_GUIDES_DATABASE...</div>
+    <!-- Controls -->
+    <div class="flex gap-8 mt-12 z-10">
+        <button id="btn-swipe-left" class="w-16 h-16 rounded-full border-2 border-red-500 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all duration-200 shadow-lg focus:outline-none focus:ring-4 focus:ring-red-500/30" style="background-color: #2c3e50;" aria-label="Swipe Left">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <button id="btn-swipe-right" class="w-16 h-16 rounded-full border-2 border-green-500 text-green-500 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all duration-200 shadow-lg focus:outline-none focus:ring-4 focus:ring-green-500/30" style="background-color: #2c3e50;" aria-label="Swipe Right">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+        </button>
     </div>
-
-    <!-- Pagination Controls -->
-    <div id="pagination-controls" class="flex flex-wrap justify-between items-center gap-4 mt-8 pt-4 border-t border-gray-800 font-mono text-xs"></div>
-
+    
+    <!-- End of Deck Message -->
+    <div id="end-message" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-0">
+        <div class="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6 border border-gray-700" style="background-color: #2c3e50;">
+            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">You're all caught up!</h3>
+        <p class="text-gray-400">You've seen all the articles we have for now.</p>
+    </div>
 </div>
 
-<!-- Interactive Engine Logic -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const feed = document.getElementById('learning-feed');
-    const searchBar = document.getElementById('search-bar');
-    const statCount = document.getElementById('stat-count');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    
-    let allLessons = [];
-    let currentFilter = 'All';
-    let currentQuery = '';
-    let activeTag = '';
-    let currentPage = 1;
-    const PAGE_SIZE = 10;
-    let filteredLessons = [];
+    // 1. Serialize site.posts using Liquid
+    const posts = [
+        {% for post in site.posts %}
+        {
+            "title": {{ post.title | jsonify }},
+            "excerpt": {{ post.excerpt | strip_html | strip_newlines | truncatewords: 30 | jsonify }},
+            "url": {{ post.url | relative_url | jsonify }}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    ];
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let deck = [...posts];
 
-    // Fetch seed data with cache-busting timestamp
-    fetch('/assets/data/learnwithme.json?v={{ site.time | date: "%s" }}')
-        .then(res => res.json())
-        .then(data => {
-            allLessons = data;
-            statCount.textContent = allLessons.length;
-            buildAutomatedTags();
-            updateCategoryCounts();
-            filterAndRender(true);
-        })
-        .catch(err => {
-            console.error("Failed to load learning data:", err);
-            feed.innerHTML = `
-                <div class="bg-[#1a202c] p-6 rounded-xl border border-red-500 text-center space-y-2">
-                    <p class="text-red-500 font-bold">⚠️ Failed to Load Database</p>
-                    <p class="text-xs text-gray-400">Please verify that /assets/data/learnwithme.json exists and is structured correctly.</p>
-                </div>
-            `;
-        });
-
-    // Update dynamic category badge numbers
-    function updateCategoryCounts() {
-        const counts = { 'All': allLessons.length, 'DevOps': 0, 'Homelab': 0, 'Cybersecurity': 0, 'CNC & Math': 0 };
-        allLessons.forEach(l => {
-            if (counts[l.category] !== undefined) counts[l.category]++;
-        });
-        const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = `(${val})`; };
-        setTxt('count-all', counts['All']);
-        setTxt('count-devops', counts['DevOps']);
-        setTxt('count-homelab', counts['Homelab']);
-        setTxt('count-cybersecurity', counts['Cybersecurity']);
-        setTxt('count-cnc', counts['CNC & Math']);
-    }
-
-    // Automatically extract, rank, and render tags
-    function buildAutomatedTags() {
-        const tagCounts = {};
-        allLessons.forEach(lesson => {
-            (lesson.tags || []).forEach(tag => {
-                const t = tag.trim().toLowerCase();
-                if (t) tagCounts[t] = (tagCounts[t] || 0) + 1;
-            });
-        });
-
-        const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
-        const TOP_TAG_LIMIT = 14;
-        const topTags = sortedTags.slice(0, TOP_TAG_LIMIT);
-        const remainingTags = sortedTags.slice(TOP_TAG_LIMIT).sort((a, b) => a[0].localeCompare(b[0]));
-
-        const renderChip = ([tag, count]) => `
-            <button onclick="handleTagClick('${tag}')" 
-                    id="tag-chip-${tag}"
-                    class="tag-chip px-2.5 py-1 rounded bg-[#111827] text-gray-300 text-[11px] font-mono border border-gray-700 hover:border-yellow-500 hover:text-yellow-400 transition-all duration-200 flex items-center gap-1 select-none">
-                <span>#${tag}</span>
-                <span class="text-[10px] text-gray-500 font-bold">(${count})</span>
-            </button>
-        `;
-
-        const topContainer = document.getElementById('quick-tags-container');
-        const moreContainer = document.getElementById('more-tags-container');
-        const toggleBtn = document.getElementById('toggle-more-tags-btn');
-
-        if (topContainer) topContainer.innerHTML = topTags.map(renderChip).join('');
-        if (moreContainer) moreContainer.innerHTML = remainingTags.map(renderChip).join('');
-        if (toggleBtn) toggleBtn.textContent = `+ Show All (${sortedTags.length}) Tags`;
-    }
-
-    // Expose tag handler to global scope
-    window.handleTagClick = function(tag) {
-        if (activeTag === tag) {
-            activeTag = '';
-        } else {
-            activeTag = tag;
-        }
-        updateTagUI();
-        filterAndRender(true);
-    };
-
-    window.clearActiveTag = function(e) {
-        if (e) e.stopPropagation();
-        activeTag = '';
-        updateTagUI();
-        filterAndRender(true);
-    };
-
-    window.toggleTagDrawer = function() {
-        const drawer = document.getElementById('more-tags-container');
-        const btn = document.getElementById('toggle-more-tags-btn');
-        if (!drawer || !btn) return;
-        const isHidden = drawer.classList.contains('hidden');
-        if (isHidden) {
-            drawer.classList.remove('hidden');
-            btn.textContent = '- Show Less';
-        } else {
-            drawer.classList.add('hidden');
-            btn.textContent = '+ Show All Tags';
-        }
-    };
-
-    function updateTagUI() {
-        const indicator = document.getElementById('active-tag-indicator');
-        const activeName = document.getElementById('active-tag-name');
-        
-        if (activeTag) {
-            if (indicator) indicator.classList.remove('hidden');
-            if (activeName) activeName.textContent = '#' + activeTag;
-        } else {
-            if (indicator) indicator.classList.add('hidden');
-        }
-
-        document.querySelectorAll('.tag-chip').forEach(chip => {
-            const chipTag = chip.id.replace('tag-chip-', '');
-            if (chipTag === activeTag) {
-                chip.classList.add('bg-yellow-500', 'text-[#1f2937]', 'border-yellow-500', 'font-bold');
-                chip.classList.remove('bg-[#111827]', 'text-gray-300', 'border-gray-700');
-            } else {
-                chip.classList.remove('bg-yellow-500', 'text-[#1f2937]', 'border-yellow-500', 'font-bold');
-                chip.classList.add('bg-[#111827]', 'text-gray-300', 'border-gray-700');
+        // 2a. Randomly shuffle the array
+        const shuffleArray = (array) => {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
-        });
-    }
+        };
 
-    // Filtering & Pagination handler
-    function filterAndRender(resetPage = true) {
-        if (resetPage) currentPage = 1;
-
-        filteredLessons = allLessons.filter(lesson => {
-            const matchesCategory = currentFilter === 'All' || lesson.category === currentFilter;
-            const matchesTag = !activeTag || (lesson.tags && lesson.tags.some(t => t.toLowerCase() === activeTag.toLowerCase()));
-            const matchesSearch = currentQuery === '' || 
-                lesson.title.toLowerCase().includes(currentQuery) ||
-                (lesson.content && lesson.content.toLowerCase().includes(currentQuery)) ||
-                (lesson.tags && lesson.tags.some(tag => tag.toLowerCase().includes(currentQuery)));
-            return matchesCategory && matchesTag && matchesSearch;
-        });
-
-        const totalPages = Math.ceil(filteredLessons.length / PAGE_SIZE) || 1;
-        if (currentPage > totalPages) currentPage = totalPages;
-        if (currentPage < 1) currentPage = 1;
-
-        const startIndex = (currentPage - 1) * PAGE_SIZE;
-        const pageLessons = filteredLessons.slice(startIndex, startIndex + PAGE_SIZE);
-
-        renderFeed(pageLessons);
-        renderPagination(filteredLessons.length, totalPages, startIndex);
-    }
-
-    // Expose changePage to window for button clicks
-    window.changePage = function(pageNumber) {
-        currentPage = pageNumber;
-        filterAndRender(false);
-        const feedElement = document.getElementById('learning-feed');
-        if (feedElement) {
-            feedElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    };
-
-    function renderPagination(totalCount, totalPages, startIndex) {
-        const paginationEl = document.getElementById('pagination-controls');
-        if (!paginationEl) return;
-
-        if (totalCount === 0) {
-            paginationEl.innerHTML = '';
-            return;
+        if (deck.length === 0) {
+            // Fallback mock data if running without Jekyll or empty posts
+            deck = [
+                { title: "Building Modern UIs", excerpt: "Learn how to build sleek user interfaces with Tailwind CSS.", url: "#" },
+                { title: "The Future of AI", excerpt: "Discover what the future holds for artificial intelligence and automation.", url: "#" },
+                { title: "Mastering JavaScript", excerpt: "Deep dive into JS concepts and become a better developer.", url: "#" }
+            ];
         }
 
-        const endIndex = Math.min(startIndex + PAGE_SIZE, totalCount);
-        const showingText = `Showing <span class="text-yellow-500 font-bold">${startIndex + 1}–${endIndex}</span> of <span class="text-white font-bold">${totalCount}</span> guides`;
+        shuffleArray(deck);
+        let currentIndex = 0;
 
-        let buttonsHtml = '';
-        if (totalPages > 1) {
-            buttonsHtml += `
-                <button onclick="changePage(${currentPage - 1})" 
-                        ${currentPage === 1 ? 'disabled class="px-3 py-1.5 rounded bg-gray-900 text-gray-600 cursor-not-allowed border border-gray-800"' : 'class="px-3 py-1.5 rounded bg-[#243346] text-yellow-500 hover:bg-yellow-500 hover:text-[#1f2937] border border-gray-700 transition-colors duration-200"'}>
-                    &larr; Prev
-                </button>
-            `;
+        const cardEl = document.getElementById('active-card');
+        const titleEl = document.getElementById('card-title');
+        const excerptEl = document.getElementById('card-excerpt');
+        const linkEl = document.getElementById('card-link');
+        const btnLeft = document.getElementById('btn-swipe-left');
+        const btnRight = document.getElementById('btn-swipe-right');
+        const endMessage = document.getElementById('end-message');
 
-            for (let p = 1; p <= totalPages; p++) {
-                if (p === 1 || p === totalPages || (p >= currentPage - 2 && p <= currentPage + 2)) {
-                    buttonsHtml += `
-                        <button onclick="changePage(${p})" 
-                                class="px-3 py-1.5 rounded font-bold border transition-colors duration-200 ${p === currentPage ? 'bg-yellow-500 text-[#1f2937] border-yellow-500' : 'bg-[#243346] text-gray-300 hover:bg-gray-700 border-gray-700'}">
-                            ${p}
-                        </button>
-                    `;
-                } else if (p === currentPage - 3 || p === currentPage + 3) {
-                    buttonsHtml += `<span class="text-gray-500 px-1">...</span>`;
-                }
+        // 2b. Render the top card
+        const renderCard = () => {
+            if (currentIndex >= deck.length) {
+                cardEl.style.display = 'none';
+                btnLeft.style.display = 'none';
+                btnRight.style.display = 'none';
+                endMessage.classList.remove('hidden');
+                return;
             }
+            const currentPost = deck[currentIndex];
+            titleEl.textContent = currentPost.title;
+            excerptEl.textContent = currentPost.excerpt;
+            linkEl.href = currentPost.url;
 
-            buttonsHtml += `
-                <button onclick="changePage(${currentPage + 1})" 
-                        ${currentPage === totalPages ? 'disabled class="px-3 py-1.5 rounded bg-gray-900 text-gray-600 cursor-not-allowed border border-gray-800"' : 'class="px-3 py-1.5 rounded bg-[#243346] text-yellow-500 hover:bg-yellow-500 hover:text-[#1f2937] border border-gray-700 transition-colors duration-200"'}>
-                    Next &rarr;
-                </button>
-            `;
-        }
+            // Reset styles
+            cardEl.className = 'swipe-card absolute inset-0 w-full h-full rounded-3xl shadow-2xl flex flex-col p-8 cursor-grab touch-none border border-gray-700/50';
+            cardEl.style.transform = '';
+            cardEl.style.backgroundColor = '#2c3e50';
+            cardEl.classList.add('snap-back');
+            setTimeout(() => cardEl.classList.remove('snap-back'), 400); // Remove class after animation
+        };
 
-        paginationEl.innerHTML = `
-            <div class="text-gray-400">
-                ${showingText}
-            </div>
-            <div class="flex items-center gap-1.5">
-                ${buttonsHtml}
-            </div>
-        `;
-    }
+        renderCard();
 
-    // Render loop (Index / Accordion Style)
-    function renderFeed(lessons) {
-        if (lessons.length === 0) {
-            feed.innerHTML = `
-                <div class="bg-[#1a202c] p-8 rounded-xl border-2 border-dashed border-gray-700 text-center">
-                    <p class="text-gray-400 font-mono text-sm">&gt; NO_RECORDS_FOUND_</p>
-                </div>
-            `;
-            return;
-        }
+        // 2c & 2d. Swipe/Drag logic
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let currentX = 0;
+        let currentY = 0;
 
-        feed.innerHTML = lessons.map(lesson => {
-            const tagsHtml = (lesson.tags || []).map(tag => `
-                <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 text-[10px] font-mono border border-gray-700">
-                    #${tag}
-                </span>
-            `).join('');
+        const SWIPE_THRESHOLD = 100; // pixels to trigger swipe
 
-            let conceptText = lesson.concept || '';
-            let reasoningText = lesson.reasoning || '';
-            let howText = lesson.how || '';
-
-            let isConceptHtml = false;
-            let isReasoningHtml = false;
-            let isHowHtml = false;
-
-            if ((!conceptText || !reasoningText || !howText) && lesson.content) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = lesson.content;
-                
-                const sections = { why: [], reasoning: [], how: [], general: [] };
-                let currentKey = 'general';
-                
-                Array.from(tempDiv.childNodes).forEach(node => {
-                    if (node.nodeType === 1 && node.tagName.toLowerCase() === 'h3') {
-                        const text = node.textContent.toLowerCase();
-                        if (text.includes('why') || text.includes('concept')) {
-                            currentKey = 'why';
-                        } else if (text.includes('decision') || text.includes('reasoning') || text.includes('logical')) {
-                            currentKey = 'reasoning';
-                        } else if (text.includes('how') || text.includes('implementation')) {
-                            currentKey = 'how';
-                        } else {
-                            currentKey = text;
-                        }
-                    } else {
-                        sections[currentKey].push(node.cloneNode(true));
-                    }
-                });
-
-                const getHtml = (nodes) => {
-                    if (!nodes || nodes.length === 0) return '';
-                    const wrapper = document.createElement('div');
-                    nodes.forEach(n => wrapper.appendChild(n));
-                    return wrapper.innerHTML.trim();
-                };
-
-                if (sections['why'].length > 0) { conceptText = getHtml(sections['why']); isConceptHtml = true; }
-                if (sections['reasoning'].length > 0) { reasoningText = getHtml(sections['reasoning']); isReasoningHtml = true; }
-                if (sections['how'].length > 0) { howText = getHtml(sections['how']); isHowHtml = true; }
-                
-                if (!conceptText && !reasoningText && !howText) {
-                    conceptText = lesson.content;
-                    isConceptHtml = true;
-                }
-            }
-
-            // Safe HTML escaping helper
-            const escapeHtml = (str) => {
-                if (!str) return '';
-                return String(str)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
-            };
-
-            const formatMarkdown = (text, isHtml = false) => {
-                if (!text) return '';
-                let output = isHtml ? text : escapeHtml(text);
-                return output
-                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/`([^`]+)`/g, '<code class="bg-[#111827] text-orange-400 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-800">$1</code>')
-                    .replace(/\n\n/g, '<br><br>')
-                    .replace(/\n/g, '<br>');
-            };
-
-            return `
-                <article class="bg-[#1a202c] rounded-xl border border-gray-700 shadow-xl overflow-hidden transition-all duration-300 hover:border-yellow-500">
-                    
-                    <!-- Clickable Index Row Header -->
-                    <div onclick="toggleGuide('${lesson.id}')"
-                         class="cursor-pointer bg-[#243346] hover:bg-[#2c3e50] px-6 py-4 flex flex-wrap justify-between items-center gap-3 select-none transition-colors duration-200">
-                        <div class="space-y-1.5">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-yellow-500 text-[#1f2937] text-[10px] font-bold font-mono uppercase tracking-wider">
-                                    ${lesson.category || 'DevOps'}
-                                </span>
-                                <span class="text-xs text-gray-400 font-mono">${lesson.date}</span>
-                            </div>
-                            <h2 class="text-lg md:text-xl font-bold text-gray-100 font-mono tracking-tight flex items-center gap-2">
-                                <span>${escapeHtml(lesson.title)}</span>
-                            </h2>
-                            <div class="flex flex-wrap gap-1.5 pt-1">${tagsHtml}</div>
-                        </div>
-                        <div class="flex items-center">
-                            <span id="guide-toggle-btn-${lesson.id}" class="px-3 py-1.5 rounded-lg bg-[#111827] border border-gray-600 text-yellow-500 text-xs font-mono font-bold hover:bg-yellow-500 hover:text-[#1f2937] transition-all duration-200">
-                                [+] View Guide
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Single Column Expandable Body -->
-                    <div id="guide-body-${lesson.id}" class="hidden p-6 md:p-8 space-y-6 bg-[#1a202c] border-t border-gray-700">
-                        
-                        <!-- 1. WHY -->
-                        ${conceptText ? `
-                        <div class="space-y-2">
-                            <h3 class="text-sm md:text-base font-bold text-[#3498db] font-mono border-b border-gray-800 pb-1.5 flex items-center">
-                                <span class="mr-2 text-lg">💡</span> WHY (The Concept)
-                            </h3>
-                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
-                                ${formatMarkdown(conceptText, isConceptHtml)}
-                            </div>
-                        </div>
-                        ` : ''}
-
-                        <!-- 2. THE LOGICAL DECISION -->
-                        ${reasoningText ? `
-                        <div class="space-y-2">
-                            <h3 class="text-sm md:text-base font-bold text-[#2ecc71] font-mono border-b border-gray-800 pb-1.5 flex items-center">
-                                <span class="mr-2 text-lg">⚖️</span> THE LOGICAL DECISION
-                            </h3>
-                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
-                                ${formatMarkdown(reasoningText, isReasoningHtml)}
-                            </div>
-                        </div>
-                        ` : ''}
-
-                        <!-- 3. HOW -->
-                        ${howText ? `
-                        <div class="space-y-2">
-                            <h3 class="text-sm md:text-base font-bold text-orange-400 font-mono border-b border-gray-800 pb-1.5 flex items-center">
-                                <span class="mr-2 text-lg">⚙️</span> HOW (Implementation Code)
-                            </h3>
-                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed pl-1">
-                                <div class="how-md font-mono">${howText.includes('```') ? renderCodeBlock(howText) : formatMarkdown(howText, isHowHtml)}</div>
-                            </div>
-                        </div>
-                        ` : ''}
-
-                        <!-- 4. Challenge Accordion -->
-                        ${lesson.challenge ? `
-                        <div class="border border-gray-800 rounded-lg overflow-hidden mt-6">
-                            <button onclick="toggleRecall('${lesson.id}')"
-                                    class="w-full bg-[#111827] px-4 py-3 flex justify-between items-center text-xs md:text-sm font-mono text-yellow-500 hover:bg-gray-800 focus:outline-none transition-colors duration-200">
-                                <span>🧠 ACTIVE_RECALL_CHALLENGE (Test Your Knowledge)</span>
-                                <span id="icon-${lesson.id}">[+] Expand</span>
-                            </button>
-                            <div id="recall-${lesson.id}" class="hidden bg-[#111827] border-t border-gray-800 p-4 space-y-4 text-xs md:text-sm">
-                                <p class="text-gray-300 leading-relaxed">${formatMarkdown(lesson.challenge, false)}</p>
-                                
-                                <button onclick="toggleAnswer('${lesson.id}')"
-                                        class="px-3 py-1.5 bg-yellow-500 text-[#1f2937] font-bold rounded font-mono hover:bg-yellow-400 transition-colors duration-200">
-                                    Reveal Solution
-                                </button>
-                                
-                                <div id="answer-${lesson.id}" class="hidden p-3 bg-gray-900 border-l-4 border-[#2ecc71] font-mono text-gray-300">
-                                    ${formatMarkdown(lesson.answer, false)}
-                                </div>
-                            </div>
-                        </div>
-                        ` : ''}
-
-                    </div>
-                </article>
-            `;
-        }).join('');
-    }
-
-    // Helper to render code blocks
-    function renderCodeBlock(text) {
-        return text.replace(/```(bash|yaml|javascript|json)?([\s\S]*?)```/g, (match, lang, code) => {
-            return `
-                <pre class="bg-gray-900 border border-gray-800 rounded-lg p-3.5 overflow-x-auto text-[11px] md:text-xs text-green-400 font-mono my-2 select-all"><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
-            `;
-        }).replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-500">$1</strong>')
-          .replace(/`(.*?)`/g, '<code class="bg-gray-900 text-orange-400 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-800">$1</code>')
-          .replace(/\n\n/g, '<br><br>')
-          .replace(/\n/g, '<br>');
-    }
-
-    // Input handlers
-    searchBar.addEventListener('input', (e) => {
-        currentQuery = e.target.value.toLowerCase().trim();
-        filterAndRender();
-    });
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => {
-                b.classList.remove('active', 'bg-yellow-500', 'text-[#1f2937]');
-                b.classList.add('bg-[#2c3e50]', 'text-gray-300');
-            });
-            btn.classList.add('active', 'bg-yellow-500', 'text-[#1f2937]');
-            btn.classList.remove('bg-[#2c3e50]', 'text-gray-300');
+        const onDragStart = (e) => {
+            if (currentIndex >= deck.length) return;
+            // Ignore drag if clicking on the Read More link
+            if (e.target === linkEl || linkEl.contains(e.target)) return;
             
-            currentFilter = btn.getAttribute('data-category');
-            filterAndRender();
+            isDragging = true;
+            cardEl.classList.add('dragging');
+            cardEl.classList.remove('snap-back');
+            
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            
+            startX = clientX;
+            startY = clientY;
+        };
+
+        const onDragMove = (e) => {
+            if (!isDragging) return;
+            // Only prevent default on touch to avoid scrolling
+            if (e.type.includes('touch')) e.preventDefault(); 
+            
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            
+            currentX = clientX - startX;
+            currentY = clientY - startY;
+
+            // Rotation based on drag distance (max 15 degrees)
+            const rotate = currentX * 0.05;
+            cardEl.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotate}deg)`;
+        };
+
+        const onDragEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            cardEl.classList.remove('dragging');
+
+            if (Math.abs(currentX) > SWIPE_THRESHOLD) {
+                // Swipe away
+                const direction = currentX > 0 ? 'right' : 'left';
+                handleSwipe(direction);
+            } else {
+                // Snap back
+                cardEl.style.transform = '';
+                cardEl.classList.add('snap-back');
+            }
+            currentX = 0;
+            currentY = 0;
+        };
+
+        const handleSwipe = (direction) => {
+            if (direction === 'right') {
+                cardEl.classList.add('swipe-right');
+            } else {
+                cardEl.classList.add('swipe-left');
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                renderCard();
+            }, 300); // Wait for transition
+        };
+
+        // Event Listeners
+        cardEl.addEventListener('mousedown', onDragStart);
+        window.addEventListener('mousemove', onDragMove, { passive: false });
+        window.addEventListener('mouseup', onDragEnd);
+
+        cardEl.addEventListener('touchstart', onDragStart, { passive: false });
+        window.addEventListener('touchmove', onDragMove, { passive: false });
+        window.addEventListener('touchend', onDragEnd);
+
+        // Buttons
+        btnLeft.addEventListener('click', () => {
+            if (currentIndex < deck.length) handleSwipe('left');
+        });
+        btnRight.addEventListener('click', () => {
+            if (currentIndex < deck.length) handleSwipe('right');
         });
     });
-});
-
-// Toggle Guide Expand/Collapse (Single-Open Accordion Behavior)
-function toggleGuide(id) {
-    const targetBody = document.getElementById(`guide-body-${id}`);
-    const targetBtn = document.getElementById(`guide-toggle-btn-${id}`);
-    const isOpening = targetBody.classList.contains('hidden');
-
-    // Collapse all currently open guides
-    document.querySelectorAll('[id^="guide-body-"]').forEach(body => {
-        body.classList.add('hidden');
-    });
-
-    // Reset all buttons to default "[+] View Guide"
-    document.querySelectorAll('[id^="guide-toggle-btn-"]').forEach(btn => {
-        btn.textContent = '[+] View Guide';
-        btn.classList.remove('bg-yellow-500', 'text-[#1f2937]');
-        btn.classList.add('bg-[#111827]', 'text-yellow-500');
-    });
-
-    // If the clicked guide was closed, expand it
-    if (isOpening) {
-        targetBody.classList.remove('hidden');
-        targetBtn.textContent = '[-] Collapse';
-        targetBtn.classList.add('bg-yellow-500', 'text-[#1f2937]');
-        targetBtn.classList.remove('bg-[#111827]', 'text-yellow-500');
-    }
-}
-
-// Toggle Recall Container
-function toggleRecall(id) {
-    const container = document.getElementById(`recall-${id}`);
-    const icon = document.getElementById(`icon-${id}`);
-    if (container.classList.contains('hidden')) {
-        container.classList.remove('hidden');
-        icon.textContent = '[-] Collapse';
-    } else {
-        container.classList.add('hidden');
-        icon.textContent = '[+] Expand';
-        document.getElementById(`answer-${id}`).classList.add('hidden');
-    }
-}
-
-// Toggle Solution Box
-function toggleAnswer(id) {
-    const box = document.getElementById(`answer-${id}`);
-    box.classList.toggle('hidden');
-}
 </script>

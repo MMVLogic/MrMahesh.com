@@ -77,7 +77,7 @@ permalink: /learnwithme/
 <script>
     // 1. Serialize site.posts using Liquid
     const posts = [
-        {% for post in site.posts %}
+        {% for post in site.guides %}
         {
             "title": {{ post.title | jsonify }},
             "excerpt": {{ post.excerpt | strip_html | strip_newlines | truncatewords: 30 | jsonify }},

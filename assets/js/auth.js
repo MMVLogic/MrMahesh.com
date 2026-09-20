@@ -74,6 +74,9 @@ window.MrMaheshAuth = (() => {
     }
 
     function notifyListeners() {
+        if (currentUser) {
+            document.dispatchEvent(new CustomEvent('auth-session-started', { detail: { user: currentUser } }));
+        }
         authListeners.forEach(cb => {
             try { cb(currentUser); } catch (e) { console.error('Auth listener error:', e); }
         });

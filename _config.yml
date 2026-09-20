@@ -31,7 +31,7 @@ collections:
     permalink: /recipes/:path/
   guides:
     output: true
-    permalink: /learnwithme/:path/
+    permalink: /guides/:path.html
   products:
     output: true
     permalink: /store/:path/

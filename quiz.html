@@ -78,7 +78,7 @@ permalink: /quiz/
                         <span class="text-xs font-mono text-gray-400 uppercase tracking-wider">Challenge</span>
                         <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <div class="flex-grow flex flex-col justify-center select-none pointer-events-none">
+                    <div class="flex-grow flex flex-col justify-center overflow-y-auto custom-scrollbar select-none">
                         <p id="card-challenge" class="text-white text-xl font-medium leading-relaxed mb-4">Loading question...</p>
                     </div>
                     <div class="mt-auto text-center">
@@ -92,7 +92,7 @@ permalink: /quiz/
                         <span class="text-xs font-mono text-green-400 uppercase tracking-wider">Answer</span>
                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <div class="flex-grow flex flex-col justify-center overflow-y-auto custom-scrollbar select-none pointer-events-none">
+                    <div class="flex-grow flex flex-col justify-center overflow-y-auto custom-scrollbar select-none ">
                         <p id="card-answer" class="text-gray-300 text-lg leading-relaxed">Loading answer...</p>
                         <p id="card-source" class="text-xs text-gray-500 mt-6 font-mono border-t border-gray-800 pt-2"></p>
                     </div>
@@ -197,8 +197,23 @@ permalink: /quiz/
             cardEl.classList.remove('flipped');
             
             const item = deck[currentIndex];
+            
+            // Dynamic text sizing based on length
+            const getDynamicTextClass = (str) => {
+                const len = str.length;
+                if (len < 80) return "text-2xl md:text-3xl font-bold";
+                if (len < 150) return "text-xl md:text-2xl font-semibold";
+                if (len < 300) return "text-lg md:text-xl font-medium";
+                if (len < 500) return "text-base md:text-lg";
+                return "text-sm md:text-base";
+            };
+
             qEl.textContent = item.challenge;
+            qEl.className = getDynamicTextClass(item.challenge) + " text-white text-center leading-relaxed mb-4 transition-all";
+            
             aEl.textContent = item.answer;
+            aEl.className = getDynamicTextClass(item.answer) + " text-gray-300 leading-relaxed transition-all";
+            
             sEl.textContent = "Source: " + item.title;
             progressText.textContent = `Question ${currentIndex + 1} of ${deck.length}`;
 

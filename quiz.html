@@ -141,22 +141,26 @@ permalink: /quiz/
 </div>
 
 <script>
-    // 1. Fetch all challenges from guides
-    let allQuestions = [
-        {% for guide in site.guides %}
-        {% if guide.challenge and guide.answer %}
-        {
-            title: {{ guide.title | jsonify }},
-            challenge: {{ guide.challenge | markdownify | strip_html | jsonify }},
-            answer: {{ guide.answer | markdownify | strip_html | jsonify }}
-        },
-        {% endif %}
-        {% endfor %}
-    ];
+    let allQuestions = [];
+    async function loadQuiz() {
+        if (!window.MrMaheshAuth || !window.MrMaheshAuth.supabase) return;
+        const { data, error } = await window.MrMaheshAuth.supabase
+            .from('guides')
+            .select('title, challenge, answer')
+            .not('challenge', 'is', null)
+            .not('answer', 'is', null)
+            .neq('challenge', '')
+            .neq('answer', '');
+            
+        if (!error && data) {
+            allQuestions = data;
+        }
+    }
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadQuiz();
         // Fallback if no questions exist
         if (allQuestions.length === 0) {
             allQuestions = [

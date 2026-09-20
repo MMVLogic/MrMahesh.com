@@ -1,0 +1,98 @@
+---
+layout: default
+title: Loading Guide...
+permalink: /guide.html
+---
+
+<div class="mt-8">
+    <div id="guide-loading" class="text-center text-gray-400 py-12 animate-pulse font-mono">
+        <svg class="w-10 h-10 mx-auto mb-4 animate-spin text-yellow-500" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        [ FETCHING_FROM_DATABASE ]...
+    </div>
+
+    <div id="guide-error" class="hidden text-center text-red-400 py-12 font-mono">
+        Guide not found or database error.
+    </div>
+
+    <article id="guide-content" class="hidden">
+        <header class="mb-8 border-b border-gray-700 pb-8">
+            <h1 id="guide-title" class="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight"></h1>
+            <div class="flex items-center text-sm font-mono text-gray-400 space-x-4">
+                <span id="guide-category" class="bg-[#2c3e50] text-[#3498db] px-3 py-1 rounded font-bold"></span>
+                <span id="guide-date"></span>
+            </div>
+        </header>
+
+        <div id="guide-body" class="prose prose-invert prose-yellow max-w-none text-gray-300 leading-loose">
+            <!-- Content gets injected here -->
+        </div>
+
+        <div class="mt-12 mb-8 flex justify-center border-t border-gray-700 pt-8">
+            <a href="/learnwithme/" class="inline-flex items-center px-6 py-3 bg-[#2c3e50] hover:bg-[#3498db] border border-gray-600 text-white font-bold rounded-xl transition-all duration-300 shadow-lg group">
+                <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to Learning Deck
+            </a>
+        </div>
+    </article>
+</div>
+
+<!-- Simple markdown parser for client side -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    // Extract ID from URL path, e.g. /guides/1234-uuid.html
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const guideId = urlParams.get('id');
+
+    const loadingEl = document.getElementById('guide-loading');
+    const errorEl = document.getElementById('guide-error');
+    const contentEl = document.getElementById('guide-content');
+    
+    if (!guideId || guideId === 'undefined') {
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    if (!window.MrMaheshAuth || !window.MrMaheshAuth.supabase) {
+        console.error("Supabase not initialized");
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        // Fetch guide from Supabase
+        const { data, error } = await window.MrMaheshAuth.supabase
+            .from('guides')
+            .select('*')
+            .eq('id', guideId)
+            .single();
+
+        if (error || !data) throw error;
+
+        // Populate DOM
+        document.getElementById('guide-title').textContent = data.title;
+        document.title = data.title + " // MrMahesh.com";
+        document.getElementById('guide-category').textContent = data.category || 'Homelab';
+        
+        const dateObj = new Date(data.created_at);
+        document.getElementById('guide-date').textContent = dateObj.toLocaleDateString();
+
+        // Convert markdown to HTML
+        document.getElementById('guide-body').innerHTML = marked.parse(data.content);
+
+        loadingEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+    } catch (err) {
+        console.error("Error fetching guide:", err);
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+    }
+});
+</script>

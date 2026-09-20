@@ -79,19 +79,35 @@ permalink: /learnwithme/
 </div>
 
 <script>
-    // 1. Serialize site.posts using Liquid
-    const posts = [
-        {% for post in site.guides %}
-        {
-            "title": {{ post.title | jsonify }},
-            "excerpt": {{ post.excerpt | strip_html | strip_newlines | truncatewords: 30 | jsonify }},
-            "url": {{ post.url | relative_url | jsonify }}
-        }{% unless forloop.last %},{% endunless %}
-        {% endfor %}
-    ];
+    // Fetch posts directly from Supabase
+    let posts = [];
+    async function loadGuides() {
+        if (!window.MrMaheshAuth || !window.MrMaheshAuth.supabase) {
+            console.error("Supabase client not found.");
+            return;
+        }
+        
+        const { data, error } = await window.MrMaheshAuth.supabase
+            .from('guides')
+            .select('id, title, excerpt')
+            .order('created_at', { ascending: false });
+            
+        if (error) {
+            console.error("Error loading guides from DB", error);
+            return;
+        }
+        
+        // Map the DB format to the format expected by the swipe deck
+        posts = data.map(g => ({
+            title: g.title,
+            excerpt: g.excerpt,
+            url: "/guide.html?id=" + g.id
+        }));
+    }
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadGuides();
         // Load history from localStorage (works for guests too!)
         let likedGuides = JSON.parse(localStorage.getItem('mrmahesh_liked_guides') || '[]');
         let dislikedGuides = JSON.parse(localStorage.getItem('mrmahesh_disliked_guides') || '[]');

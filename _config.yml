@@ -29,9 +29,7 @@ collections:
   recipes:
     output: true
     permalink: /recipes/:path/
-  guides:
-    output: true
-    permalink: /guides/:path.html
+
   products:
     output: true
     permalink: /store/:path/

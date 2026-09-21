@@ -84,10 +84,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dateObj = new Date(data.created_at);
         document.getElementById('guide-date').textContent = dateObj.toLocaleDateString();
 
-        // Clean out raw/endraw liquid tags from markdown
+        // Clean out raw/endraw liquid tags from markdown using RegExp constructors 
+        // (separating '{' and '%' so Jekyll's Liquid parser doesn't crash during build)
+        const rawRegex = new RegExp('\\{' + '%\\s*raw\\s*%\\}', 'g');
+        const endrawRegex = new RegExp('\\{' + '%\\s*endraw\\s*%\\}', 'g');
+        
         const cleanedContent = data.content
-            .replace(/{%\s*raw\s*%}/g, '')
-            .replace(/{%\s*endraw\s*%}/g, '');
+            .replace(rawRegex, '')
+            .replace(endrawRegex, '');
 
         // Convert markdown to HTML
         document.getElementById('guide-body').innerHTML = marked.parse(cleanedContent);

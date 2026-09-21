@@ -103,7 +103,24 @@ figure figcaption {
 div.highlighter-rouge,
 pre.highlighter-rouge code,
 code.language-plaintext {
-  color: #333;
+  color: #e2e8f0;
+}
+
+/* Fix inline code blocks having unreadable white backgrounds from the base theme */
+.prose code {
+  color: #fbbf24 !important; /* amber-400 */
+  background-color: rgba(0, 0, 0, 0.4) !important; /* dark transparent background */
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+/* Revert the styling for code blocks inside <pre> so they don't get inline padding/colors */
+.prose pre code {
+  color: inherit !important;
+  background-color: transparent !important;
+  padding: 0;
+  font-weight: inherit;
 }
 
 /* --- Link Styles --- */

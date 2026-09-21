@@ -84,8 +84,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dateObj = new Date(data.created_at);
         document.getElementById('guide-date').textContent = dateObj.toLocaleDateString();
 
+        // Clean out raw/endraw liquid tags from markdown
+        const cleanedContent = data.content
+            .replace(/{%\s*raw\s*%}/g, '')
+            .replace(/{%\s*endraw\s*%}/g, '');
+
         // Convert markdown to HTML
-        document.getElementById('guide-body').innerHTML = marked.parse(data.content);
+        document.getElementById('guide-body').innerHTML = marked.parse(cleanedContent);
 
         loadingEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
